@@ -1,3 +1,5 @@
+# Welcome to the ConfigMgr-Hub repo.
+This project is the place to share and collaborate on the best settings, reports, scripts, applications and other content for Configuration Manager.
 
 # Contributing
 
