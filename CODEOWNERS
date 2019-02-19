@@ -1,0 +1,6 @@
+# OWNERS File for configmgr-hub
+# in general there won't be
+# Each line is a file pattern followed by one or more owners.
+
+# You can also use email addresses if you prefer.
+src/Microsoft/*  @silveyy
