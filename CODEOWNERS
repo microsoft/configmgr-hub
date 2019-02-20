@@ -3,4 +3,6 @@
 # Each line is a file pattern followed by one or more owners.
 
 # You can also use email addresses if you prefer.
-src/Microsoft/*  @silveyy
+CODEOWNERS @microsoft/configmgr
+README.md @microsoft/configmgr
+src/Microsoft/*  @microsoft/configmgr
