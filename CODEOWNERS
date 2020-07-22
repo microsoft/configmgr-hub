@@ -4,4 +4,3 @@
 # You can also use email addresses if you prefer.
 CODEOWNERS @microsoft/configmgr
 README.md @microsoft/configmgr
-src/Microsoft/*  @microsoft/configmgr
