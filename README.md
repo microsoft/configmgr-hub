@@ -1,5 +1,5 @@
-# Welcome to the ConfigMgr-Hub repo.
-This project is the place to share and collaborate on the best settings, reports, scripts, applications and other content for Configuration Manager. For more information about using the hub, see [Configuration Manager Community hub documentation](https://docs.microsoft.com/mem/configmgr/core/servers/manage/community-hub).
+# Welcome to the ConfigMgr-Hub repo
+This repository is where reports, scripts, applications, and other hub content for Configuration Manager are stored. Pull requests (PRs) to this repository should be submitted with the Configuration Manager console using the instructions in this ReadMe file. For more information about using the hub, see [Configuration Manager Community hub documentation](https://docs.microsoft.com/mem/configmgr/core/servers/manage/community-hub).
 
 ## Contributor License Agreement
 
@@ -23,7 +23,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
    ![Join Configuration Manager's Community hub](./media/3555935-join-community-hub.png)
 
-1. After joining, you'll see your membership request is pending. Your account needs approval by the Configuration Manager hub Content Curation team. Approvals are done once a day, so it may take up to one business day for your approval to be granted.
+1. After joining, you'll see your membership request is pending. Your account needs approval by the Configuration Manager Content Curation team. Approvals are done once a day, so it may take up to one business day for your approval to be granted.
 1. Once you're granted access, you'll get an email from GitHub. Open the link in the email to accept the invitation.
 
 ## Contribute content
@@ -31,19 +31,23 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 Once you've accepted the invitation, you can contribute content.
 
 1. Go to **Community** > **Community hub** > **Your hub**.
-1. Click **Add an Item** to open the contribution wizard.
-1. Specify the settings for the object:
-   - **Type:**
-     - CMPivot queries
-     - PowerShell Scripts
-     - Reports
-     - Task sequences
-     - Applications
-     - Configuration items  
+1. Select **Add an Item** to open the contribution wizard.
+      ![Join Configuration Manager's Community hub](./media/3555935-add-community-hub.png)
+1. Specify the **Type** of object you want to share from the drop down menu. The following object types are available:
+     - Configuration item
+     - CMPivot query
+     - Report
+     - PowerShell Script
+     - Task sequence
+     - Application
+
+1. Select **Browse** to load your environment's object list for the selected type. The object's **Name** and **Description** (if available) will automatically load in the contribution wizard.
+1. Edit the following information to reflect what the community should see for your contribution:
    - **Name:** Name of your object
    - **Description:** The description of the object you're contributing.
 1. Click **Next** to submit the contribution.
 1. Once the contribution is complete, you'll see the GitHub pull request (PR) link. The link is also emailed to you. You can paste the link into a browser to view the PR. Your PR will go though the standard GitHub merge process.
+   - PRs should be submitted through the Configuration Manager console, not directly to the GitHub repository.
 1. Click **Close** to exit the contribution wizard.
 1. Once the PR has been completed and merged, the new item will show up on the Community hub home page for others to see.
 
