@@ -1,0 +1,1 @@
+USMUserProfile | where Special == false and LastUseTime < (now() - 90d)
