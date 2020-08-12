@@ -18,8 +18,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 ## Join the Community hub to contribute content
 
 1. Go to the **Community hub** node in the **Community** workspace.
-1. Click on **Your hub** and you'll be prompted to sign into GitHub. If you don't have an account, you'll be redirected to GitHub where you can create one. A GitHub account is only required to contribute and share content from the **Your hub** page.
-1. Once you've signed into GitHub, click the **Join** button to join the Community hub.
+1. Select **Your hub** and you'll be prompted to sign into GitHub. If you don't have an account, you'll be redirected to GitHub where you can create one. A GitHub account is only required to contribute and share content from the **Your hub** page.
+1. Once you've signed into GitHub, select the **Join** button to join the Community hub.
 
    ![Join Configuration Manager's Community hub](./media/3555935-join-community-hub.png)
 
@@ -33,7 +33,7 @@ Once you've accepted the invitation, you can contribute content.
 1. Go to **Community** > **Community hub** > **Your hub**.
 1. Select **Add an Item** to open the contribution wizard.
       ![Join Configuration Manager's Community hub](./media/3555935-add-community-hub.png)
-1. Specify the **Type** of object you want to share from the drop down menu. The following object types are available:
+1. Specify the **Type** of object you want to share from the drop-down menu. The following object types are available:
      - Configuration item
      - CMPivot query
      - Report
@@ -45,10 +45,10 @@ Once you've accepted the invitation, you can contribute content.
 1. Edit the following information to reflect what the community should see for your contribution:
    - **Name:** Name of your object
    - **Description:** The description of the object you're contributing.
-1. Click **Next** to submit the contribution.
+1. Select **Next** to submit the contribution.
 1. Once the contribution is complete, you'll see the GitHub pull request (PR) link. The link is also emailed to you. You can paste the link into a browser to view the PR. Your PR will go though the standard GitHub merge process.
    - PRs should be submitted through the Configuration Manager console, not directly to the GitHub repository.
-1. Click **Close** to exit the contribution wizard.
+1. Choose **Close** to exit the contribution wizard.
 1. Once the PR has been completed and merged, the new item will show up on the Community hub home page for others to see.
 
 ## Next steps
