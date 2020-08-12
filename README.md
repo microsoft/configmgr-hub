@@ -30,7 +30,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 Once you've accepted the invitation, you can contribute content.
 
-1. Go to **Community** > **hub** > **My hub**.
+1. Go to **Community** > **Community hub** > **Your hub**.
 1. Click **Add an Item** to open the contribution wizard.
 1. Specify the settings for the object:
    - **Type:**
