@@ -17,8 +17,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Join the Community hub to contribute content
 
-1. Go to the **hub** node in the **Community** workspace.
-1. Click on **My hub** and you'll be prompted to sign into GitHub. If you don't have an account, you'll be redirected to GitHub where you can create one. A GitHub account is only required to contribute and share content from the **My hub** page.
+1. Go to the **Community hub** node in the **Community** workspace.
+1. Click on **Your hub** and you'll be prompted to sign into GitHub. If you don't have an account, you'll be redirected to GitHub where you can create one. A GitHub account is only required to contribute and share content from the **Your hub** page.
 1. Once you've signed into GitHub, click the **Join** button to join the Community hub.
 
    ![Join Configuration Manager's Community hub](./media/3555935-join-community-hub.png)
