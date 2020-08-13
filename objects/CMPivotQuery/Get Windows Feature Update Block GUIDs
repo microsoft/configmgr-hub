@@ -1,0 +1,1 @@
+Registry('HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Appraiser\\GWX') | where Property == 'SdbEntries' and Value != ''
