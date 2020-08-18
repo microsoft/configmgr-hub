@@ -1,0 +1,8 @@
+// Shows the pie chart of Windows 10/2016/2019 cumulative update versions
+OperatingSystem 
+| project Device, BuildNumber
+| join (Registry('HKLM:\\Software\\Microsoft\\Windows NT\\CurrentVersion')
+| where Property =='UBR' | project Device, CU=Value)
+| project Device, FullBuild=strcat(BuildNumber,'.',tostring(CU))
+| summarize count() by FullBuild
+| render piechart with(title='Windows CUs')
