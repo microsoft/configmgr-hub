@@ -1,0 +1,1 @@
+Registry('HKLM:\SOFTWARE\Microsoft\SMS\DP') | where Property == 'RamDiskTFTPWindowSize' or Property == 'RamdiskTFTPBlockSize'
