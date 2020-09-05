@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_FC07EA7F-55AD-47CC-90AA-2A3E907188DF" LogicalName="OperatingSystem_94d0bb1b-b25a-442d-95af-9b0ee1c5a030" Version="4">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Feature Update - No logged on interactive user - Failed" ResourceId="ID-5f37143e-5216-4848-9342-40bacd003b5b" />
+      <Description Text="Detects and remediates devices where Feature Update returns error -2149842976&#xD;&#xA;&#xD;&#xA;@AdamGrossTX - https://github.com/AdamGrossTX/Windows10FeatureUpdates" ResourceId="ID-b3a4d4ab-be28-475d-9872-fde03cc3a16c" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_b97ce766-3cd3-404b-889a-259406d3bacb" DataType="String">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Failed Feature Update - No logged on interactive user" ResourceId="ID-fd412ccd-6def-448c-a9ac-ec956e419c30" />
+            <Description Text="" ResourceId="ID-02a4ade1-0ada-4b3b-84af-10329296505b" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">#No Logged In User Discovery
+Try {
+    If(Get-CimInstance -Namespace "ROOT\ccm\ClientSDK" -ClassName "CCM_SoftwareUpdate" -Filter ("ErrorCode = 2149842976") -ErrorAction Stop) {
+        Return "Non-Compliant"
+    }
+    Else {
+        Return "Compliant"
+    }
+}
+Catch {
+    Return "Non-Compliant"
+}
+</DiscoveryScriptBody>
+            <RemediationScriptBody ScriptType="PowerShell">#No Logged On User Remdiation
+Param (
+    $IncomingValue
+)
+
+Try {
+    $SoftwareDistFolder = "$($env:windir)\SoftwareDistribution\Download"
+    If(Test-Path $SoftwareDistFolder) {
+        Get-Service wuauserv | Stop-Service -Force
+        Get-ChildItem -Path $SoftwareDistFolder | Remove-Item -Force -Recurse
+        Start-Service wuauserv
+
+        $Actions = @(
+            "{00000000-0000-0000-0000-000000000021}",
+            "{00000000-0000-0000-0000-000000000022}",
+            "{00000000-0000-0000-0000-000000000108}"
+        )
+
+        ForEach ($Action in $Actions) {
+            $Filter = "InventoryActionID = '{0}'" -f $Action
+            Get-CIMInstance -Namespace "ROOT\ccm\invagt" -ClassName InventoryActionStatus -Filter $Filter | Remove-CimInstance -ErrorAction SilentlyContinue | Out-Null
+            $ArgList = @{sScheduleID = $Action}
+            Invoke-CimMethod -Namespace "root\ccm" -ClassName "SMS_Client" -MethodName TriggerSchedule -Arguments $ArgList -ErrorAction Stop  | Out-Null
+        }
+    }
+    Else {
+        Throw "$($SoftwareDistFolder) not found. No Action Taken."
+    }
+}
+Catch {
+    Return $_
+}</RemediationScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_f7461eef-d33e-416c-b300-2416aa0d0c6d" Severity="Critical" NonCompliantWhenSettingIsNotFound="true">
+        <Annotation>
+          <DisplayName Text="Compliant" ResourceId="ID-2d23c015-6b0b-426a-9616-16c8067dc1bb" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_FC07EA7F-55AD-47CC-90AA-2A3E907188DF" LogicalName="OperatingSystem_94d0bb1b-b25a-442d-95af-9b0ee1c5a030" Version="4" DataType="String" SettingLogicalName="ScriptSetting_b97ce766-3cd3-404b-889a-259406d3bacb" SettingSourceType="Script" Method="Value" Changeable="true" />
+            <ConstantValue Value="Compliant" DataType="String" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_ARM64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_10_and_higher_Clients" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
