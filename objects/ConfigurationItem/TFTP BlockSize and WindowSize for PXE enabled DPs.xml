@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_FC07EA7F-55AD-47CC-90AA-2A3E907188DF" LogicalName="OperatingSystem_faf55bb3-a88a-4663-888c-ecb593c20cc3" Version="2" ConfigurationFlags="256">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Server - TFTP BlockSize and WindowSize for PXE enabled DPs" ResourceId="ID-718b8870-0173-4392-88d0-88cc795c0a56" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="RegSetting_b9a8589a-089a-4974-8da7-16532ea5bb05" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="RamDiskTFTPWindowSize" ResourceId="ID-d9bc1d35-9003-4e9b-abca-a14cd528dc1c" />
+            <Description Text="" />
+          </Annotation>
+          <RegistryDiscoverySource Hive="HKEY_LOCAL_MACHINE" Depth="Base" Is64Bit="false" CreateMissingPath="true" RemediateDword="true">
+            <Key>SOFTWARE\Microsoft\SMS\DP</Key>
+            <ValueName>RamDiskTFTPWindowSize</ValueName>
+          </RegistryDiscoverySource>
+        </SimpleSetting>
+        <SimpleSetting LogicalName="RegSetting_e6f11603-dc03-4136-a060-6b4757465595" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="RamdiskTFTPBlockSize" ResourceId="ID-03526288-23a7-4552-aa42-3ba4a89f2008" />
+            <Description Text="" />
+          </Annotation>
+          <RegistryDiscoverySource Hive="HKEY_LOCAL_MACHINE" Depth="Base" Is64Bit="false" CreateMissingPath="true" RemediateDword="true">
+            <Key>SOFTWARE\Microsoft\SMS\DP</Key>
+            <ValueName>RamdiskTFTPBlockSize</ValueName>
+          </RegistryDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_92b21ceb-1ce2-40eb-ae87-c7e32583763b" Severity="Critical" NonCompliantWhenSettingIsNotFound="true">
+        <Annotation>
+          <DisplayName Text="RamDiskTFTPWindowSize set to 8" ResourceId="ID-782dddd5-aec7-412c-8420-8a2d2db6db74" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_FC07EA7F-55AD-47CC-90AA-2A3E907188DF" LogicalName="OperatingSystem_faf55bb3-a88a-4663-888c-ecb593c20cc3" Version="2" DataType="Int64" SettingLogicalName="RegSetting_b9a8589a-089a-4974-8da7-16532ea5bb05" SettingSourceType="Registry" Method="Value" Changeable="true" />
+            <ConstantValue Value="8" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_c4f21f3e-a389-46b4-962a-0c68e3ca5c5f" Severity="Critical" NonCompliantWhenSettingIsNotFound="true">
+        <Annotation>
+          <DisplayName Text="RamdiskTFTPBlockSize is set to 1452" ResourceId="ID-f3ef979d-352c-48dc-8340-d197fc3d3f1a" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_FC07EA7F-55AD-47CC-90AA-2A3E907188DF" LogicalName="OperatingSystem_faf55bb3-a88a-4663-888c-ecb593c20cc3" Version="2" DataType="Int64" SettingLogicalName="RegSetting_e6f11603-dc03-4136-a060-6b4757465595" SettingSourceType="Registry" Method="Value" Changeable="true" />
+            <ConstantValue Value="1452" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2012_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2016" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2019_and_higher" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
