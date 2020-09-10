@@ -1,0 +1,8 @@
+SystemBootData
+|join Device
+
+| summarize avg(BootDuration / 1000)
+
+by Model
+
+| render barchart with (kind=stacked, title='Average Boot Times', ytitle='Time (seconds)')
