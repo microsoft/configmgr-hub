@@ -1,0 +1,2 @@
+ InstalledSoftware | summarize countif( (ProductName == 'title') ) by ProductVersion | where (countif_ > 0)|
+render barchart
