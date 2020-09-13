@@ -1,0 +1,2 @@
+CcmLog('LocationServices') | where LogText contains 'Client is not in any boundary group.'
+| project Device, LogText, DateTime
