@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_EDB82410-9C54-411C-AEF5-C64731191F8E" LogicalName="OperatingSystem_4f0d535e-8d8c-4c73-8f6b-e3b7f5e39039" Version="3">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="CMTrace Symbolic Link" ResourceId="ID-1ace708c-7ecc-48b8-abd6-55c0b1ac76c4" />
+      <Description Text="put a symbolic link to CMTrace.exe in the Windows folder so it can be launched from Run Prompt" ResourceId="ID-01b4d560-264d-420e-9a1f-f0820291568c" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_140e5a2f-85c1-4ec7-8a68-a1e06f805730" DataType="String">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="CMTrace Symbolic Link" ResourceId="ID-b9ed3705-5eb0-4816-91ad-671674d85439" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell"># Discovery
+$test = Get-ChildItem -Path c:\windows -Filter "cmtrace" -ErrorAction Ignore
+if(($test.LinkType -eq "SymbolicLink") -and ($test.Target -eq "C:\Windows\CCM\CMtrace.exe")){
+    Write-Output "True"
+}Else{
+    Write-Output "False"t
+}
+
+</DiscoveryScriptBody>
+            <RemediationScriptBody ScriptType="PowerShell"># Remediation
+New-Item -ItemType SymbolicLink -Path "C:\Windows" -Name "CMTRACE" -Value "C:\Windows\CCM\CMtrace.exe" -Force</RemediationScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_dface1a3-2a26-485f-a0cb-f8c2448f4b4a" Severity="None" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="CMTrace Symbolic Link" ResourceId="ID-46fcd998-d290-476d-94f2-13c287f84087" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_EDB82410-9C54-411C-AEF5-C64731191F8E" LogicalName="OperatingSystem_4f0d535e-8d8c-4c73-8f6b-e3b7f5e39039" Version="3" DataType="String" SettingLogicalName="ScriptSetting_140e5a2f-85c1-4ec7-8a68-a1e06f805730" SettingSourceType="Script" Method="Value" Changeable="true" />
+            <ConstantValue Value="True" DataType="String" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
