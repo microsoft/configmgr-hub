@@ -1,0 +1,2 @@
+FileContent('c:\Windows\smscfg.ini')
+| where Content contains 'Last SMSUID Change Date=11/24/2020'
