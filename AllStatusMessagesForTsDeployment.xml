@@ -1,0 +1,22 @@
+<ActionDescription Class="Executable" DisplayName="ShowStatusMessages" MnemonicDisplayName="MnemonicShowStatusMessages" 
+   Description="ShowStatusMessagesDescription">
+    <ShowOn>      
+        <string>DefaultContextualTab</string>  
+        <string>ContextMenu</string> 
+    </ShowOn>
+    <ResourceAssembly>
+      <Assembly>AdminUI.SystemStatus.dll</Assembly>
+      <Type>Microsoft.ConfigurationManagement.AdminConsole.SystemStatus.Properties.Resources.resources</Type>
+    </ResourceAssembly>
+    <ImagesDescription>
+       <ResourceAssembly>
+        <Assembly>AdminUI.UIResources.dll</Assembly>
+        <Type>Microsoft.ConfigurationManagement.AdminConsole.UIResources.Properties.Resources.resources</Type>
+      </ResourceAssembly>
+      <ImageResourceName>ShowMessages</ImageResourceName>
+    </ImagesDescription>
+    <Executable>
+        <FilePath>i386\statview.exe</FilePath>  
+        <Parameters>/SMS:PROPERTY=401,"##SUB:DeploymentID##"</Parameters>  
+    </Executable>  
+</ActionDescription>
