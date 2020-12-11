@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_C9C0C0B9-AFC3-4CE6-9559-B456E2372D8D" LogicalName="OperatingSystem_8b9bb42c-a8ae-40f5-9ed4-0eb7577663d1" Version="4">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Show Seconds in System Clock" ResourceId="ID-535a7d23-99c4-4386-a42c-884c6877321c" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="RegSetting_5aa3d05f-2e05-4042-9484-38fbe976719f" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="ShowSecondsInSystemClock" ResourceId="ID-345a0dc9-6092-4383-b2f2-c01ea0e0c16e" />
+            <Description Text="" />
+          </Annotation>
+          <RegistryDiscoverySource Hive="HKEY_CURRENT_USER" Depth="Base" Is64Bit="false" CreateMissingPath="true" IsPerUser="true" RemediateDword="true">
+            <Key>Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced</Key>
+            <ValueName>ShowSecondsInSystemClock</ValueName>
+          </RegistryDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_d3057e1f-fc98-4239-9d8a-2b7fbbea61ab" Severity="None" NonCompliantWhenSettingIsNotFound="true">
+        <Annotation>
+          <DisplayName Text="New_Rule" ResourceId="ID-14416a69-df72-4f62-90f8-d5bce0b6fdcb" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_C9C0C0B9-AFC3-4CE6-9559-B456E2372D8D" LogicalName="OperatingSystem_8b9bb42c-a8ae-40f5-9ed4-0eb7577663d1" Version="4" DataType="Int64" SettingLogicalName="RegSetting_5aa3d05f-2e05-4042-9484-38fbe976719f" SettingSourceType="Registry" Method="Value" Changeable="true" />
+            <ConstantValue Value="1" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2016" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2019_and_higher" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
