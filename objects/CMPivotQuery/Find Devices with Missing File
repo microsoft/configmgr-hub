@@ -1,0 +1,6 @@
+//Return Devices that are missing a specific file from a specific path. 
+// Change YOURFILEPATH to the file path you are looking for like File('C:\Windows\notepad.exe')
+Device
+| join kind=leftouter (File('YOURFILEPATH')) 
+| where isnull(FileName)
+| project Device
