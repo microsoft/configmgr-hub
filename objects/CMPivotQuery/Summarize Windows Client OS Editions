@@ -1,0 +1,41 @@
+OperatingSystem 
+
+ | where ProductType == 1 // filter on workstations 
+
+ | project Edition=case( 
+
+     BuildNumber == '2600', 'Windows XP', 
+
+     BuildNumber like '760%', 'Windows 7', 
+     
+     BuildNumber == '9600', 'Windows 8', 
+
+     BuildNumber == '10240', 'Windows 10 1507', 
+
+     BuildNumber == '10586', 'Windows 10 1511', 
+
+     BuildNumber == '14393', 'Windows 10 1607', 
+
+     BuildNumber == '15063', 'Windows 10 1703', 
+
+     BuildNumber == '16299', 'Windows 10 1709', 
+
+     BuildNumber == '17134', 'Windows 10 1803', 
+
+     BuildNumber == '17763', 'Windows 10 1809', 
+
+     BuildNumber == '18362', 'Windows 10 1903', 
+
+     BuildNumber == '18363', 'Windows 10 1909', 
+
+     BuildNumber == '19041', 'Windows 10 2004',
+     
+     BuildNumber == '19042', 'Windows 10 20H2',
+
+     BuildNumber > '19042', 'Windows 10 Other', 
+
+     BuildNumber) 
+
+ | summarize count() by Edition 
+
+ | order by count_ asc 
