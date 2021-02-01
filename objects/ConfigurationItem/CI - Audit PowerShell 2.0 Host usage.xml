@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_F893751F-8918-4EF8-9CF2-E1BD59AE10A1" LogicalName="OperatingSystem_9b25d81b-fc3a-4540-a605-2be68baddaeb" Version="7" ConfigurationFlags="256">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="CI - Audit PowerShell 2.0 Host usage" ResourceId="ID-74ab9742-fe2e-4028-a544-4aaad56fcd13" />
+      <Description Text="PowerShell 2.0 is used by malware attacks to evade a number of PowerShell 5 security features in what is typically referred to as a downgrade attack. This CI allows you to detect PowerShell 2.0 hosts being launched. When you have no PowerShell 2.0 requirements in your environment this CI can give you the reassurance to disable the feature." ResourceId="ID-e4dfc45d-215c-4a30-a986-02607bdcd0ab" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="WqlSetting_7327515b-b367-4d3b-b094-5ebc7b09c04d" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Setting - PowerShell 2.0 Host Not Launched" ResourceId="ID-2da40956-561d-402d-97be-42c4891d0315" />
+            <Description Text="When PowerShell is launched an event log entry is written with eventid 400 in the Windows PowerShell log. The eventlog message will contain the string hostversion followed by the version of the PowerShell host logged." ResourceId="ID-53dd7994-991f-436c-bb6c-473836351ccc" />
+          </Annotation>
+          <WqlQueryDiscoverySource>
+            <Namespace>root\cimv2</Namespace>
+            <Class>Win32_NTLogEvent</Class>
+            <Property>EventIdentifier</Property>
+            <Where>logfile='Windows PowerShell' and eventidentifier='400' and message like '%hostversion=2.0%'</Where>
+          </WqlQueryDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_5273212b-1e80-44c8-8e93-1f9969126720" Severity="Warning" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="Rule - PowerShell 2.0 Host Not Launched" ResourceId="ID-3a14a2e5-97a8-4a34-9add-fd734f1939eb" />
+          <Description Text="The log entry that is being searched for in the Settings tab should not exist. If it doesn't PowerShell 2.0 was not launched on a device and all is good." ResourceId="ID-c4578be9-667c-48f3-a2dc-f9be9ead926c" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_F893751F-8918-4EF8-9CF2-E1BD59AE10A1" LogicalName="OperatingSystem_9b25d81b-fc3a-4540-a605-2be68baddaeb" Version="7" DataType="Int64" SettingLogicalName="WqlSetting_7327515b-b367-4d3b-b094-5ebc7b09c04d" SettingSourceType="WqlQuery" Method="Count" Changeable="false" />
+            <ConstantValue Value="0" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_10_and_higher_Clients" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
