@@ -1,0 +1,1 @@
+LogicalDisk | summarize sum( FreeSpace ) by Device | order by sum_ desc | render barchart
