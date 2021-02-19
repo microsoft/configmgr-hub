@@ -2,8 +2,8 @@
 # Each line is a file pattern followed by one or more owners.
 
 # You can also use email addresses if you prefer.
-CODEOWNERS @microsoft/configmgr
-README.md @microsoft/configmgr
+CODEOWNERS @microsoft/configmgr-hub
+README.md @microsoft/configmgr-hub
 * @microsoft/configmgr
 /tools/ExtensionDownloader.ps1 @microsoft/configmgr-hub
 /pipelines/secure-scan.yml @microsoft/configmgr-hub
