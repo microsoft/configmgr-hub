@@ -132,7 +132,7 @@ function Main
 
             $pFile  = ${env:Build_SourcesDirectory} + "\objects\ConsoleExtension\" + $objectInfo.codeSignPolicyFile;
             Write-Host "##vso[task.setvariable variable=codeSignPolicyFile;]$pFile"
-
+            Write-Host "##vso[task.setvariable variable=codeSignEnabled]true"
             $itemDir = $extensionRootDirectory + "\objects\consoleextension\" + $objectName;
             $cabFile = $itemDir + "\" + $objectName + ".cab"
 

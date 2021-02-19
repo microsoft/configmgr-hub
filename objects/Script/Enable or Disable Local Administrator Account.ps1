@@ -14,7 +14,7 @@
 
     Using NET commands instead
         net user Administrator /ACTIVE:YES
-        net user Administrator P@ssw0rd
+        net user Administrator ''
         
     Removing the option to set the password here since the env uses LAPS and password parameter is passed in plain text and will show in the client logs.
 #>
@@ -22,7 +22,7 @@ Param (
     [Parameter(Mandatory=$true)]
     [ValidateSet("True","False")]
     [string]$Enable
-    #,[string]$Password = "P@ssw0rd"
+    #,[string]$Password = ""
 )
 
 Try {
