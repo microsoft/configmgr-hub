@@ -1,0 +1,77 @@
+# Pipeline for running SDL scans
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-2019'
+
+variables:
+  codeSignPolicyFile: ''
+
+steps:
+  - task: PowerShell@2
+    displayName: "Download & Expand Console Extensions"
+    inputs:
+      filePath: '$(Build.SourcesDirectory)\tools\Extensiondownloader.ps1'
+      failOnStderr: true
+      workingDirectory: '$(Build.SourcesDirectory)\objects'
+
+  - powershell: 'get-childitem env:'
+    displayName: "Print variables"
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
+    displayName: 'Run PoliCheck'
+    inputs:
+      targetType: F
+      targetArgument: '$(Build.SourcesDirectory)\objects'
+    continueOnError: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
+    displayName: 'Run AntiMalware Scan'
+    inputs:
+      FileDirPath: '$(Build.SourcesDirectory)\objects'
+      EnableServices: true
+      TreatSignatureUpdateFailureAs: Standard
+      TreatStaleSignatureAs: Warning
+    continueOnError: true
+
+  - task: CredScan@3
+    inputs:
+      toolMajorVersion: 'V2'
+
+  - task: CodeSign@1
+    inputs:
+      Path: '$(Build.SourcesDirectory)\objects'
+      verboseOutput: true
+      Targets: '**.dll;**.exe;**sys'
+      PolicyType: 'Custom'
+      PolicyFile: '$(codeSignPolicyFile)'
+      ExcludePassesFromLog: false
+
+  - task: PublishSecurityAnalysisLogs@3
+    inputs:
+      ArtifactName: 'CodeAnalysisLogs'
+      ArtifactType: 'Container'
+      AllTools: true
+      ToolLogsNotFoundAction: 'Standard'
+
+  - task: PostAnalysis@2
+    inputs:
+      AllTools: false
+      APIScan: false
+      BinSkim: false
+      CodesignValidation: true
+      CodesignValidationBreakOn: 'WarningAbove'
+      CredScan: true
+      FortifySCA: false
+      FxCop: false
+      ModernCop: false
+      PoliCheck: true
+      PoliCheckBreakOn: 'Severity2Above'
+      RoslynAnalyzers: false
+      SDLNativeRules: false
+      Semmle: false
+      TSLint: false
+      ToolLogsNotFoundAction: 'Error'
