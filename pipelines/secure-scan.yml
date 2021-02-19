@@ -1,7 +1,9 @@
 # Pipeline for running SDL scans
 # https://aka.ms/yaml
 
-trigger:
+trigger: none
+
+pr:
 - master
 
 pool:
@@ -9,6 +11,7 @@ pool:
 
 variables:
   codeSignPolicyFile: ''
+  codeSignEnabled: false
 
 steps:
   - task: PowerShell@2
@@ -42,6 +45,7 @@ steps:
       toolMajorVersion: 'V2'
 
   - task: CodeSign@1
+    condition: and(succeeded(), eq(variables['codeSignEnabled'], 'true'))
     inputs:
       Path: '$(Build.SourcesDirectory)\objects'
       verboseOutput: true
