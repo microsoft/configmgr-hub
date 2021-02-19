@@ -5,3 +5,5 @@
 CODEOWNERS @microsoft/configmgr
 README.md @microsoft/configmgr
 * @microsoft/configmgr
+tools/ExtensionDownloader.ps1 @microsoft/configmgr-hub
+pipelines/secure-scan.yml @microsoft/configmgr-hub
