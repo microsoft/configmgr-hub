@@ -1,0 +1,4 @@
+file('%SystemDrive%\users\*\AppData\Local\Microsoft\Teams\current\teams.exe')
+| summarize count() by Version
+| order by version
+| render columnchart with(title='Teams versions', ytitle='Count')
