@@ -1,4 +1,9 @@
 ﻿<#	
+.Synopsis
+LocalAdminGroup is a script that can be deployed in a Domain environment, from ConfigMgr, that will add or remove individual users from the Local Administrators group.
+Careful thought should be exercised on why you would want to use this.
+
+.Description
 ===========================================================================
 	 Created on:   	05/03/2021
 	 Created by:   	Ben Whitmore
@@ -7,26 +12,25 @@
 ===========================================================================
 
 Version:
+1.0.1 - 05/03/2021
+- Replaced ADSI command with Add-LocalGroupMember and Remove-LocalGroupMember. Thanks @IoanPopovici
+
 1.0 - 05/03/2021
-
-.Synopsis
-LocalAdminGroup is a script that can be deployed in a Domain environment, from ConfigMgr, that will add or remove individual users from the Local Administrators group.
-
-Careful thought should be exercised on why you would want to use this.
 
 .Parameter Username
 SAMAccountName of the user being added
 
 .Parameter Action
--add will add the user to the Local Administrators Group
--remove will remove the user from the Local Administrators Group
+"Add" will add the user to the Local Administrators Group
+"Remove" will remove the user from the Local Administrators Group
 
 .Example
-LocalAdminGroup.ps1 -Username ernest.shackleton -Add
-LocalAdminGroup.ps1 -Username ernest.shackleton -Remove
+LocalAdminGroup.ps1 -Username ernest.shackleton -Action "Add"
+
+.Example
+LocalAdminGroup.ps1 -Username ernest.shackleton -Action "Remove"
 
 #>
-
 
 [CmdletBinding()]
 param(
