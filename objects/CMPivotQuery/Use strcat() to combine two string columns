@@ -1,0 +1,3 @@
+OperatingSystem
+| summarize count() by strcat(Caption, ' ', BuildNumber)
+| render piechart
