@@ -1,0 +1,1 @@
+Registry('HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\TargetVersionUpgradeExperienceIndicators\\*\\') | where Property == 'GatedBlockId' and Value != 'None'
