@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SiPolicy xmlns="urn:schemas-microsoft-com:sipolicy">
+  <VersionEx>10.0.0.0</VersionEx>
+  <PlatformID>{2E07F7E4-194C-4D20-B7C9-6F44A6C5A234}</PlatformID>
+  <Rules>
+    <Rule>
+      <Option>Enabled:Unsigned System Integrity Policy</Option>
+    </Rule>
+    <Rule>
+      <Option>Enabled:Audit Mode</Option>
+    </Rule>
+    <Rule>
+      <Option>Enabled:Advanced Boot Options Menu</Option>
+    </Rule>
+    <Rule>
+      <Option>Required:Enforce Store Applications</Option>
+    </Rule>
+    <Rule>
+      <Option>Enabled:UMCI</Option>
+    </Rule>
+  </Rules>
+  <!--EKUS-->
+  <EKUs />
+  <!--File Rules-->
+  <FileRules />
+  <!--Signers-->
+  <Signers>
+    <Signer ID="ID_SIGNER_S_49E_0" Name="Go Daddy Secure Certificate Authority - G2">
+      <CertRoot Type="TBS" Value="F9FF37F02E632CB7387025C07E57908A3D371B7C95D8CDD0390DE231ED943A12" />
+    </Signer>
+    <Signer ID="ID_SIGNER_S_4D5_0" Name="Microsoft Code Signing PCA 2011">
+      <CertRoot Type="TBS" Value="F6F717A43AD9ABDDC8CEFDDE1C505462535E7D1307E630F9544A2D14FE8BF26E" />
+      <CertPublisher Value="Microsoft Corporation" />
+    </Signer>
+    <Signer ID="ID_SIGNER_S_E12_1" Name="Recast Software, Inc.">
+      <CertRoot Type="TBS" Value="73A0D549CE501CCAC4079D2EE7871C04A4805947011D011CDAC2B6C5197EF806" />
+    </Signer>
+  </Signers>
+  <!--Driver Signing Scenarios-->
+  <SigningScenarios>
+    <SigningScenario Value="12" ID="ID_SIGNINGSCENARIO_WINDOWS" FriendlyName="Auto generated policy on 02-17-2021">
+      <ProductSigners>
+        <AllowedSigners>
+          <AllowedSigner SignerId="ID_SIGNER_S_49E_0" />
+          <AllowedSigner SignerId="ID_SIGNER_S_4D5_0" />
+          <AllowedSigner SignerId="ID_SIGNER_S_E12_1" />
+        </AllowedSigners>
+      </ProductSigners>
+    </SigningScenario>
+  </SigningScenarios>
+  <UpdatePolicySigners />
+  <CiSigners>
+    <CiSigner SignerId="ID_SIGNER_S_49E_0" />
+    <CiSigner SignerId="ID_SIGNER_S_4D5_0" />
+    <CiSigner SignerId="ID_SIGNER_S_E12_1" />
+  </CiSigners>
+  <HvciOptions>0</HvciOptions>
+  <PolicyTypeID>{A244370E-44C9-4C06-B551-F6016E563076}</PolicyTypeID>
+</SiPolicy>
