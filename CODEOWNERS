@@ -7,3 +7,4 @@ README.md @microsoft/configmgr-hub
 * @microsoft/configmgr
 /tools/ExtensionDownloader.ps1 @microsoft/configmgr-hub
 /pipelines/secure-scan.yml @microsoft/configmgr-hub
+/object/ConsoleExtension/"Right Click Tools.json" @recast-software/community-hub
