@@ -1,5 +1,55 @@
 # ===================================================================
 #
+#   Run validation library
+#
+# ===================================================================
+
+function RunValidation
+{
+    $artifactsLocation = $Env:SYSTEM_ARTIFACTSDIRECTORY;
+    $consoleExValidatorLocation = $artifactsLocation + "\lib\net40\Microsoft.ConfigurationManager.ConsoleExtensionCommon.dll";
+    $itemsRootDirectory = $Env:BUILD_REPOSITORY_LOCALPATH;
+    $consoleExsDirectory = $itemsRootDirectory + "\" + "objects\consoleextension";
+    $extensionJson = get-ChangedExtensions;
+    
+    Write-Host 'Using validator from ' $consoleExValidatorLocation;
+    
+    if ($null -ne $extensionJson)
+    {
+        $extensionName = [System.IO.Path]::GetFileNameWithoutExtension($extensionJson);
+        $extensionCabPath = $consoleExsDirectory + "\" + $extensionName + "\" + $extensionName + ".cab";
+        $expandedCabFolder = $consoleExsDirectory + "\" + $extensionName + "\_" + $extensionName + ".cab";
+        Write-Host "Targetted Cab file: " $extensionCabPath;
+        Write-Host "Expanded Cab location: " $expandedCabFolder;
+        
+        #Initialize objects
+        [Reflection.Assembly]::LoadFile($consoleExValidatorLocation)
+        $objectFactory = new-object Microsoft.ConfigurationManager.ConsoleExtension.SystemFunctions.SystemObjectFactory
+        $validator = new-object -TypeName Microsoft.ConfigurationManager.ConsoleExtension.ConsoleExtensionValidator -ArgumentList $objectFactory
+
+        #Starts validation
+        Try
+        {
+            Write-Host 'Verifying the signiture of the cab file...'
+            $validator.VerifyExtensionCabSigniture($extensionCabPath);
+            Write-Host 'Verifying the contents of the cab file...'
+            $validator.VerifyExtensionCabContent($expandedCabFolder);
+            Write-Host 'All validation succeeded'
+        }
+        Catch
+        {
+            $ErrorMessage = $_.Exception.Message;
+            Write-Error $ErrorMessage;
+        }
+    }
+    else
+    {
+        Write-Host "Did not find any changed console extension.";
+    }
+}
+
+# ===================================================================
+#
 # Creates a directory named after the cab file 
 # and expands the cab into that directdory. 
 #
@@ -41,7 +91,7 @@ function expandCabFile
 # ===================================================================
 #
 #   Detects if this submission is a console submission
-#   and if so downloads the extension for verification.
+#   and if so gets a list of full paths to files for the extension for verification.
 #
 # ===================================================================
 function get-ChangedExtensions
@@ -55,7 +105,7 @@ function get-ChangedExtensions
     
     write-host "Comparing commits:" $srcCommit  "," $destCommit;
 
-    # return  the list of json files changed between the source and destination branches.
+    # return the list of json files changed between the source and destination branches.
     $changed = git diff $srcCommit $destCommit --name-only | where-object { $_ -like "objects/ConsoleExtension/*.json"};
 
     write-host "Changed extension json:" $changed
@@ -106,7 +156,7 @@ function print-objectJson
 #   Main entry point.
 #
 # ===================================================================
-function Main
+function DownloadAndExpand
 {
     print-EnvironmentVariables;
 
@@ -138,11 +188,15 @@ function Main
 
             $r = mkdir $itemDir;
     
-            if((Test-Path $cabFile) -eq $False )
+            # Always download to ensure we are verifying the correct latest file
+            if ((Test-Path $cabFile) -eq $True)
             {
-                Write-Host "Downloading cab:" $objectInfo.downloadLocation "to:" $itemDir;
-                Invoke-WebRequest -Uri $objectInfo.downloadLocation -OutFile $cabFile;
+                Write-Error "File:" $cabFile "already exists. This is unexpected.";
+                return;
             }
+            
+            Write-Host "Downloading cab:" $objectInfo.downloadLocation "to:" $itemDir;
+            Invoke-WebRequest -Uri $objectInfo.downloadLocation -OutFile $cabFile;
 
             verifyFileHash -expectedHash $objectInfo.FileHash -fileToCheck $cabFile -algorithm $objectInfo.HashAlgorithm -ErrorAction Stop
     
@@ -210,7 +264,15 @@ function print-EnvironmentVariables
 Write-host 'Extension downloader starting...'
 Write-Host "=================================================="
 
-Main;
+DownloadAndExpand;
 
 Write-Host "Extension downloader finished";
+Write-Host "=================================================="
+
+Write-Host 'Running console extension validation...'
+Write-Host "=================================================="
+
+RunValidation;
+
+Write-Host "Console extension validation finished.";
 Write-Host "=================================================="
