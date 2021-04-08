@@ -14,8 +14,16 @@ variables:
   codeSignEnabled: false
 
 steps:
+  - task: DownloadPackage@1
+    inputs:
+      packageType: 'nuget'
+      feed: '529bf55b-43ce-4ca9-a3fd-3c4ed16e057e/16e32dcf-19b6-4e02-b265-9d7f350b9d17'
+      definition: 'f3dcad12-4825-45c2-9294-57472ac832fd'
+      version: '5.2103.1095.1000'
+      downloadPath: '$(System.ArtifactsDirectory)'
+
   - task: PowerShell@2
-    displayName: "Download & Expand Console Extensions"
+    displayName: "Download, Expand, and Validate Console Extensions"
     inputs:
       filePath: '$(Build.SourcesDirectory)\tools\Extensiondownloader.ps1'
       failOnStderr: true
@@ -44,7 +52,7 @@ steps:
     inputs:
       toolMajorVersion: 'V2'
 
-  - task: CodeSign@1
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-codesignvalidation.CodeSign@1
     condition: and(succeeded(), eq(variables['codeSignEnabled'], 'true'))
     inputs:
       Path: '$(Build.SourcesDirectory)\objects'
