@@ -52,7 +52,7 @@ steps:
     inputs:
       toolMajorVersion: 'V2'
 
-  - task: CodeSign@1
+  - task: vss-secure-development-tools.codesign@1
     condition: and(succeeded(), eq(variables['codeSignEnabled'], 'true'))
     inputs:
       Path: '$(Build.SourcesDirectory)\objects'
