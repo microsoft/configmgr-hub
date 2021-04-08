@@ -1,10 +1,8 @@
 # OWNERS File for configmgr-hub
-# Each line is a file pattern followed by one or more owners.
-
-# You can also use email addresses if you prefer.
+# Each line is a file pattern followed by one or more owners. You can also use email addresses if you prefer.
+* @microsoft/configmgr-hub
 CODEOWNERS @microsoft/configmgr-hub
 README.md @microsoft/configmgr-hub
-* @microsoft/configmgr
 /tools/ExtensionDownloader.ps1 @microsoft/configmgr-hub
 /pipelines/secure-scan.yml @microsoft/configmgr-hub
 /object/ConsoleExtension/"Right Click Tools.json" @recast-software/community-hub
