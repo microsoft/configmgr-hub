@@ -19,8 +19,8 @@ function RunValidation
         $extensionName = [System.IO.Path]::GetFileNameWithoutExtension($extensionJson);
         $extensionCabPath = $consoleExsDirectory + "\" + $extensionName + "\" + $extensionName + ".cab";
         $expandedCabFolder = $consoleExsDirectory + "\" + $extensionName + "\_" + $extensionName + ".cab";
-        Write-Host "Targetted Cab file: " $extensionCabPath;
-        Write-Host "Expanded Cab location: " $expandedCabFolder;
+        Write-Host "Targeted cab file: " $extensionCabPath;
+        Write-Host "Expanded cab location: " $expandedCabFolder;
         
         #Initialize objects
         [Reflection.Assembly]::LoadFile($consoleExValidatorLocation)
@@ -30,7 +30,7 @@ function RunValidation
         #Starts validation
         Try
         {
-            Write-Host 'Verifying the signiture of the cab file...'
+            Write-Host 'Verifying the signature of the cab file...'
             $validator.VerifyExtensionCabSigniture($extensionCabPath);
             Write-Host 'Verifying the contents of the cab file...'
             $validator.VerifyExtensionCabContent($expandedCabFolder);
@@ -90,7 +90,7 @@ function expandCabFile
 
 # ===================================================================
 #
-#   Detects if this submission is a console submission
+#   Detects if this submission is a console extension submission
 #   and if so gets a list of full paths to files for the extension for verification.
 #
 # ===================================================================
@@ -164,13 +164,16 @@ function DownloadAndExpand
 
    if($null -ne $extensionJson)
     {
-        $extensionRootDirectory = (get-BuildRootDirectory); 
+        Write-Host "##vso[task.setvariable variable=codeSignEnabled]true"
+        
+        $repoRootFolder = (get-BuildRootDirectory);
+        $consoleExtensionFolder = $repoRootFolder + "\objects\ConsoleExtension\"
 
-        write-host "Repository root:" $extensionRootDirectory;
+        write-host "Repository root:" $repoRootFolder;
 
         foreach($json in $extensionJson)
         {
-            $jsonFile = $extensionRootDirectory + "\" + $json;
+            $jsonFile = $repoRootFolder + "\" + $json; # ...\objects\ConsoleExtension\Some Extension.json
 
             Write-Host "Processing extension json:" $jsonFile;
 
@@ -180,10 +183,10 @@ function DownloadAndExpand
             
             print-objectJson -objectJson $objectInfo;
 
-            $pFile  = ${env:Build_SourcesDirectory} + "\objects\ConsoleExtension\" + $objectInfo.codeSignPolicyFile;
+            $pFile  = $consoleExtensionFolder + $objectInfo.codeSignPolicyFile;
             Write-Host "##vso[task.setvariable variable=codeSignPolicyFile;]$pFile"
-            Write-Host "##vso[task.setvariable variable=codeSignEnabled]true"
-            $itemDir = $extensionRootDirectory + "\objects\consoleextension\" + $objectName;
+            
+            $itemDir = $consoleExtensionFolder + $objectName;
             $cabFile = $itemDir + "\" + $objectName + ".cab"
 
             $r = mkdir $itemDir;
@@ -199,7 +202,9 @@ function DownloadAndExpand
             Invoke-WebRequest -Uri $objectInfo.downloadLocation -OutFile $cabFile;
 
             verifyFileHash -expectedHash $objectInfo.FileHash -fileToCheck $cabFile -algorithm $objectInfo.HashAlgorithm -ErrorAction Stop
-    
+
+            setupESRPScanningPrereqs -fileToCopy $cabFile
+
             write-host "Recursively searching for cab files.."
             searchAndExpand -directory $itemDir
 
@@ -209,6 +214,33 @@ function DownloadAndExpand
     else {
         write-host "No extensions submitted to this branch.";
     }
+}
+
+
+# ===================================================================
+#
+#   Creates a folder to be used for ESRP scan uploads, copies the specified file to the folder, 
+#   and saves the folder to an ENV variable for use by ESRP scanning task.
+#
+# ===================================================================
+function setupESRPScanningPrereqs
+{
+    param($fileToCopy);
+
+    $scanFolder = (get-BuildRootDirectory) + "\ESRPScan";
+    
+    if (Test-Path $scanFolder)
+    {
+        Remove-Item -Recurse -Force -Path $scanFolder
+    }
+
+    md $scanFolder
+    
+    Write-Host "Copying '$fileToCopy' to '$scanFolder' for ESRP scanning."
+    
+    Copy-Item $fileToCopy -Destination $scanFolder
+      
+    Write-Host "##vso[task.setvariable variable=ESRPScanFolder]$scanFolder"
 }
 
 # ===================================================================
