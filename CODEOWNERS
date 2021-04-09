@@ -5,3 +5,4 @@ CODEOWNERS @microsoft/configmgr-hub
 README.md @microsoft/configmgr-hub
 /tools/ExtensionDownloader.ps1 @microsoft/configmgr-hub
 /pipelines/secure-scan.yml @microsoft/configmgr-hub
+/object/ConsoleExtension/"Right Click Tools.json" @recast-software/community-hub
