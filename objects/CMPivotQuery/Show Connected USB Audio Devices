@@ -1,0 +1,1 @@
+USBDevice | summarize countif ( (service like '%usbaudio%') ) by Name | where (countif_ > 0) | order by countif_ desc
