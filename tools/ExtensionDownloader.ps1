@@ -185,9 +185,16 @@ function DownloadAndExpand
 
             $pFile  = $consoleExtensionFolder + $objectInfo.codeSignPolicyFile;
             Write-Host "##vso[task.setvariable variable=codeSignPolicyFile;]$pFile"
-            
+
             $itemDir = $consoleExtensionFolder + $objectName;
             $cabFile = $itemDir + "\" + $objectName + ".cab"
+
+            # Ensure the folder has not been pre-created
+            if (Test-Path $itemDir)
+            {
+                Write-Error "Folder:" $itemDir "already exists. This is unexpected.";
+                return;
+            }
 
             $r = mkdir $itemDir;
     
@@ -219,8 +226,7 @@ function DownloadAndExpand
 
 # ===================================================================
 #
-#   Creates a folder to be used for ESRP scan uploads, copies the specified file to the folder, 
-#   and saves the folder to an ENV variable for use by ESRP scanning task.
+#   Creates a folder to be used for ESRP scan uploads, copies the specified file to the folder, and saves the folder to an ENV variable for use by ESRP scanning task.
 #
 # ===================================================================
 function setupESRPScanningPrereqs
