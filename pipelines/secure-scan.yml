@@ -54,7 +54,7 @@ steps:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run AntiMalware Scan'
     inputs:
-      FileDirPath: '$(Build.SourcesDirectory)\objects'
+      FileDirPath: '$(Build.SourcesDirectory)'
       EnableServices: true
       TreatSignatureUpdateFailureAs: 'Error'
       TreatStaleSignatureAs: 'Error'
@@ -67,9 +67,8 @@ steps:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-codesignvalidation.CodeSign@1
     condition: and(succeeded(), eq(variables['codeSignEnabled'], 'true'))
     inputs:
-      Path: '$(Build.SourcesDirectory)\objects'
+      Path: '$(Build.SourcesDirectory)\objects\ConsoleExtension'
       verboseOutput: true
-      Targets: '**.dll;**.exe;**sys;**.ps1'
       PolicyType: 'Custom'
       PolicyFile: '$(codeSignPolicyFile)'
       ExcludePassesFromLog: false
