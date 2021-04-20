@@ -56,8 +56,8 @@ steps:
     inputs:
       FileDirPath: '$(Build.SourcesDirectory)\objects'
       EnableServices: true
-      TreatSignatureUpdateFailureAs: Standard
-      TreatStaleSignatureAs: Warning
+      TreatSignatureUpdateFailureAs: 'Error'
+      TreatStaleSignatureAs: 'Error'
     continueOnError: true
 
   - task: CredScan@3
