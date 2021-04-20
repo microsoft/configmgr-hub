@@ -90,7 +90,7 @@ function expandCabFile
 
 # ===================================================================
 #
-#   Detects if this submission is a console submission
+#   Detects if this submission is a console extension submission
 #   and if so gets a list of full paths to files for the extension for verification.
 #
 # ===================================================================
