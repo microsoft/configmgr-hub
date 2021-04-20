@@ -19,8 +19,8 @@ function RunValidation
         $extensionName = [System.IO.Path]::GetFileNameWithoutExtension($extensionJson);
         $extensionCabPath = $consoleExsDirectory + "\" + $extensionName + "\" + $extensionName + ".cab";
         $expandedCabFolder = $consoleExsDirectory + "\" + $extensionName + "\_" + $extensionName + ".cab";
-        Write-Host "Targeted cab file: " $extensionCabPath;
-        Write-Host "Expanded cab location: " $expandedCabFolder;
+        Write-Host "Targetted Cab file: " $extensionCabPath;
+        Write-Host "Expanded Cab location: " $expandedCabFolder;
         
         #Initialize objects
         [Reflection.Assembly]::LoadFile($consoleExValidatorLocation)
@@ -30,7 +30,7 @@ function RunValidation
         #Starts validation
         Try
         {
-            Write-Host 'Verifying the signature of the cab file...'
+            Write-Host 'Verifying the signiture of the cab file...'
             $validator.VerifyExtensionCabSigniture($extensionCabPath);
             Write-Host 'Verifying the contents of the cab file...'
             $validator.VerifyExtensionCabContent($expandedCabFolder);
@@ -90,7 +90,7 @@ function expandCabFile
 
 # ===================================================================
 #
-#   Detects if this submission is a console extension submission
+#   Detects if this submission is a console submission
 #   and if so gets a list of full paths to files for the extension for verification.
 #
 # ===================================================================
@@ -185,9 +185,16 @@ function DownloadAndExpand
 
             $pFile  = $consoleExtensionFolder + $objectInfo.codeSignPolicyFile;
             Write-Host "##vso[task.setvariable variable=codeSignPolicyFile;]$pFile"
-            
+
             $itemDir = $consoleExtensionFolder + $objectName;
             $cabFile = $itemDir + "\" + $objectName + ".cab"
+
+            # Ensure the folder has not been pre-created
+            if (Test-Path $itemDir)
+            {
+                Write-Error "Folder:" $itemDir "already exists. This is unexpected.";
+                return;
+            }
 
             $r = mkdir $itemDir;
     
@@ -219,8 +226,7 @@ function DownloadAndExpand
 
 # ===================================================================
 #
-#   Creates a folder to be used for ESRP scan uploads, copies the specified file to the folder, 
-#   and saves the folder to an ENV variable for use by ESRP scanning task.
+#   Creates a folder to be used for ESRP scan uploads, copies the specified file to the folder, and saves the folder to an ENV variable for use by ESRP scanning task.
 #
 # ===================================================================
 function setupESRPScanningPrereqs
