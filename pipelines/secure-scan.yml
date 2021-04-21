@@ -71,6 +71,7 @@ steps:
       PolicyType: 'Custom'
       PolicyFile: '$(codeSignPolicyFile)'
       ExcludePassesFromLog: false
+      FailIfNoTargetsFound: 'false'
 
   - task: PublishSecurityAnalysisLogs@3
     inputs:
