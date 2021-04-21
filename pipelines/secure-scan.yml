@@ -65,13 +65,13 @@ steps:
       toolMajorVersion: 'V2'
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-codesignvalidation.CodeSign@1
-    condition: and(succeeded(), eq(variables['codeSignEnabled'], 'true'))
     inputs:
       Path: '$(Build.SourcesDirectory)\objects\ConsoleExtension'
       verboseOutput: true
       PolicyType: 'Custom'
       PolicyFile: '$(codeSignPolicyFile)'
       ExcludePassesFromLog: false
+      FailIfNoTargetsFound: 'false'
 
   - task: PublishSecurityAnalysisLogs@3
     inputs:
