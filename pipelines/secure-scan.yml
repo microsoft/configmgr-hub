@@ -18,7 +18,7 @@ steps:
     inputs:
       packageType: 'nuget'
       feed: '529bf55b-43ce-4ca9-a3fd-3c4ed16e057e/16e32dcf-19b6-4e02-b265-9d7f350b9d17'
-      definition: 'd168c270-391f-4a3f-984a-6ca97aa9d532'
+      definition: 'e3212b3d-265a-4313-a777-8700eb28cc56'
       version: '5.2107.1022.1000'
       downloadPath: '$(System.ArtifactsDirectory)'
 
