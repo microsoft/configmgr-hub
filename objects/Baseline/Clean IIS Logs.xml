@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <Baseline AuthoringScopeId="ScopeId_934D3704-824B-4374-9652-668BE142BFCB" LogicalName="Baseline_1a80a1fa-296f-4f57-a8a0-5fab89c52e83" Version="2">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Clean IIS Logs" ResourceId="ID-e6473ac7-1d00-4536-a4c4-b2aba652f1cd" />
+      <Description Text="Clean IIS logs that are older than x days (default: 60). When creating the deployment, don't miss to set the remediate option." ResourceId="ID-c8ad32e6-b748-4cff-9b37-086c4756d728" />
+    </Annotation>
+    <RequiredItems />
+    <ProhibitedItems />
+    <OptionalItems />
+    <OperatingSystems>
+      <OperatingSystemReference AuthoringScopeId="ScopeId_934D3704-824B-4374-9652-668BE142BFCB" LogicalName="OperatingSystem_c8fc1de2-c3fc-450c-bb4d-d695863a312f" />
+    </OperatingSystems>
+    <SoftwareUpdates />
+    <Baselines />
+    <OtherConfigurationItems />
+  </Baseline>
+</DesiredConfigurationDigest>
