@@ -1,9 +1,33 @@
+<#
+  .SYNOPSIS
+  Setup Microsoft Configuration Manager to send events to external services
+
+  .DESCRIPTION
+  The script sets up Configuration Manager to send specific types of events to external services. Supported event types include Application Approval events and Status Message Filter based events.
+  In order to send these events to external systems, you need to create a subscription. Each subscription can be tied to multiple events. Follow "Create a subscription" option to create a subscription. 
+  This script also allows creation of status message filter rules that can send matching status messages to an external system. Follow "Create a status filter rule to expose status messages" option to create such a filter. 
+  You can also list available subsciptions with associated events by choosing "List available subscriptions".
+
+  .LINK
+  https://docs.microsoft.com/en-us/mem/configmgr/core/get-started/2021/technical-preview-2106#bkmk_pushnotify
+
+  .EXAMPLE
+  PS> SetupExternalServiceNotifications.ps1
+#>
+
+
 function PromptUserForEventSelection
 {
+
     param 
     (
         [object[]]$Options
     )
+
+    <#
+    .SYNOPSIS
+    Prompts user to select an event out of available events
+    #>
 
     $AllSelectedEvents = @()
     $SelectedOption = 0
@@ -45,6 +69,11 @@ function PromptUser
         [string]$Message,
         [string[]]$Options
     )
+
+    <#
+    .SYNOPSIS
+    Prompts user to select an option
+    #>
     
     $SelectedOption = 0
     do 
@@ -77,7 +106,7 @@ function PromptUser
     } while($true)
 } 
 
-
+# Check if console is installed
 if($ENV:SMS_ADMIN_UI_PATH -eq $null)
 {
     Write-Host "Unable to locate Configuration Manager Console on this machine. Please run this script on a machine where Configuration Manager Console is installed."
@@ -102,12 +131,14 @@ if($(Get-WmiObject -Query "SELECT * FROM __Namespace WHERE Name = `"SMS`"" -Name
     }
 }
 
+# If this machine is not site server, ask for site server FQDN
 if($IsSiteServerFound -eq $false)
 {
     Write-Host "Enter Site Server FQDN: " -NoNewline
     $SiteServerPath = Read-Host
 }
 
+# Get the provider machine
 $AllProviderLocations=Get-WmiObject -Query "SELECT * FROM SMS_ProviderLocation" -Namespace "root\sms" -ComputerName $SiteServerPath
 foreach($ProviderLocation in $AllProviderLocations)
 {
@@ -132,6 +163,7 @@ if((Get-PSDrive -Name $SiteCode -PSProvider CMSite -ErrorAction SilentlyContinue
     New-PSDrive -Name $SiteCode -PSProvider CMSite -Root $ProviderMachineName @initParams
 }
 
+# Cache current location. Need to switch to this directory when script is finished
 $BeforeLocation = Get-Location
 
 # Set the current location to be the site code.
@@ -151,6 +183,7 @@ if([version]$SiteVersion -lt [version]"5.0.9052.1000")
     exit
 }
 
+# Create ODataConnectionManager to communicate with AdminService
 $NamedValuesDictionary = New-Object -TypeName "Microsoft.ConfigurationManagement.ManagementProvider.SmsNamedValuesDictionary"
 $NamedValuesDictionary["ConnectedSiteCode"] = $SiteCode
 $NamedValuesDictionary["ProviderMachineName"] = $ProviderMachineName
@@ -166,6 +199,7 @@ $AvailableActions = @()
 $AvailableActions+=$ListSubsAction
 $AvailableActions+=$CreateRuleAction
 
+# Create subscription action is only available on top level site
 $ParentSiteCode = (Get-WmiObject -Query "SELECT ParentSiteCode FROM SMS_SCI_SiteDefinition WHERE SiteServerName=`"$SiteServerPath`"" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -ExpandProperty ParentSiteCode
 if($ParentSiteCode.Length -eq 0)
 {
