@@ -200,7 +200,7 @@ $AvailableActions+=$ListSubsAction
 $AvailableActions+=$CreateRuleAction
 
 # Create subscription action is only available on top level site
-$ParentSiteCode = (Get-WmiObject -Query "SELECT ParentSiteCode FROM SMS_SCI_SiteDefinition WHERE SiteServerName=`"$SiteServerPath`"" -Namespace "root\sms\site_$SiteCode" â€“ComputerName $ProviderMachineName) | Select-Object -ExpandProperty ParentSiteCode
+$ParentSiteCode = (Get-WmiObject -Query "SELECT ParentSiteCode FROM SMS_SCI_SiteDefinition WHERE SiteServerName=`"$SiteServerPath`"" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -ExpandProperty ParentSiteCode
 if($ParentSiteCode.Length -eq 0)
 {
     # This is top level site, user can create a subscription
@@ -270,16 +270,16 @@ elseif($Res.Item2 -eq $CreateRuleAction)
     Write-Host "Provide a name for the new status message filter rule: " -NoNewline
     $NewRuleName = Read-Host
 
-    $AllSources = (Get-WmiObject -Query "SELECT DISTINCT moduleName FROM SMS_StatMsgModuleNames" -Namespace "root\sms\site_$SiteCode" â€“ComputerName $ProviderMachineName) | Select-Object -Property ModuleName
+    $AllSources = (Get-WmiObject -Query "SELECT DISTINCT moduleName FROM SMS_StatMsgModuleNames" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -Property ModuleName
     $SourceRes = PromptUser -Message "Source:" -Options ($AllSources.ModuleName)
     
-    $AllSiteCodes = (Get-WmiObject -Query "SELECT DISTINCT SiteCode FROM SMS_ComponentSummarizer" -Namespace "root\sms\site_$SiteCode" â€“ComputerName $ProviderMachineName) | Select-Object -Property SiteCode
+    $AllSiteCodes = (Get-WmiObject -Query "SELECT DISTINCT SiteCode FROM SMS_ComponentSummarizer" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -Property SiteCode
     $SiteCodeRes = PromptUser -Message "Site Code:" -Options ($AllSiteCodes.SiteCode)
 
-    $AllSystems = (Get-WmiObject -Query "SELECT DISTINCT MachineName FROM SMS_ComponentSummarizer" -Namespace "root\sms\site_$SiteCode" â€“ComputerName $ProviderMachineName) | Select-Object -Property MachineName
+    $AllSystems = (Get-WmiObject -Query "SELECT DISTINCT MachineName FROM SMS_ComponentSummarizer" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -Property MachineName
     $SystemRes = PromptUser -Message "System:" -Options ($AllSystems.MachineName)
     
-    $AllComponents = (Get-WmiObject -Query "SELECT DISTINCT ComponentName FROM SMS_ComponentSummarizer ORDER BY ComponentName" -Namespace "root\sms\site_$SiteCode" â€“ComputerName $ProviderMachineName) | Select-Object -Property ComponentName
+    $AllComponents = (Get-WmiObject -Query "SELECT DISTINCT ComponentName FROM SMS_ComponentSummarizer ORDER BY ComponentName" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -Property ComponentName
     $ComponentRes = PromptUser -Message "Component:" -Options ($AllComponents.ComponentName)
 
     $MessageTypeRes = PromptUser -Message "Message Type:" -Options `
@@ -302,7 +302,7 @@ elseif($Res.Item2 -eq $CreateRuleAction)
     if($SourceRes.Item1 -ne 0)
     {
         $AllProperties = (Get-WmiObject -Query "SELECT DISTINCT att.AttributeID FROM SMS_StatusMessage AS stat INNER JOIN SMS_StatMsgAttributes AS att ON stat.RecordID = att.RecordID WHERE stat.moduleName=`"$($SourceRes.Item2)`"" `
-            -Namespace "root\sms\site_$SiteCode" â€“ComputerName $ProviderMachineName) | Select-Object -ExpandProperty AttributeID
+            -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -ExpandProperty AttributeID
 
         Add-Type -Path "$ConsoleDir\Microsoft.ConfigurationManagement.ManagementProvider.dll"
         $AttributeResourceAssemblyDescription = New-Object -TypeName "Microsoft.ConfigurationManagement.AdminConsole.Schema.AssemblyDescription"
@@ -321,7 +321,7 @@ elseif($Res.Item2 -eq $CreateRuleAction)
         {
             $SelectedPropertyId = $AllPropertyName[$PropertyRes.Item2]
             $AllPropertyValues = (Get-WmiObject -Query "SELECT DISTINCT att.AttributeValue FROM SMS_StatusMessage AS stat INNER JOIN SMS_StatMsgAttributes AS att ON stat.RecordID = att.RecordID WHERE stat.moduleName = `"$($SourceRes.Item2)`" AND att.AttributeID = $SelectedPropertyId ORDER BY att.AttributeValue" `
-                -Namespace "root\sms\site_$SiteCode" â€“ComputerName $ProviderMachineName) | Select-Object -ExpandProperty AttributeValue
+                -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -ExpandProperty AttributeValue
             $PropertyValueRes = PromptUser -Message "Property value:" -Options ($AllPropertyValues)
         }
     }
