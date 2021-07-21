@@ -18,7 +18,6 @@
 
 function PromptUserForEventSelection
 {
-
     param 
     (
         [object[]]$Options
@@ -78,7 +77,6 @@ function PromptUser
     $SelectedOption = 0
     do 
     {
-        $OptionIndex = 0
         Write-Host $Message
         Write-Host "0: Skip/Continue"
 
@@ -107,7 +105,7 @@ function PromptUser
 } 
 
 # Check if console is installed
-if($ENV:SMS_ADMIN_UI_PATH -eq $null)
+if($null -eq $ENV:SMS_ADMIN_UI_PATH)
 {
     Write-Host "Unable to locate Configuration Manager Console on this machine. Please run this script on a machine where Configuration Manager Console is installed."
     exit
@@ -117,10 +115,10 @@ $ConsoleDir = "$ENV:SMS_ADMIN_UI_PATH\.."
 
 # Try to find Site Server
 [bool]$IsSiteServerFound = $false
-if($(Get-WmiObject -Query "SELECT * FROM __Namespace WHERE Name = `"SMS`"" -Namespace "root") -ne $null)
+if($null -ne $(Get-WmiObject -Query "SELECT * FROM __Namespace WHERE Name = `"SMS`"" -Namespace "root"))
 {
     $FoundSiteServerPath = [System.Net.Dns]::GetHostByName(($ENV:ComputerName)).HostName
-    if($FoundSiteServerPath -ne $null)
+    if($null -ne $FoundSiteServerPath)
     {
         $response = Read-Host -Prompt "This is site server machine with FQDN `"$FoundSiteServerPath`", continue with this site server (Y/N)?"
         if($response -like "Y*")
@@ -154,12 +152,12 @@ foreach($ProviderLocation in $AllProviderLocations)
 $initParams = @{}
 
 # Import the ConfigurationManager.psd1 module
-if((Get-Module ConfigurationManager) -eq $null) {
+if($null -eq (Get-Module ConfigurationManager)) {
     Import-Module "$($ENV:SMS_ADMIN_UI_PATH)\..\ConfigurationManager.psd1" @initParams 
 }
 
 # Connect to the site's drive if it is not already present
-if((Get-PSDrive -Name $SiteCode -PSProvider CMSite -ErrorAction SilentlyContinue) -eq $null) {
+if($null -eq (Get-PSDrive -Name $SiteCode -PSProvider CMSite -ErrorAction SilentlyContinue)) {
     New-PSDrive -Name $SiteCode -PSProvider CMSite -Root $ProviderMachineName @initParams
 }
 
@@ -200,7 +198,7 @@ $AvailableActions+=$ListSubsAction
 $AvailableActions+=$CreateRuleAction
 
 # Create subscription action is only available on top level site
-$ParentSiteCode = (Get-WmiObject -Query "SELECT ParentSiteCode FROM SMS_SCI_SiteDefinition WHERE SiteServerName=`"$SiteServerPath`"" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -ExpandProperty ParentSiteCode
+$ParentSiteCode = (Get-WmiObject -Query "SELECT ParentSiteCode FROM SMS_SCI_SiteDefinition WHERE SiteServerName=`"$SiteServerPath`"" -Namespace "root\sms\site_$SiteCode" -ComputerName $ProviderMachineName) | Select-Object -ExpandProperty ParentSiteCode
 if($ParentSiteCode.Length -eq 0)
 {
     # This is top level site, user can create a subscription
@@ -249,7 +247,7 @@ if($Res.Item2 -eq $CreateSubAction)
     try
     { 
         $ODataConnectionManager.ExecuteMethod("v1.0/NotificationSubscription", (ConvertTo-Json $CreateSubscriptionBody))
-        Write-Host "Subscription created successfuly."
+        Write-Host "Subscription created successfully."
     }
     catch
     { 
@@ -270,16 +268,16 @@ elseif($Res.Item2 -eq $CreateRuleAction)
     Write-Host "Provide a name for the new status message filter rule: " -NoNewline
     $NewRuleName = Read-Host
 
-    $AllSources = (Get-WmiObject -Query "SELECT DISTINCT moduleName FROM SMS_StatMsgModuleNames" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -Property ModuleName
+    $AllSources = (Get-WmiObject -Query "SELECT DISTINCT moduleName FROM SMS_StatMsgModuleNames" -Namespace "root\sms\site_$SiteCode" -ComputerName $ProviderMachineName) | Select-Object -Property ModuleName
     $SourceRes = PromptUser -Message "Source:" -Options ($AllSources.ModuleName)
     
-    $AllSiteCodes = (Get-WmiObject -Query "SELECT DISTINCT SiteCode FROM SMS_ComponentSummarizer" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -Property SiteCode
+    $AllSiteCodes = (Get-WmiObject -Query "SELECT DISTINCT SiteCode FROM SMS_ComponentSummarizer" -Namespace "root\sms\site_$SiteCode" -ComputerName $ProviderMachineName) | Select-Object -Property SiteCode
     $SiteCodeRes = PromptUser -Message "Site Code:" -Options ($AllSiteCodes.SiteCode)
 
-    $AllSystems = (Get-WmiObject -Query "SELECT DISTINCT MachineName FROM SMS_ComponentSummarizer" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -Property MachineName
+    $AllSystems = (Get-WmiObject -Query "SELECT DISTINCT MachineName FROM SMS_ComponentSummarizer" -Namespace "root\sms\site_$SiteCode" -ComputerName $ProviderMachineName) | Select-Object -Property MachineName
     $SystemRes = PromptUser -Message "System:" -Options ($AllSystems.MachineName)
     
-    $AllComponents = (Get-WmiObject -Query "SELECT DISTINCT ComponentName FROM SMS_ComponentSummarizer ORDER BY ComponentName" -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -Property ComponentName
+    $AllComponents = (Get-WmiObject -Query "SELECT DISTINCT ComponentName FROM SMS_ComponentSummarizer ORDER BY ComponentName" -Namespace "root\sms\site_$SiteCode" -ComputerName $ProviderMachineName) | Select-Object -Property ComponentName
     $ComponentRes = PromptUser -Message "Component:" -Options ($AllComponents.ComponentName)
 
     $MessageTypeRes = PromptUser -Message "Message Type:" -Options `
@@ -302,7 +300,7 @@ elseif($Res.Item2 -eq $CreateRuleAction)
     if($SourceRes.Item1 -ne 0)
     {
         $AllProperties = (Get-WmiObject -Query "SELECT DISTINCT att.AttributeID FROM SMS_StatusMessage AS stat INNER JOIN SMS_StatMsgAttributes AS att ON stat.RecordID = att.RecordID WHERE stat.moduleName=`"$($SourceRes.Item2)`"" `
-            -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -ExpandProperty AttributeID
+            -Namespace "root\sms\site_$SiteCode" -ComputerName $ProviderMachineName) | Select-Object -ExpandProperty AttributeID
 
         Add-Type -Path "$ConsoleDir\Microsoft.ConfigurationManagement.ManagementProvider.dll"
         $AttributeResourceAssemblyDescription = New-Object -TypeName "Microsoft.ConfigurationManagement.AdminConsole.Schema.AssemblyDescription"
@@ -315,13 +313,13 @@ elseif($Res.Item2 -eq $CreateRuleAction)
             $AllPropertyName.Add([Microsoft.ConfigurationManagement.AdminConsole.Common.UtilityClass]::GetStringFromAssembly($AttributeResourceAssemblyDescription, $PropertyItem), [string]($PropertyItem))
         }
 
-        $PropertyRes = PromptUser -Message "Property:" -Options (($AllPropertyName.Keys) | sort)
+        $PropertyRes = PromptUser -Message "Property:" -Options (($AllPropertyName.Keys) | Sort-Object)
 
         if($PropertyRes.Item1 -ne 0)
         {
             $SelectedPropertyId = $AllPropertyName[$PropertyRes.Item2]
             $AllPropertyValues = (Get-WmiObject -Query "SELECT DISTINCT att.AttributeValue FROM SMS_StatusMessage AS stat INNER JOIN SMS_StatMsgAttributes AS att ON stat.RecordID = att.RecordID WHERE stat.moduleName = `"$($SourceRes.Item2)`" AND att.AttributeID = $SelectedPropertyId ORDER BY att.AttributeValue" `
-                -Namespace "root\sms\site_$SiteCode" –ComputerName $ProviderMachineName) | Select-Object -ExpandProperty AttributeValue
+                -Namespace "root\sms\site_$SiteCode" -ComputerName $ProviderMachineName) | Select-Object -ExpandProperty AttributeValue
             $PropertyValueRes = PromptUser -Message "Property value:" -Options ($AllPropertyValues)
         }
     }
@@ -410,11 +408,12 @@ Modifying this rule's actions in console will remove it from external service no
 }
 
 Set-Location $BeforeLocation
+
 # SIG # Begin signature block
-# MIIjkgYJKoZIhvcNAQcCoIIjgzCCI38CAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIIjgwYJKoZIhvcNAQcCoIIjdDCCI3ACAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBXYx+XljJXvcfk
-# NFSz0s2fcmLFlPbf/bqI+9qqmxAnWKCCDYEwggX/MIID56ADAgECAhMzAAAB32vw
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBGmlAjEZBTsq2b
+# 9RPtwaWwQeKMVI21dxAsPtTBMy7uS6CCDYEwggX/MIID56ADAgECAhMzAAAB32vw
 # LpKnSrTQAAAAAAHfMA0GCSqGSIb3DQEBCwUAMH4xCzAJBgNVBAYTAlVTMRMwEQYD
 # VQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRtb25kMR4wHAYDVQQKExVNaWNy
 # b3NvZnQgQ29ycG9yYXRpb24xKDAmBgNVBAMTH01pY3Jvc29mdCBDb2RlIFNpZ25p
@@ -486,119 +485,119 @@ Set-Location $BeforeLocation
 # xw4o7t5lL+yX9qFcltgA1qFGvVnzl6UJS0gQmYAf0AApxbGbpT9Fdx41xtKiop96
 # eiL6SJUfq/tHI4D1nvi/a7dLl+LrdXga7Oo3mXkYS//WsyNodeav+vyL6wuA6mk7
 # r/ww7QRMjt/fdW1jkT3RnVZOT7+AVyKheBEyIXrvQQqxP/uozKRdwaGIm1dxVk5I
-# RcBCyZt2WwqASGv9eZ/BvW1taslScxMNelDNMYIVZzCCFWMCAQEwgZUwfjELMAkG
+# RcBCyZt2WwqASGv9eZ/BvW1taslScxMNelDNMYIVWDCCFVQCAQEwgZUwfjELMAkG
 # A1UEBhMCVVMxEzARBgNVBAgTCldhc2hpbmd0b24xEDAOBgNVBAcTB1JlZG1vbmQx
 # HjAcBgNVBAoTFU1pY3Jvc29mdCBDb3Jwb3JhdGlvbjEoMCYGA1UEAxMfTWljcm9z
 # b2Z0IENvZGUgU2lnbmluZyBQQ0EgMjAxMQITMwAAAd9r8C6Sp0q00AAAAAAB3zAN
 # BglghkgBZQMEAgEFAKCBrjAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgor
-# BgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkqhkiG9w0BCQQxIgQg24brDUDf
-# oslgXXIbHRWmCZo3REsYDhDqGKgs4g8SFZowQgYKKwYBBAGCNwIBDDE0MDKgFIAS
+# BgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkqhkiG9w0BCQQxIgQgE76D7HyQ
+# 5qLn5EzyfdAtZfVdu7mLmHzwwc0iWHf3pd8wQgYKKwYBBAGCNwIBDDE0MDKgFIAS
 # AE0AaQBjAHIAbwBzAG8AZgB0oRqAGGh0dHA6Ly93d3cubWljcm9zb2Z0LmNvbTAN
-# BgkqhkiG9w0BAQEFAASCAQAjdT/LiD/Z4midfcq+JrVj4T7ieDXzwyxcTAhwrc6v
-# 4naVHMYtKI6/xyJaXBDqyny3dxLvmNdR09ZamgeuKEgcCnW27e4m6L572/XKZ2iv
-# p5vYLJxEK8NYWk+BVGu5dHtvwGhDT70Hn4DbhKQM45OOH33Bl5PRlKoVYiUrefBE
-# 9nEaE4ngym9T6W8T3lwRsQ4cojAusAPQmx8kVvYWdIqrQQzJkTDN4GkC+dfnI17S
-# rpe9kN9KxsWhwMgW0w7jEmjUFRIZpNl7xzo8tWJMIT7QNTgOIvLl7GCducmmmLgK
-# BSe+7xBZb0MRYYFS9dFhqr4YWoXJSC5diRlzcQlicd7GoYIS8TCCEu0GCisGAQQB
-# gjcDAwExghLdMIIS2QYJKoZIhvcNAQcCoIISyjCCEsYCAQMxDzANBglghkgBZQME
-# AgEFADCCAVUGCyqGSIb3DQEJEAEEoIIBRASCAUAwggE8AgEBBgorBgEEAYRZCgMB
-# MDEwDQYJYIZIAWUDBAIBBQAEIIAmeTw9Fxh4R+oEkP6ZCINt2vi72hg04vyXqbh7
-# 2OG6AgZg06F248IYEzIwMjEwNzAxMDg1MTQ1LjQxMVowBIACAfSggdSkgdEwgc4x
+# BgkqhkiG9w0BAQEFAASCAQBMRL1sleJIqzixTkyrzpzug7DYNT+Bk8Q4BAHgR4du
+# KkQGxQlQVHkVdQGLrbRuAo/HHyHSLsLwmlulKyqJGwYUVQaOAxu2JxoZ/P/hLx2C
+# bJypQK0eiv9JrKTqSUYf8tq/9mNgA4BAitSSSk9NnXMycvDslDxlKpkPR2Nei8B+
+# Dd/gNazZ2c7bZvu3XB9rcuAgL8HVm2jKuyTyCwKQvPwR3lut4RBpoPZOFTI8GMfB
+# 232a3PvCjD7vnaC1sU0Yf5PqwPc2kPaABwegX/bKCiaEQQON8XFEngAfmohw8+qT
+# HaolodI63bUxPjN9zTMbpdeT0s7rJXpNzMqqI+rSwfecoYIS4jCCEt4GCisGAQQB
+# gjcDAwExghLOMIISygYJKoZIhvcNAQcCoIISuzCCErcCAQMxDzANBglghkgBZQME
+# AgEFADCCAVEGCyqGSIb3DQEJEAEEoIIBQASCATwwggE4AgEBBgorBgEEAYRZCgMB
+# MDEwDQYJYIZIAWUDBAIBBQAEIA7fBRyEOrjxYxn2h6brbQdvDQi3eBg1G1W4cOte
+# eAR8AgZg02RkqpsYEzIwMjEwNzEwMTAyMTU5LjM2N1owBIACAfSggdCkgc0wgcox
 # CzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRt
-# b25kMR4wHAYDVQQKExVNaWNyb3NvZnQgQ29ycG9yYXRpb24xKTAnBgNVBAsTIE1p
-# Y3Jvc29mdCBPcGVyYXRpb25zIFB1ZXJ0byBSaWNvMSYwJAYDVQQLEx1UaGFsZXMg
-# VFNTIEVTTjpGN0E2LUUyNTEtMTUwQTElMCMGA1UEAxMcTWljcm9zb2Z0IFRpbWUt
-# U3RhbXAgU2VydmljZaCCDkQwggT1MIID3aADAgECAhMzAAABWZ/8fl8s6vJDAAAA
-# AAFZMA0GCSqGSIb3DQEBCwUAMHwxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpXYXNo
-# aW5ndG9uMRAwDgYDVQQHEwdSZWRtb25kMR4wHAYDVQQKExVNaWNyb3NvZnQgQ29y
-# cG9yYXRpb24xJjAkBgNVBAMTHU1pY3Jvc29mdCBUaW1lLVN0YW1wIFBDQSAyMDEw
-# MB4XDTIxMDExNDE5MDIxNVoXDTIyMDQxMTE5MDIxNVowgc4xCzAJBgNVBAYTAlVT
-# MRMwEQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRtb25kMR4wHAYDVQQK
-# ExVNaWNyb3NvZnQgQ29ycG9yYXRpb24xKTAnBgNVBAsTIE1pY3Jvc29mdCBPcGVy
-# YXRpb25zIFB1ZXJ0byBSaWNvMSYwJAYDVQQLEx1UaGFsZXMgVFNTIEVTTjpGN0E2
-# LUUyNTEtMTUwQTElMCMGA1UEAxMcTWljcm9zb2Z0IFRpbWUtU3RhbXAgU2Vydmlj
-# ZTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK54xGHJZ8SHREtNIoBo
-# 9AG6Mro8gEZCt8WgV/mNdIt2tMOP3zVYU4+sRsImxTwfzJEDBWaTc7LxlEy/1302
-# fRmd/R2pwnY7pyT90yvZAmQQLZ6D+faGBwwhi5rre/tmBJdbAXFZ8qL2JDc4txBn
-# 30Mr1C8DFBdrIjwbP+i2RdAOaSwIs/xQsMeZAz3v5j9VEdwq8+iM6YcLcqKrYAwP
-# +OE58371ST5kj2f7quToeTXhSvDczKYrVokL3Zn0+KNAnbpp4rH1tXymmgXQcgVC
-# z1E/Ey8NEsvZ1FjV5QP6ovDMT8YAo7KzaYvT4Ix+xMVvW+1/1MnYaaoR8bLnQxmT
-# ZOMCAwEAAaOCARswggEXMB0GA1UdDgQWBBT20KmFRryt+uTrJ9eIwjyy6Tdj5zAf
-# BgNVHSMEGDAWgBTVYzpcijGQ80N7fEYbxTNoWoVtVTBWBgNVHR8ETzBNMEugSaBH
-# hkVodHRwOi8vY3JsLm1pY3Jvc29mdC5jb20vcGtpL2NybC9wcm9kdWN0cy9NaWNU
-# aW1TdGFQQ0FfMjAxMC0wNy0wMS5jcmwwWgYIKwYBBQUHAQEETjBMMEoGCCsGAQUF
-# BzAChj5odHRwOi8vd3d3Lm1pY3Jvc29mdC5jb20vcGtpL2NlcnRzL01pY1RpbVN0
-# YVBDQV8yMDEwLTA3LTAxLmNydDAMBgNVHRMBAf8EAjAAMBMGA1UdJQQMMAoGCCsG
-# AQUFBwMIMA0GCSqGSIb3DQEBCwUAA4IBAQCNkVQS6A+BhrfGOCAWo3KcuUa4estp
-# zyn+ZLlkh0pJmAJp4EUDrLWsieYCf2oyoc8KjVMC+NHFFVvHLrSMhWnR5FtY6l3Z
-# 6Ur9ITBSz64j5wTRRE8vIpQiHVYjRVNPGR2tiqG5nKP5+sD0rZI464OFNz4n7erD
-# JOpV7Im1L/sAwfX+GHoc4j5rfuAuQTFY82sdYvtHM4LTxwV997uhlFs52oHapdFW
-# 1KXt6vMxEXnSX8soQfUd+M+Yq3J7udc6R941Guxfd6A0vecV56JjvmpCng4jRkqu
-# Aeyf/dKmQUaR1fKvALBRAmZkAUtWijS/3MkeQv/lUvHVo7GPFzJ/O3wJMIIGcTCC
-# BFmgAwIBAgIKYQmBKgAAAAAAAjANBgkqhkiG9w0BAQsFADCBiDELMAkGA1UEBhMC
-# VVMxEzARBgNVBAgTCldhc2hpbmd0b24xEDAOBgNVBAcTB1JlZG1vbmQxHjAcBgNV
-# BAoTFU1pY3Jvc29mdCBDb3Jwb3JhdGlvbjEyMDAGA1UEAxMpTWljcm9zb2Z0IFJv
-# b3QgQ2VydGlmaWNhdGUgQXV0aG9yaXR5IDIwMTAwHhcNMTAwNzAxMjEzNjU1WhcN
-# MjUwNzAxMjE0NjU1WjB8MQswCQYDVQQGEwJVUzETMBEGA1UECBMKV2FzaGluZ3Rv
-# bjEQMA4GA1UEBxMHUmVkbW9uZDEeMBwGA1UEChMVTWljcm9zb2Z0IENvcnBvcmF0
-# aW9uMSYwJAYDVQQDEx1NaWNyb3NvZnQgVGltZS1TdGFtcCBQQ0EgMjAxMDCCASIw
-# DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKkdDbx3EYo6IOz8E5f1+n9plGt0
-# VBDVpQoAgoX77XxoSyxfxcPlYcJ2tz5mK1vwFVMnBDEfQRsalR3OCROOfGEwWbEw
-# RA/xYIiEVEMM1024OAizQt2TrNZzMFcmgqNFDdDq9UeBzb8kYDJYYEbyWEeGMoQe
-# dGFnkV+BVLHPk0ySwcSmXdFhE24oxhr5hoC732H8RsEnHSRnEnIaIYqvS2SJUGKx
-# Xf13Hz3wV3WsvYpCTUBR0Q+cBj5nf/VmwAOWRH7v0Ev9buWayrGo8noqCjHw2k4G
-# kbaICDXoeByw6ZnNPOcvRLqn9NxkvaQBwSAJk3jN/LzAyURdXhacAQVPIk0CAwEA
-# AaOCAeYwggHiMBAGCSsGAQQBgjcVAQQDAgEAMB0GA1UdDgQWBBTVYzpcijGQ80N7
-# fEYbxTNoWoVtVTAZBgkrBgEEAYI3FAIEDB4KAFMAdQBiAEMAQTALBgNVHQ8EBAMC
-# AYYwDwYDVR0TAQH/BAUwAwEB/zAfBgNVHSMEGDAWgBTV9lbLj+iiXGJo0T2UkFvX
-# zpoYxDBWBgNVHR8ETzBNMEugSaBHhkVodHRwOi8vY3JsLm1pY3Jvc29mdC5jb20v
-# cGtpL2NybC9wcm9kdWN0cy9NaWNSb29DZXJBdXRfMjAxMC0wNi0yMy5jcmwwWgYI
-# KwYBBQUHAQEETjBMMEoGCCsGAQUFBzAChj5odHRwOi8vd3d3Lm1pY3Jvc29mdC5j
-# b20vcGtpL2NlcnRzL01pY1Jvb0NlckF1dF8yMDEwLTA2LTIzLmNydDCBoAYDVR0g
-# AQH/BIGVMIGSMIGPBgkrBgEEAYI3LgMwgYEwPQYIKwYBBQUHAgEWMWh0dHA6Ly93
-# d3cubWljcm9zb2Z0LmNvbS9QS0kvZG9jcy9DUFMvZGVmYXVsdC5odG0wQAYIKwYB
-# BQUHAgIwNB4yIB0ATABlAGcAYQBsAF8AUABvAGwAaQBjAHkAXwBTAHQAYQB0AGUA
-# bQBlAG4AdAAuIB0wDQYJKoZIhvcNAQELBQADggIBAAfmiFEN4sbgmD+BcQM9naOh
-# IW+z66bM9TG+zwXiqf76V20ZMLPCxWbJat/15/B4vceoniXj+bzta1RXCCtRgkQS
-# +7lTjMz0YBKKdsxAQEGb3FwX/1z5Xhc1mCRWS3TvQhDIr79/xn/yN31aPxzymXlK
-# kVIArzgPF/UveYFl2am1a+THzvbKegBvSzBEJCI8z+0DpZaPWSm8tv0E4XCfMkon
-# /VWvL/625Y4zu2JfmttXQOnxzplmkIz/amJ/3cVKC5Em4jnsGUpxY517IW3DnKOi
-# PPp/fZZqkHimbdLhnPkd/DjYlPTGpQqWhqS9nhquBEKDuLWAmyI4ILUl5WTs9/S/
-# fmNZJQ96LjlXdqJxqgaKD4kWumGnEcua2A5HmoDF0M2n0O99g/DhO3EJ3110mCII
-# YdqwUB5vvfHhAN/nMQekkzr3ZUd46PioSKv33nJ+YWtvd6mBy6cJrDm77MbL2IK0
-# cs0d9LiFAR6A+xuJKlQ5slvayA1VmXqHczsI5pgt6o3gMy4SKfXAL1QnIffIrE7a
-# KLixqduWsqdCosnPGUFN4Ib5KpqjEWYw07t0MkvfY3v1mYovG8chr1m1rtxEPJdQ
-# cdeh0sVV42neV8HR3jDA/czmTfsNv11P6Z0eGTgvvM9YBS7vDaBQNdrvCScc1bN+
-# NR4Iuto229Nfj950iEkSoYIC0jCCAjsCAQEwgfyhgdSkgdEwgc4xCzAJBgNVBAYT
-# AlVTMRMwEQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRtb25kMR4wHAYD
-# VQQKExVNaWNyb3NvZnQgQ29ycG9yYXRpb24xKTAnBgNVBAsTIE1pY3Jvc29mdCBP
-# cGVyYXRpb25zIFB1ZXJ0byBSaWNvMSYwJAYDVQQLEx1UaGFsZXMgVFNTIEVTTjpG
-# N0E2LUUyNTEtMTUwQTElMCMGA1UEAxMcTWljcm9zb2Z0IFRpbWUtU3RhbXAgU2Vy
-# dmljZaIjCgEBMAcGBSsOAwIaAxUAKnbLAI8fhO58SCWrpZnXvXEZshGggYMwgYCk
-# fjB8MQswCQYDVQQGEwJVUzETMBEGA1UECBMKV2FzaGluZ3RvbjEQMA4GA1UEBxMH
-# UmVkbW9uZDEeMBwGA1UEChMVTWljcm9zb2Z0IENvcnBvcmF0aW9uMSYwJAYDVQQD
-# Ex1NaWNyb3NvZnQgVGltZS1TdGFtcCBQQ0EgMjAxMDANBgkqhkiG9w0BAQUFAAIF
-# AOSHWk0wIhgPMjAyMTA3MDEwMTAyMDVaGA8yMDIxMDcwMjAxMDIwNVowdzA9Bgor
-# BgEEAYRZCgQBMS8wLTAKAgUA5IdaTQIBADAKAgEAAgInaAIB/zAHAgEAAgIR3zAK
-# AgUA5IirzQIBADA2BgorBgEEAYRZCgQCMSgwJjAMBgorBgEEAYRZCgMCoAowCAIB
-# AAIDB6EgoQowCAIBAAIDAYagMA0GCSqGSIb3DQEBBQUAA4GBACbH1qlG/4eAjr6b
-# OpGqHuR3hxGW6bau01IBkt/FhOg+pjk0cO/0RxfYP28O8IB+miYRrzGFE0THYOFx
-# jo2ubiaEEnAIjmOACMCpsJaVd9dBD8timZKqUCB5amhEmnTPbJ+uc490ZkAAkXGD
-# BpFospyeDIUxhX5cdYsXS/ojoMx7MYIDDTCCAwkCAQEwgZMwfDELMAkGA1UEBhMC
-# VVMxEzARBgNVBAgTCldhc2hpbmd0b24xEDAOBgNVBAcTB1JlZG1vbmQxHjAcBgNV
-# BAoTFU1pY3Jvc29mdCBDb3Jwb3JhdGlvbjEmMCQGA1UEAxMdTWljcm9zb2Z0IFRp
-# bWUtU3RhbXAgUENBIDIwMTACEzMAAAFZn/x+Xyzq8kMAAAAAAVkwDQYJYIZIAWUD
-# BAIBBQCgggFKMBoGCSqGSIb3DQEJAzENBgsqhkiG9w0BCRABBDAvBgkqhkiG9w0B
-# CQQxIgQgMc+5nazgv9e9y3Hy4jTpfPBBPQlRMM/HXkT9N9SflPowgfoGCyqGSIb3
-# DQEJEAIvMYHqMIHnMIHkMIG9BCABWBvPvzDmfNeSzmJT4+dGA+uj/qq7/fKkUn36
-# rxND6DCBmDCBgKR+MHwxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpXYXNoaW5ndG9u
-# MRAwDgYDVQQHEwdSZWRtb25kMR4wHAYDVQQKExVNaWNyb3NvZnQgQ29ycG9yYXRp
-# b24xJjAkBgNVBAMTHU1pY3Jvc29mdCBUaW1lLVN0YW1wIFBDQSAyMDEwAhMzAAAB
-# WZ/8fl8s6vJDAAAAAAFZMCIEILXVYF1nlBZ7jlo7DG/g/upd5UrYm+FnIrOczA2E
-# 4rfDMA0GCSqGSIb3DQEBCwUABIIBAGcvdvx4OWgPDqVNg4eR26e2xnNFGdvZuyUO
-# myOeOtf0daCx/owOAw7hjPd2ilo+aVs9utcOvjuFrgF/qyYQqjUNGQgyOl9MxqXS
-# m5raR1GQIa+dGqSjqkcbyPiP3A7fRQn4eKvBoTmhUHq2ujve70+u3+kFKbkLUcdo
-# CLeLQMjMDRRV6SNa3HLhOS7CrQE0PZrkmVHVfdRPgOXGkvs3AXCHmbA2HxaqDBKF
-# lAoSDIUyBS/5vAgpLE8pf5dw4qfrS6laiwynOFEvk++2peC9G9IR/r3exCEnbPq3
-# hT8g6QXWwGawI+HKD6KHoE54c8WTb2weg3XJMeY59FTc8fu99Ww=
+# b25kMR4wHAYDVQQKExVNaWNyb3NvZnQgQ29ycG9yYXRpb24xJTAjBgNVBAsTHE1p
+# Y3Jvc29mdCBBbWVyaWNhIE9wZXJhdGlvbnMxJjAkBgNVBAsTHVRoYWxlcyBUU1Mg
+# RVNOOjdCRjEtRTNFQS1CODA4MSUwIwYDVQQDExxNaWNyb3NvZnQgVGltZS1TdGFt
+# cCBTZXJ2aWNloIIOOTCCBPEwggPZoAMCAQICEzMAAAFRw1DnWWyqxqcAAAAAAVEw
+# DQYJKoZIhvcNAQELBQAwfDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCldhc2hpbmd0
+# b24xEDAOBgNVBAcTB1JlZG1vbmQxHjAcBgNVBAoTFU1pY3Jvc29mdCBDb3Jwb3Jh
+# dGlvbjEmMCQGA1UEAxMdTWljcm9zb2Z0IFRpbWUtU3RhbXAgUENBIDIwMTAwHhcN
+# MjAxMTEyMTgyNjA0WhcNMjIwMjExMTgyNjA0WjCByjELMAkGA1UEBhMCVVMxEzAR
+# BgNVBAgTCldhc2hpbmd0b24xEDAOBgNVBAcTB1JlZG1vbmQxHjAcBgNVBAoTFU1p
+# Y3Jvc29mdCBDb3Jwb3JhdGlvbjElMCMGA1UECxMcTWljcm9zb2Z0IEFtZXJpY2Eg
+# T3BlcmF0aW9uczEmMCQGA1UECxMdVGhhbGVzIFRTUyBFU046N0JGMS1FM0VBLUI4
+# MDgxJTAjBgNVBAMTHE1pY3Jvc29mdCBUaW1lLVN0YW1wIFNlcnZpY2UwggEiMA0G
+# CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCf0ofvqoSuO+84iSNZsem0yRgOOYb4
+# kSbOC7Kv9XGNmBn+KDwyTjuOpIk/lHEf+wPKqFi7uM9I7zqyJmHy7sMFf0vwj4AH
+# 7x88+8Pi6gsoPbYGmgWXgHwXDkrtK6Ju9vEY3tp0vX/Nb6xZeVW+kOEQ8goMgK8R
+# 02MZMuGS19+2N5+D2W6YExQEnYbj+Dhp3R0O9E2YqIxldd78uXhCD+g9LNcJQRih
+# JKprkP7kxGKZV7n9hMuPSNWvyIXjlXSFPtUfw4k7hgiZydmGroPDUb7DoAJEZ48W
+# Y5apby0RnXdIyY6q4mtOTDLLzPI21W20kBft2IUttHRK8yVsllYrQod3AgMBAAGj
+# ggEbMIIBFzAdBgNVHQ4EFgQUxXf/42hQYpM0aDo4zITp83VE6m0wHwYDVR0jBBgw
+# FoAU1WM6XIoxkPNDe3xGG8UzaFqFbVUwVgYDVR0fBE8wTTBLoEmgR4ZFaHR0cDov
+# L2NybC5taWNyb3NvZnQuY29tL3BraS9jcmwvcHJvZHVjdHMvTWljVGltU3RhUENB
+# XzIwMTAtMDctMDEuY3JsMFoGCCsGAQUFBwEBBE4wTDBKBggrBgEFBQcwAoY+aHR0
+# cDovL3d3dy5taWNyb3NvZnQuY29tL3BraS9jZXJ0cy9NaWNUaW1TdGFQQ0FfMjAx
+# MC0wNy0wMS5jcnQwDAYDVR0TAQH/BAIwADATBgNVHSUEDDAKBggrBgEFBQcDCDAN
+# BgkqhkiG9w0BAQsFAAOCAQEAK/31wBWDmfHRKqO8t9DOa6AyPlwn00TrR25IfUun
+# EdiKb0uzdR+Jh3u3Qm/ITD+tFMQodvOdXosUuVf76UckwYrNmce1N7Y4jpkcWc2I
+# WG2DJa5gMmubspDKQ2LUbUtu5WJ70x6Gagr6EGJmeetx9lKcFKiSu87ZARYcLXGd
+# nnAzzZQSOmsVg6RyFT7pFygKOOYgUZ+BLM2PUwht/iVwnkWhXUyDoXAXjkKKM5cd
+# VevOSKwxn2m4OkWOMRXpMBjog2AySEt6/8BWjDSwXwx9DO0kiUVh0USRnk0X8jLO
+# gLZhv2LDhsIp0Gt0PcCzqa+gZI2MILqU53PoR6skrc2EWDCCBnEwggRZoAMCAQIC
+# CmEJgSoAAAAAAAIwDQYJKoZIhvcNAQELBQAwgYgxCzAJBgNVBAYTAlVTMRMwEQYD
+# VQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRtb25kMR4wHAYDVQQKExVNaWNy
+# b3NvZnQgQ29ycG9yYXRpb24xMjAwBgNVBAMTKU1pY3Jvc29mdCBSb290IENlcnRp
+# ZmljYXRlIEF1dGhvcml0eSAyMDEwMB4XDTEwMDcwMTIxMzY1NVoXDTI1MDcwMTIx
+# NDY1NVowfDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCldhc2hpbmd0b24xEDAOBgNV
+# BAcTB1JlZG1vbmQxHjAcBgNVBAoTFU1pY3Jvc29mdCBDb3Jwb3JhdGlvbjEmMCQG
+# A1UEAxMdTWljcm9zb2Z0IFRpbWUtU3RhbXAgUENBIDIwMTAwggEiMA0GCSqGSIb3
+# DQEBAQUAA4IBDwAwggEKAoIBAQCpHQ28dxGKOiDs/BOX9fp/aZRrdFQQ1aUKAIKF
+# ++18aEssX8XD5WHCdrc+Zitb8BVTJwQxH0EbGpUdzgkTjnxhMFmxMEQP8WCIhFRD
+# DNdNuDgIs0Ldk6zWczBXJoKjRQ3Q6vVHgc2/JGAyWGBG8lhHhjKEHnRhZ5FfgVSx
+# z5NMksHEpl3RYRNuKMYa+YaAu99h/EbBJx0kZxJyGiGKr0tkiVBisV39dx898Fd1
+# rL2KQk1AUdEPnAY+Z3/1ZsADlkR+79BL/W7lmsqxqPJ6Kgox8NpOBpG2iAg16Hgc
+# sOmZzTznL0S6p/TcZL2kAcEgCZN4zfy8wMlEXV4WnAEFTyJNAgMBAAGjggHmMIIB
+# 4jAQBgkrBgEEAYI3FQEEAwIBADAdBgNVHQ4EFgQU1WM6XIoxkPNDe3xGG8UzaFqF
+# bVUwGQYJKwYBBAGCNxQCBAweCgBTAHUAYgBDAEEwCwYDVR0PBAQDAgGGMA8GA1Ud
+# EwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAU1fZWy4/oolxiaNE9lJBb186aGMQwVgYD
+# VR0fBE8wTTBLoEmgR4ZFaHR0cDovL2NybC5taWNyb3NvZnQuY29tL3BraS9jcmwv
+# cHJvZHVjdHMvTWljUm9vQ2VyQXV0XzIwMTAtMDYtMjMuY3JsMFoGCCsGAQUFBwEB
+# BE4wTDBKBggrBgEFBQcwAoY+aHR0cDovL3d3dy5taWNyb3NvZnQuY29tL3BraS9j
+# ZXJ0cy9NaWNSb29DZXJBdXRfMjAxMC0wNi0yMy5jcnQwgaAGA1UdIAEB/wSBlTCB
+# kjCBjwYJKwYBBAGCNy4DMIGBMD0GCCsGAQUFBwIBFjFodHRwOi8vd3d3Lm1pY3Jv
+# c29mdC5jb20vUEtJL2RvY3MvQ1BTL2RlZmF1bHQuaHRtMEAGCCsGAQUFBwICMDQe
+# MiAdAEwAZQBnAGEAbABfAFAAbwBsAGkAYwB5AF8AUwB0AGEAdABlAG0AZQBuAHQA
+# LiAdMA0GCSqGSIb3DQEBCwUAA4ICAQAH5ohRDeLG4Jg/gXEDPZ2joSFvs+umzPUx
+# vs8F4qn++ldtGTCzwsVmyWrf9efweL3HqJ4l4/m87WtUVwgrUYJEEvu5U4zM9GAS
+# inbMQEBBm9xcF/9c+V4XNZgkVkt070IQyK+/f8Z/8jd9Wj8c8pl5SpFSAK84Dxf1
+# L3mBZdmptWvkx872ynoAb0swRCQiPM/tA6WWj1kpvLb9BOFwnzJKJ/1Vry/+tuWO
+# M7tiX5rbV0Dp8c6ZZpCM/2pif93FSguRJuI57BlKcWOdeyFtw5yjojz6f32WapB4
+# pm3S4Zz5Hfw42JT0xqUKloakvZ4argRCg7i1gJsiOCC1JeVk7Pf0v35jWSUPei45
+# V3aicaoGig+JFrphpxHLmtgOR5qAxdDNp9DvfYPw4TtxCd9ddJgiCGHasFAeb73x
+# 4QDf5zEHpJM692VHeOj4qEir995yfmFrb3epgcunCaw5u+zGy9iCtHLNHfS4hQEe
+# gPsbiSpUObJb2sgNVZl6h3M7COaYLeqN4DMuEin1wC9UJyH3yKxO2ii4sanblrKn
+# QqLJzxlBTeCG+SqaoxFmMNO7dDJL32N79ZmKLxvHIa9Zta7cRDyXUHHXodLFVeNp
+# 3lfB0d4wwP3M5k37Db9dT+mdHhk4L7zPWAUu7w2gUDXa7wknHNWzfjUeCLraNtvT
+# X4/edIhJEqGCAsswggI0AgEBMIH4oYHQpIHNMIHKMQswCQYDVQQGEwJVUzETMBEG
+# A1UECBMKV2FzaGluZ3RvbjEQMA4GA1UEBxMHUmVkbW9uZDEeMBwGA1UEChMVTWlj
+# cm9zb2Z0IENvcnBvcmF0aW9uMSUwIwYDVQQLExxNaWNyb3NvZnQgQW1lcmljYSBP
+# cGVyYXRpb25zMSYwJAYDVQQLEx1UaGFsZXMgVFNTIEVTTjo3QkYxLUUzRUEtQjgw
+# ODElMCMGA1UEAxMcTWljcm9zb2Z0IFRpbWUtU3RhbXAgU2VydmljZaIjCgEBMAcG
+# BSsOAwIaAxUAoKKvc/E/pEILJUwlIBWgxXrXI16ggYMwgYCkfjB8MQswCQYDVQQG
+# EwJVUzETMBEGA1UECBMKV2FzaGluZ3RvbjEQMA4GA1UEBxMHUmVkbW9uZDEeMBwG
+# A1UEChMVTWljcm9zb2Z0IENvcnBvcmF0aW9uMSYwJAYDVQQDEx1NaWNyb3NvZnQg
+# VGltZS1TdGFtcCBQQ0EgMjAxMDANBgkqhkiG9w0BAQUFAAIFAOSToy0wIhgPMjAy
+# MTA3MTAxMjQwMTNaGA8yMDIxMDcxMTEyNDAxM1owdDA6BgorBgEEAYRZCgQBMSww
+# KjAKAgUA5JOjLQIBADAHAgEAAgICaTAHAgEAAgIRujAKAgUA5JT0rQIBADA2Bgor
+# BgEEAYRZCgQCMSgwJjAMBgorBgEEAYRZCgMCoAowCAIBAAIDB6EgoQowCAIBAAID
+# AYagMA0GCSqGSIb3DQEBBQUAA4GBABqYPr98sNnEm7HWBZeNXy4/htl+Ik/BJGgG
+# qkEkIO3+2BAvGm3jG+3hpOunxCYlhkyYot1GjpK5lyIuZS9x+SW2hKRYSIJfQlQy
+# mQCvzNY7DT8/g1rs/nN4a3wZrld7tZzeREfk3g64OgDjD85ucPBG9eRJpt+RQVhn
+# 8Pth1NMgMYIDDTCCAwkCAQEwgZMwfDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCldh
+# c2hpbmd0b24xEDAOBgNVBAcTB1JlZG1vbmQxHjAcBgNVBAoTFU1pY3Jvc29mdCBD
+# b3Jwb3JhdGlvbjEmMCQGA1UEAxMdTWljcm9zb2Z0IFRpbWUtU3RhbXAgUENBIDIw
+# MTACEzMAAAFRw1DnWWyqxqcAAAAAAVEwDQYJYIZIAWUDBAIBBQCgggFKMBoGCSqG
+# SIb3DQEJAzENBgsqhkiG9w0BCRABBDAvBgkqhkiG9w0BCQQxIgQgYWxKDwgDHXKj
+# e1l1M8tZjnIXRf6HAANxbkpjKP5vKn4wgfoGCyqGSIb3DQEJEAIvMYHqMIHnMIHk
+# MIG9BCAuzVyZiPjWwVkHAKYW+/1Jw/m265SHGy/+3QH1cXrlQTCBmDCBgKR+MHwx
+# CzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRt
+# b25kMR4wHAYDVQQKExVNaWNyb3NvZnQgQ29ycG9yYXRpb24xJjAkBgNVBAMTHU1p
+# Y3Jvc29mdCBUaW1lLVN0YW1wIFBDQSAyMDEwAhMzAAABUcNQ51lsqsanAAAAAAFR
+# MCIEIC41ZcNvTNscM5tnqZvAgrkSCZJVd508Mm2Ge/w+n8diMA0GCSqGSIb3DQEB
+# CwUABIIBAAKlfKpE3eH141L4nuGYopJRcnitjrxCSs7omQzJZUeJ71s0YuBkChIy
+# 2Pu6sZw4BYPnPa7QjtKsqCqFb3mUMpkYut3lU1KvAocni9ksUPpAUeVixFKJA8YD
+# GvaSGNmS/yG8c71uH7n7hS+w11J4gh79WAOws7WEn6GtoxyrW6z/RkipKHQxZL91
+# +hqAHZ6+EQ8Pz0qed299h0S+AgufatPga3WaMzWXMIZEfwWv7o1nmYh+cZa6+ziu
+# 1w+MSspISxpH9VDkACHSRFz1YcFA7JjcgnuZS7tpP17NsyFq3UY7Vgprk8RS/moK
+# 2aV0Z2Ls5XoJ7/ibIbTm7NUA6Zl8NSQ=
 # SIG # End signature block
