@@ -40,9 +40,6 @@
   </Signers>
   <!--Driver Signing Scenarios-->
   <SigningScenarios>
-    <SigningScenario Value="131" ID="ID_SIGNINGSCENARIO_DRIVERS_1" FriendlyName="Auto generated policy on 08-06-2021">
-      <ProductSigners />
-    </SigningScenario>
     <SigningScenario Value="12" ID="ID_SIGNINGSCENARIO_WINDOWS" FriendlyName="Auto generated policy on 08-06-2021">
       <ProductSigners>
         <AllowedSigners>
