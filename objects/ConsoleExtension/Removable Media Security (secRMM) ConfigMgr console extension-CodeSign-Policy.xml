@@ -25,36 +25,36 @@
   <FileRules />
   <!--Signers-->
   <Signers>
-    <Signer ID="ID_SIGNER_S_1" Name="DigiCert SHA2 High Assurance Code Signing CA">
-      <CertRoot Type="TBS" Value="0BF095B845B69928B5D7DFD1C42AE4F90FEB8DC97F7830598C93E848877021FB" />
-      <CertPublisher Value="Squadra Technologies, LLC." />
+    <Signer ID="ID_SIGNER_S_53" Name="Squadra Technologies, LLC.">
+      <CertRoot Type="TBS" Value="A6015C27A931021F1EB10436AA8AC8449794244069C2E2BDA4D81BF80417E0D3" />
     </Signer>
-    <Signer ID="ID_SIGNER_S_B" Name="Microsoft Code Signing PCA">
-      <CertRoot Type="TBS" Value="27543A3F7612DE2261C7228321722402F63A07DE" />
-      <CertPublisher Value="Microsoft Corporation" />
+    <Signer ID="ID_SIGNER_S_5D" Name="Microsoft Corporation">
+      <CertRoot Type="TBS" Value="CE13DA3E20F06D1C9EBEF5646F4B763F423FBFFA" />
     </Signer>
-    <Signer ID="ID_SIGNER_S_C" Name="Microsoft Code Signing PCA 2011">
-      <CertRoot Type="TBS" Value="F6F717A43AD9ABDDC8CEFDDE1C505462535E7D1307E630F9544A2D14FE8BF26E" />
-      <CertPublisher Value="Microsoft Corporation" />
+    <Signer ID="ID_SIGNER_S_5E" Name="Microsoft Corporation">
+      <CertRoot Type="TBS" Value="917EBD6DAC3D94552444FB74BB0D4EF0B4CFBF41EEF871B4FAF250C00B63AF80" />
     </Signer>
   </Signers>
   <!--Driver Signing Scenarios-->
   <SigningScenarios>
+    <SigningScenario Value="131" ID="ID_SIGNINGSCENARIO_DRIVERS_1" FriendlyName="Auto generated policy on 08-06-2021">
+      <ProductSigners />
+    </SigningScenario>
     <SigningScenario Value="12" ID="ID_SIGNINGSCENARIO_WINDOWS" FriendlyName="Auto generated policy on 08-06-2021">
       <ProductSigners>
         <AllowedSigners>
-          <AllowedSigner SignerId="ID_SIGNER_S_1" />
-          <AllowedSigner SignerId="ID_SIGNER_S_B" />
-          <AllowedSigner SignerId="ID_SIGNER_S_C" />
+          <AllowedSigner SignerId="ID_SIGNER_S_53" />
+          <AllowedSigner SignerId="ID_SIGNER_S_5D" />
+          <AllowedSigner SignerId="ID_SIGNER_S_5E" />
         </AllowedSigners>
       </ProductSigners>
     </SigningScenario>
   </SigningScenarios>
   <UpdatePolicySigners />
   <CiSigners>
-    <CiSigner SignerId="ID_SIGNER_S_1" />
-    <CiSigner SignerId="ID_SIGNER_S_B" />
-    <CiSigner SignerId="ID_SIGNER_S_C" />
+    <CiSigner SignerId="ID_SIGNER_S_53" />
+    <CiSigner SignerId="ID_SIGNER_S_5D" />
+    <CiSigner SignerId="ID_SIGNER_S_5E" />
   </CiSigners>
   <HvciOptions>0</HvciOptions>
   <PolicyTypeID>{A244370E-44C9-4C06-B551-F6016E563076}</PolicyTypeID>
