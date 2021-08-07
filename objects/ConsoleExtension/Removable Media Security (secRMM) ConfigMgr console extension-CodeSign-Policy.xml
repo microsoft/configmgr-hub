@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SiPolicy xmlns="urn:schemas-microsoft-com:sipolicy">
+  <VersionEx>10.0.0.0</VersionEx>
+  <PlatformID>{2E07F7E4-194C-4D20-B7C9-6F44A6C5A234}</PlatformID>
+  <Rules>
+    <Rule>
+      <Option>Enabled:Unsigned System Integrity Policy</Option>
+    </Rule>
+    <Rule>
+      <Option>Enabled:Audit Mode</Option>
+    </Rule>
+    <Rule>
+      <Option>Enabled:Advanced Boot Options Menu</Option>
+    </Rule>
+    <Rule>
+      <Option>Required:Enforce Store Applications</Option>
+    </Rule>
+    <Rule>
+      <Option>Enabled:UMCI</Option>
+    </Rule>
+  </Rules>
+  <!--EKUS-->
+  <EKUs />
+  <!--File Rules-->
+  <FileRules />
+  <!--Signers-->
+  <Signers>
+    <Signer ID="ID_SIGNER_S_53" Name="Squadra Technologies, LLC.">
+      <CertRoot Type="TBS" Value="A6015C27A931021F1EB10436AA8AC8449794244069C2E2BDA4D81BF80417E0D3" />
+    </Signer>
+    <Signer ID="ID_SIGNER_S_5D" Name="Microsoft Corporation">
+      <CertRoot Type="TBS" Value="CE13DA3E20F06D1C9EBEF5646F4B763F423FBFFA" />
+    </Signer>
+    <Signer ID="ID_SIGNER_S_5E" Name="Microsoft Corporation">
+      <CertRoot Type="TBS" Value="917EBD6DAC3D94552444FB74BB0D4EF0B4CFBF41EEF871B4FAF250C00B63AF80" />
+    </Signer>
+  </Signers>
+  <!--Driver Signing Scenarios-->
+  <SigningScenarios>
+    <SigningScenario Value="131" ID="ID_SIGNINGSCENARIO_DRIVERS_1" FriendlyName="Auto generated policy on 08-06-2021">
+      <ProductSigners />
+    </SigningScenario>
+    <SigningScenario Value="12" ID="ID_SIGNINGSCENARIO_WINDOWS" FriendlyName="Auto generated policy on 08-06-2021">
+      <ProductSigners>
+        <AllowedSigners>
+          <AllowedSigner SignerId="ID_SIGNER_S_53" />
+          <AllowedSigner SignerId="ID_SIGNER_S_5D" />
+          <AllowedSigner SignerId="ID_SIGNER_S_5E" />
+        </AllowedSigners>
+      </ProductSigners>
+    </SigningScenario>
+  </SigningScenarios>
+  <UpdatePolicySigners />
+  <CiSigners>
+    <CiSigner SignerId="ID_SIGNER_S_53" />
+    <CiSigner SignerId="ID_SIGNER_S_5D" />
+    <CiSigner SignerId="ID_SIGNER_S_5E" />
+  </CiSigners>
+  <HvciOptions>0</HvciOptions>
+  <PolicyTypeID>{A244370E-44C9-4C06-B551-F6016E563076}</PolicyTypeID>
+</SiPolicy>
