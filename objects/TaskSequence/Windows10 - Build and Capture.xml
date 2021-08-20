@@ -1,0 +1,176 @@
+<sequence version="3.10">
+  <referenceList>
+    <reference package="SCB00021" />
+    <reference package="SCB00026" />
+    <reference package="SCB00003" />
+  </referenceList>
+  <globalVarList>
+    <variable name="OSDEnableTCPIPFiltering" property="EnableTCPIPFiltering">false</variable>
+  </globalVarList>
+  <group name="Build the Reference Machine" description="Actions to build a reference machine">
+    <step type="SMS_TaskSequence_RebootAction" name="Restart in Windows PE" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <condition>
+        <expression type="SMS_TaskSequence_VariableConditionExpression">
+          <variable name="Operator">equals</variable>
+          <variable name="Value">false</variable>
+          <variable name="Variable">_SMSTSInWinPE</variable>
+        </expression>
+      </condition>
+      <action>smsboot.exe /target:WinPE</action>
+      <defaultVarList>
+        <variable name="SMSRebootMessage" property="Message">A new Microsoft Windows operating system is being installed.  The computer must reboot to continue.</variable>
+        <variable name="SMSRebootTimeout" property="MessageTimeout">10</variable>
+        <variable name="SMSRebootTarget" property="Target" hidden="true">WinPE</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_SetVariableAction" name="Error timeout" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>tsenv.exe "SMSTSErrorDialogTimeout=43200" /hiddenflag:False</action>
+      <defaultVarList>
+        <variable name="DoNotShowVariableValue" property="DoNotShowVariableValue" hidden="true">false</variable>
+        <variable name="VariableName" property="VariableName" hidden="true">SMSTSErrorDialogTimeout</variable>
+        <variable name="VariableValue" property="VariableValue" hidden="true">43200</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_RunCommandLineAction" name="Set PS Execution policy" description="" runIn="WinPEandFullOS" successCodeList="0 3010" retryCount="0" runFromNet="false">
+      <action>smsswd.exe /run: powershell.exe -noprofile -command "Set-ExecutionPolicy Bypass LocalMachine" -force</action>
+      <defaultVarList>
+        <variable name="CommandLine" property="CommandLine" hidden="true">powershell.exe -noprofile -command "Set-ExecutionPolicy Bypass LocalMachine" -force</variable>
+        <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+        <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+        <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_RunCommandLineAction" name="Prepare the drive" description="" runIn="WinPEandFullOS" successCodeList="0 3010" retryCount="0" runFromNet="false">
+      <condition>
+        <operator type="or">
+          <expression type="SMS_TaskSequence_VariableConditionExpression">
+            <variable name="Operator">equals</variable>
+            <variable name="Value">True</variable>
+            <variable name="Variable">_SMSTSInWinPE</variable>
+          </expression>
+        </operator>
+      </condition>
+      <action>smsswd.exe /run: PowerShell.exe -NoProfile -Command "Get-Disk | Where partitionstyle -eq 'raw' | Initialize-Disk -PartitionStyle MBR -PassThru | New-Partition -AssignDriveLetter -UseMaximumSize | Format-Volume -FileSystem NTFS -NewFileSystemLabel "Windows" -Confirm:$false"</action>
+      <defaultVarList>
+        <variable name="CommandLine" property="CommandLine" hidden="true">PowerShell.exe -NoProfile -Command "Get-Disk | Where partitionstyle -eq 'raw' | Initialize-Disk -PartitionStyle MBR -PassThru | New-Partition -AssignDriveLetter -UseMaximumSize | Format-Volume -FileSystem NTFS -NewFileSystemLabel "Windows" -Confirm:$false"</variable>
+        <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+        <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+        <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_PartitionDiskAction" name="Partition Disk 0" description="Actions to partition and format the new machine" runIn="WinPE" successCodeList="0" retryCount="0" runFromNet="false">
+      <condition>
+        <expression type="SMS_TaskSequence_VariableConditionExpression">
+          <variable name="Operator">notExists</variable>
+          <variable name="Variable">_SMSTSClientCache</variable>
+        </expression>
+        <expression type="SMS_TaskSequence_VariableConditionExpression">
+          <variable name="Operator">notEquals</variable>
+          <variable name="Value">OEMMedia</variable>
+          <variable name="Variable">_SMSTSMediaType</variable>
+        </expression>
+        <expression type="SMS_TaskSequence_VariableConditionExpression">
+          <variable name="Operator">notEquals</variable>
+          <variable name="Value">true</variable>
+          <variable name="Variable">_OSDMigrateUseHardlinks</variable>
+        </expression>
+        <expression type="SMS_TaskSequence_VariableConditionExpression">
+          <variable name="Operator">notEquals</variable>
+          <variable name="Value">true</variable>
+          <variable name="Variable">_SMSTSBootUEFI</variable>
+        </expression>
+      </condition>
+      <action>osddiskpart.exe</action>
+      <defaultVarList>
+        <variable name="OSDDiskIndex" property="DiskIndex">0</variable>
+        <variable name="OSDDiskType" property="DiskType">Basic</variable>
+        <variable name="OSDDiskpartBiosCompatibilityMode" property="DiskpartBiosCompatibilityMode">false</variable>
+        <variable name="OSDGPTBootDisk" property="GPTBootDisk">false</variable>
+        <variable name="OSDPartitionStyle" property="PartitionStyle">MBR</variable>
+        <variable name="OSDPartitions" property="Partitions" hidden="true">1</variable>
+        <variable name="OSDPartitions0AssignVolumeLetter" property="Partitions0AssignVolumeLetter">true</variable>
+        <variable name="OSDPartitions0Bootable" property="Partitions0Bootable">true</variable>
+        <variable name="OSDPartitions0FileSystem" property="Partitions0FileSystem">NTFS</variable>
+        <variable name="OSDPartitions0QuickFormat" property="Partitions0QuickFormat">true</variable>
+        <variable name="OSDPartitions0Size" property="Partitions0Size">100</variable>
+        <variable name="OSDPartitions0SizeUnits" property="Partitions0SizeUnits">Percent</variable>
+        <variable name="OSDPartitions0Type" property="Partitions0Type">PRIMARY</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_ApplyOperatingSystemAction" name="Apply Operating System" description="Actions to apply operating system" runIn="WinPE" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>OSDApplyOS.exe /install:SCB00026,%OSDInstallEditionIndex% "/config:SCB00021,%OSDConfigFileName%" /runfromnet:False</action>
+      <defaultVarList>
+        <variable name="OSDConfigFileName" property="ConfigFileName">unattend.xml</variable>
+        <variable name="ConfigFilePackage" property="ConfigFilePackage" hidden="true">SCB00021</variable>
+        <variable name="OSDInstallEditionIndex" property="InstallEditionIndex">1</variable>
+        <variable name="InstallPackageID" property="InstallPackageID" hidden="true">SCB00026</variable>
+        <variable name="RunFromNet" property="RunFromNet" hidden="true">false</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_ApplyWindowsSettingsAction" name="Apply Windows Settings" description="Actions to apply Windows settings" runIn="WinPE" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>osdwinsettings.exe /config</action>
+      <defaultVarList>
+        <variable name="OSDComputerName" property="ComputerName">%_SMSTSMachineName%</variable>
+        <variable name="OSDProductKey" property="ProductKey"></variable>
+        <variable name="OSDRandomAdminPassword" property="RandomAdminPassword">false</variable>
+        <variable name="OSDRegisteredOrgName" property="RegisteredOrgName">SCCB</variable>
+        <variable name="OSDRegisteredUserName" property="RegisteredUserName">vadmin</variable>
+        <variable name="OSDServerLicenseConnectionLimit" property="ServerLicenseConnectionLimit">5</variable>
+        <variable name="OSDTimeZone" property="TimeZone">AUS Eastern Standard Time</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_ApplyNetworkSettingsAction" name="Apply Network Settings" description="Actions to configure network settings" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>osdnetsettings.exe configure</action>
+      <defaultVarList>
+        <variable name="OSDEnableTCPIPFiltering" property="EnableTCPIPFiltering" hidden="true">false</variable>
+        <variable name="OSDNetworkJoinType" property="NetworkJoinType">1</variable>
+        <variable name="OSDWorkgroupName" property="WorkgroupName">LAB</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_AutoApplyAction" name="Apply Device Drivers" description="" runIn="WinPE" successCodeList="0" retryCount="0" runFromNet="false">
+      <condition>
+        <expression type="SMS_TaskSequence_VariableConditionExpression">
+          <variable name="Operator">notEquals</variable>
+          <variable name="Value">FullMedia</variable>
+          <variable name="Variable">_SMSTSMediaType</variable>
+        </expression>
+      </condition>
+      <action>osddriverclient.exe /auto /bestmatch:%OSDAutoApplyDriverBestMatch% /unsigned:%OSDAllowUnsignedDriver%</action>
+      <defaultVarList>
+        <variable name="OSDAutoApplyDriverBestMatch" property="BestMatch">true</variable>
+        <variable name="OSDAllowUnsignedDriver" property="UnsignedDriver">false</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_SetupWindowsAndSMSAction" name="Setup Windows and Configuration Manager" description="Actions to setup Windows and Configuration Manager client" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>OSDSetupWindows.exe</action>
+      <defaultVarList>
+        <variable name="SMSClientInstallProperties" property="ClientInstallProperties">SMSMP=SCCB.W2019.LAB DNSSUFFIX=W2019.LAB</variable>
+        <variable name="_SMSClientPackageID" property="ClientPackageID">SCB00003</variable>
+      </defaultVarList>
+    </step>
+  </group>
+  <group name="Capture the Reference Machine" description="Actions to prepare and capture the reference machine">
+    <step type="SMS_TaskSequence_PrepareSMSClientAction" name="Prepare Configuration Manager Client" description="" runIn="FullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>osdpreparesmsclient.exe</action>
+      <defaultVarList />
+    </step>
+    <step type="SMS_TaskSequence_PrepareOSAction" name="Prepare OS" description="" runIn="FullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>osdprepareos.exe /activate:%OSDKeepActivation% /bmsd:%OSDBuildStorageDriverList% /shutdown:%OSDShutdownPreparedOs%</action>
+      <defaultVarList>
+        <variable name="OSDBuildStorageDriverList" property="BuildStorageDriverList">false</variable>
+        <variable name="OSDKeepActivation" property="KeepActivation">false</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_CaptureSystemImageAction" name="Capture the Reference Machine" description="" runIn="WinPE" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>osdcapturesystemimage.exe</action>
+      <defaultVarList>
+        <variable name="OSDCaptureDestination" property="CaptureDestination">\\SCCB\Source\OSD\Captures\Win10_1903_071719.wim</variable>
+        <variable name="OSDCaptureAccountPassword" property="CapturePassword"></variable>
+        <variable name="OSDCaptureAccount" property="CaptureUsername">W2019\vadmin</variable>
+        <variable name="OSDImageCreator" property="ImageCreator">vadmin</variable>
+        <variable name="OSDImageDescription" property="ImageDescription">1903 capture</variable>
+        <variable name="OSDImageVersion" property="ImageVersion"></variable>
+      </defaultVarList>
+    </step>
+  </group>
+</sequence>
