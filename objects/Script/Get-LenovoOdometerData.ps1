@@ -36,7 +36,6 @@ has been advised of the possibility of such damages.
 |   AUTHOR      : Lenovo Commercial Deployment Readiness Team 
 |   DESCRIPTION : Version 1.0 
 +---------------------------------------------------------------------------------------------+ 
- 
 #> 
 
 <# 
