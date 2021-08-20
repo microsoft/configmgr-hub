@@ -1,0 +1,1 @@
+OperatingSystem  | summarize dcount(Device) by bin(LastBootUpTime,1d) | order by bin| render timechart  
