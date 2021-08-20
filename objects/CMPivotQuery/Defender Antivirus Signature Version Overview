@@ -1,0 +1,7 @@
+EPStatus
+| summarize count() by AntivirusSignatureVersion
+| order by AntivirusSignatureVersion desc
+| render columnchart
+
+
+
