@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_F089B0C1-1DD7-4F2C-A585-2206DB72143D" LogicalName="OperatingSystem_d10c8de0-23c9-4951-a477-cd456d6a36f1" Version="6">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Item_ResetDirtyShutdownEventTracker" ResourceId="ID-d428a132-a562-4f54-90dd-fafcd07ef2f0" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="RegSetting_dfd75873-98c8-4e70-b76b-c698ce2ba840" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Reset Dirty Shutdown" ResourceId="ID-ec63062c-607b-4655-8966-ccf341806848" />
+            <Description Text="" />
+          </Annotation>
+          <RegistryDiscoverySource Hive="HKEY_LOCAL_MACHINE" Depth="Base" Is64Bit="true" CreateMissingPath="true">
+            <Key>SOFTWARE\Microsoft\Windows\CurrentVersion\Reliability</Key>
+            <ValueName>DirtyShutdown</ValueName>
+          </RegistryDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_c46472ed-ae17-4d8f-8c21-b307ade846ba" Severity="Informational" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="DirtyShutdown must exist" ResourceId="ID-3c7d1c05-3740-497d-97a2-f2a3794456fc" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>NotEquals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_F089B0C1-1DD7-4F2C-A585-2206DB72143D" LogicalName="OperatingSystem_d10c8de0-23c9-4951-a477-cd456d6a36f1" Version="6" DataType="Int64" SettingLogicalName="RegSetting_dfd75873-98c8-4e70-b76b-c698ce2ba840" SettingSourceType="Registry" Method="Count" Changeable="false" />
+            <ConstantValue Value="0" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_b262d9dc-d361-4234-970e-84930bc09072" Severity="Informational" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="DirtyShutdown Equals 0" ResourceId="ID-9339792f-0394-46c1-a76b-666eb8766311" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_F089B0C1-1DD7-4F2C-A585-2206DB72143D" LogicalName="OperatingSystem_d10c8de0-23c9-4951-a477-cd456d6a36f1" Version="6" DataType="Int64" SettingLogicalName="RegSetting_dfd75873-98c8-4e70-b76b-c698ce2ba840" SettingSourceType="Registry" Method="Value" Changeable="true" />
+            <ConstantValue Value="0" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2012_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2016" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2019_and_higher" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
