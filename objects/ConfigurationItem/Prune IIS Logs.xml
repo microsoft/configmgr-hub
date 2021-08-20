@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_B94B43B3-CEF5-458E-8B92-E7E17CFDAA71" LogicalName="LogicalName_d41851ca-0c85-4103-b54d-3712546f5302" Version="7">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Prune IIS Logs" ResourceId="ID-4df71498-2c87-42ed-9e6e-47aad0578722" />
+      <Description Text="IIS log maintenance script - DeployEverything.com" ResourceId="ID-0036e96a-cade-45e2-905c-c8b316a115a3" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_b1e3d7ec-2196-4d56-8699-a8168860c73b" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Prune IIS Logs" ResourceId="ID-54937cbc-0d2b-4ce4-a8b0-51ab0f4b0390" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell"># Specify the maximum log age file to maintain
+$MaxDays = 7
+
+function DiscoverIISLogs ($MaxDays)
+{
+	try
+	{
+		# Import IIS WebAdmin Module
+		Import-Module WebAdministration
+		
+		# Return list of IIS webistes
+		$IISSites = Get-Website
+		# Loop for each IIS site
+		foreach ($Site in $IISSites)
+		{
+			# Return path for IIS logs
+			$IISLogs = $Site.LogFile.Directory
+			# Condition to replace DOS %SystemDrive% variable with Powershell variable
+			If ($IISLogs -like "*%SystemDrive%*")
+			{
+				$IISLogs = $IISLogs -replace "%SystemDrive%", "$env:SystemDrive"
+			}
+			# Count IIS Log files to prune
+			$LogCount = $LogCount + (Get-ChildItem -Path $IISLogs -Recurse -Filter "*.log" | Where-Object { $(Get-Date).Subtract($_.LastWriteTime).Days -gt $MaxDays}).count
+		}
+		Return $LogCount
+	}
+	catch { return -1 }
+}
+
+DiscoverIISLogs ($MaxDays)</DiscoveryScriptBody>
+            <RemediationScriptBody ScriptType="PowerShell"># Specify the maximum log age file to maintain
+$MaxDays = 7
+
+function PurgeIISLogs ($MaxDays)
+{
+	try
+	{
+		# Import IIS WebAdmin Module
+		Import-Module WebAdministration
+		
+		# Return list of IIS webistes
+		$IISSites = Get-Website
+		# Loop for each IIS site
+		foreach ($Site in $IISSites)
+		{
+			# Return path for IIS logs
+			$IISLogs = $Site.LogFile.Directory
+			# Condition to replace DOS %SystemDrive% variable with Powershell variable
+			If ($IISLogs -like "*%SystemDrive%*")
+			{
+				$IISLogs = $IISLogs -replace "%SystemDrive%", "$env:SystemDrive"
+			}
+			# Purge IIS Log files
+			Get-ChildItem -Path $IISLogs -Recurse -Filter "*.log" | Where-Object { $(Get-Date).Subtract($_.LastWriteTime).Days -gt $MaxDays } | Foreach-Object { Remove-Item $_.FullName -Force -Verbose }
+		}
+	}
+
+catch {  }
+}
+
+PurgeIISLogs ($MaxDays)</RemediationScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_e992afae-305a-44ef-9de1-47d9845662bb" Severity="None" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="Prune IIS Logs" ResourceId="ID-71ab8ec3-4dbc-439e-a4e0-45aa8212d237" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_B94B43B3-CEF5-458E-8B92-E7E17CFDAA71" LogicalName="LogicalName_d41851ca-0c85-4103-b54d-3712546f5302" Version="7" DataType="Int64" SettingLogicalName="ScriptSetting_b1e3d7ec-2196-4d56-8699-a8168860c73b" SettingSourceType="Script" Method="Value" Changeable="true" />
+            <ConstantValue Value="0" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2008" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2008_R2" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Server_2008" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_CORE" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_SP1" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_SP1_Core" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_SP2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_SP2_Core" />
+          <RuleExpression RuleId="Windows/x86_Windows_Server_2008_SP2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_8" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2012_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2016" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
