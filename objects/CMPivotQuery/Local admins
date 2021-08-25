@@ -1,0 +1,2 @@
+Administrators
+| where Name !contains 'Administrator' and Name !contains 'Domain Admins'
