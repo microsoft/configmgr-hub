@@ -3220,7 +3220,8 @@ group by s.Name0</CommandText>
                     </ChartMajorGridLines>
                     <ChartMinorGridLines>
                       <Style>
-                        <Border>%5Cn                          <Color>Gainsboro</Color>
+                        <Border>
+%5Cn                          <Color>Gainsboro</Color>
                           <Style>Dotted</Style>
                         </Border>
                       </Style>
@@ -4830,7 +4831,8 @@ group by s.Name0</CommandText>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
-                            <TextRun>%5Cn                              <Label>Click here to see the complete report catalog</Label>
+                            <TextRun>
+%5Cn                              <Label>Click here to see the complete report catalog</Label>
                               <Value>="Click here to see the complete report catalog"</Value>
                               <ActionInfo>
                                 <Actions>
@@ -4879,7 +4881,7 @@ group by s.Name0</CommandText>
                               <ActionInfo>
                                 <Actions>
                                   <Action>
-                                    <Hyperlink>http://www.SystemCenterDudes.com</Hyperlink>
+                                    <Hyperlink>https://www.SystemCenterDudes.com</Hyperlink>
                                   </Action>
                                 </Actions>
                               </ActionInfo>
@@ -5231,7 +5233,7 @@ group by s.Name0</CommandText>
                   <ActionInfo>
                     <Actions>
                       <Action>
-                        <Hyperlink>http://www.systemcenterdudes.com</Hyperlink>
+                        <Hyperlink>https://www.systemcenterdudes.com</Hyperlink>
                       </Action>
                     </Actions>
                   </ActionInfo>
@@ -5279,7 +5281,7 @@ group by s.Name0</CommandText>
                       <ActionInfo>
                         <Actions>
                           <Action>
-                            <Hyperlink>http://www.SystemCenterDudes.com</Hyperlink>
+                            <Hyperlink>https://www.SystemCenterDudes.com</Hyperlink>
                           </Action>
                         </Actions>
                       </ActionInfo>
@@ -5415,7 +5417,7 @@ group by s.Name0</CommandText>
               <ActionInfo>
                 <Actions>
                   <Action>
-                    <Hyperlink>http://www.systemcenterdudes.com</Hyperlink>
+                    <Hyperlink>https://www.systemcenterdudes.com</Hyperlink>
                   </Action>
                 </Actions>
               </ActionInfo>
