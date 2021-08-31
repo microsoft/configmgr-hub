@@ -4947,7 +4947,7 @@ group by s.Name0</CommandText>
                               <ActionInfo>
                                 <Actions>
                                   <Action>
-                                    <Hyperlink>http://www.twitter.com/scdudes</Hyperlink>
+                                    <Hyperlink>https://www.twitter.com/scdudes</Hyperlink>
                                   </Action>
                                 </Actions>
                               </ActionInfo>
@@ -4980,7 +4980,7 @@ group by s.Name0</CommandText>
                               <ActionInfo>
                                 <Actions>
                                   <Action>
-                                    <Hyperlink>http://www.facebook.com/systemcenterdudes</Hyperlink>
+                                    <Hyperlink>https://www.facebook.com/systemcenterdudes</Hyperlink>
                                   </Action>
                                 </Actions>
                               </ActionInfo>
@@ -5347,7 +5347,7 @@ group by s.Name0</CommandText>
                       <ActionInfo>
                         <Actions>
                           <Action>
-                            <Hyperlink>http://www.twitter.com/scdudes</Hyperlink>
+                            <Hyperlink>https://www.twitter.com/scdudes</Hyperlink>
                           </Action>
                         </Actions>
                       </ActionInfo>
@@ -5380,7 +5380,7 @@ group by s.Name0</CommandText>
                       <ActionInfo>
                         <Actions>
                           <Action>
-                            <Hyperlink>http://www.facebook.com/systemcenterdudes</Hyperlink>
+                            <Hyperlink>https://www.facebook.com/systemcenterdudes</Hyperlink>
                           </Action>
                         </Actions>
                       </ActionInfo>
