@@ -1,0 +1,1 @@
+﻿Write-Host "Community hub is released!"
