@@ -1,0 +1,30 @@
+//.SYNOPSIS
+//    Summarizes inactivity lockout timeout.
+//.DESCRIPTION
+//    Summarizes inactivity lockout timeout in seconds and renders a barchart with the results.
+//.NOTES
+//    Created by Ioan Popovici.
+//    v1.1.0 - 2021-03-17
+//.LINK
+//    https://MEM.Zone/
+//.LINK
+//    https://MEM.Zone/GIT
+//.LINK
+//    https://MEM.Zone/ISSUES
+
+//*=============================================
+//* SCRIPT BODY
+//*=============================================
+//#region ScriptBody
+
+Registry('HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System') | where Property == 'InactivityTimeoutSecs'
+// Perform a full outer join to add devices where the registry key is not present
+| join kind=fullouter (OS | project Device)
+| summarize NumberOfDevices=count() by Seconds=iif(isnotnull(Value), Value, 'NotDetected')
+| order by Seconds
+| render barchart with (title='Inactivity Lockout Timeout Summarization', xtitle='Seconds', ytitle='Number of Devices')
+
+//#endregion
+//*=============================================
+//* END SCRIPT BODY
+//*=============================================
