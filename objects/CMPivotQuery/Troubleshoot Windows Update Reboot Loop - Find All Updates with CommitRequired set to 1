@@ -1,0 +1,1 @@
+Registry('hklm:SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\CommitRequired\*') | where Value == '1'
