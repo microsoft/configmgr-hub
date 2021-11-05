@@ -1,0 +1,1 @@
+Service | where Status == 'Running'
