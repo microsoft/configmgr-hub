@@ -106,11 +106,38 @@ function Add-CMCollectionMember {
     Invoke-CMPost $odata $uri $body
 }
 
+function Get-CMApplication {
+    $uri = "v1.0/Application";
+    $odata = Connect-CMAdminService
+    Invoke-CMGet $odata $uri
+}
+
+function Invoke-CMApplicationInstall {
+    param (
+        [string]$CIGUID,
+        [string]$SMSID
+    )
+
+    $uri = "v1.0/Application($($CIGUID))/AdminService.InstallApplication"
+    $body = @{
+        "Devices" = @($SMSID);
+    }
+    
+    $odata = Connect-CMAdminService
+    Invoke-CMPost $odata $uri $body
+}
+
 # Sample usage
 
-# Create a collection and add device as direct member
+# Create collection and add one direct member
 $collection = New-CMCollection -Name "Test Collection 1"
 $device = (Get-CMDevice)[0]
 Add-CMCollectionMember -CollectionID $collection.CollectionID -ResourceID $device.MachineId -RuleName "Direct member $($device.Name)"
 
+# Invoke app install remotely for an application already deployed to the client (for this one client must know about this app)
+$deviceName = "MyDevice"
+$applicationName = "My Application"
+$device = Get-CMDevice | Where-Object {$_.Name -eq $deviceName}
+$application = Get-CMApplication | Where-Object {$_.DisplayName -eq $applicationName}
+Invoke-CMApplicationInstall -CIGUID $application.CIGUID -SMSID $device.SMSID
 
