@@ -42,13 +42,17 @@ function Invoke-CMGet {
 
     # Use OData connection manager
 
-    # This path takes care of admin service communication for intranet scenarios, both HTTPS and Enhanced HTTP (no PKI cert required) - still needs some work
-    # $results = $odata.ODataServiceCaller.ExecuteGetQuery($odata.BaseUrl + $query, $null);
-    # return $results.value | ConvertFrom-Json;
+    # This path takes care of admin service communication for intranet scenarios, both HTTPS and Enhanced HTTP (no PKI cert required)
+    $results = $odata.ODataServiceCaller.ExecuteGetQuery($odata.BaseUrl + $query, $null);
+    if ($null -ne $results)
+    {
+        return ($results.ToString() | ConvertFrom-Json).value;
+    }
+    return $null;
 
     # Using invoke REST method, for the intranet scenario, requires PKI cert bound to the port, but the same method can be used for token auth scenarios
-    $uri = $odata.BaseUrl + $query;
-    return (Invoke-RestMethod -Method Get -Uri $uri -UseDefaultCredentials).value;
+    # $uri = $odata.BaseUrl + $query;
+    # return (Invoke-RestMethod -Method Get -Uri $uri -UseDefaultCredentials).value;
 }
 
 function Invoke-CMPost {
@@ -58,12 +62,18 @@ function Invoke-CMPost {
         $body
     )
 
-    # This path takes care of admin service communication for intranet scenarios, both HTTPS and Enhanced HTTP (no PKI cert required) - still needs some work
-    # $results = $odata.ExecuteMethod($query, $body);
+    # This path takes care of admin service communication for intranet scenarios, both HTTPS and Enhanced HTTP (no PKI cert required)
+    $jsonBody = (ConvertTo-Json $body);
+    $results = $odata.ODataServiceCaller.ExecutePost($odata.BaseUrl + $query, $null, $jsonBody);
+    if ($null -ne $results)
+    {
+        return ($results.ToString() | ConvertFrom-Json);
+    }
+    return $null;
 
     # Using invoke REST method, for the intranet scenario, requires PKI cert bound to the port, but the same method can be used for token auth scenarios
-    $uri = $odata.BaseUrl + $query;
-    return (Invoke-RestMethod -Method Post -Uri $uri -UseDefaultCredentials -Body (ConvertTo-Json $body) -ContentType "application/json");
+    # $uri = $odata.BaseUrl + $query;
+    # return (Invoke-RestMethod -Method Post -Uri $uri -UseDefaultCredentials -Body (ConvertTo-Json $body) -ContentType "application/json");
 }
 
 function Get-CMDevice {
@@ -72,7 +82,6 @@ function Get-CMDevice {
     $odata = Connect-CMAdminService
     Invoke-CMGet $odata $uri
 }
-
 
 function New-CMCollection {
     param (
