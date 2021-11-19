@@ -1,5 +1,5 @@
 
-# Sample usage
+# Sample usage, run CommonFunctions.ps1 first to import the functions
 
 # Create collection and add one direct member
 $collection = New-CMCollection -Name "Test Collection 1"
