@@ -1,4 +1,4 @@
-# Welcome to the samples directory
+# Samples
 
 This directory will eventually contain a list of available samples available to the MEM community. For now, it's an ideas list, but as samples are added we'll update this readme with information about the added samples.
 
