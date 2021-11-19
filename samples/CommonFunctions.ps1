@@ -1,5 +1,22 @@
+
+# This function expects console to be installed
+$ConsoleDir = "$ENV:SMS_ADMIN_UI_PATH\.."
+
 function Connect-CMAdminService {
 
+    $WqlConnectionManager = Get-WmiConnectionManager
+
+    # Create ODataConnectionManager to communicate with AdminService
+    Add-Type -Path "$ConsoleDir\AdminUI.ODataQueryEngine.dll"
+    $ODataConnectionManager = New-Object -TypeName "Microsoft.ConfigurationManagement.ManagementProvider.ODataQueryEngine.ODataConnectionManager" -ArgumentList $WqlConnectionManager.NamedValueDictionary,$WqlConnectionManager
+    [void]($ODataConnectionManager.Connect($ProviderMachineName))
+
+    return $ODataConnectionManager;
+}
+
+
+function Get-WmiConnectionManager {
+    
     # Get the provider machine - add server name if remote from the site server
     $AllProviderLocations=Get-WmiObject -Query "SELECT * FROM SMS_ProviderLocation" -Namespace "root\sms"
     foreach($ProviderLocation in $AllProviderLocations)
@@ -10,19 +27,11 @@ function Connect-CMAdminService {
         break;
     }
 
-    # This function expects console to be installed
-    $ConsoleDir = "$ENV:SMS_ADMIN_UI_PATH\.."
-
     Add-Type -Path "$ConsoleDir\AdminUI.WqlQueryEngine.dll"
     $WqlConnectionManager = New-Object -TypeName "Microsoft.ConfigurationManagement.ManagementProvider.WqlQueryEngine.WqlConnectionManager"
     [void]($WqlConnectionManager.Connect($ProviderMachineName))
 
-    # Create ODataConnectionManager to communicate with AdminService
-    Add-Type -Path "$ConsoleDir\AdminUI.ODataQueryEngine.dll"
-    $ODataConnectionManager = New-Object -TypeName "Microsoft.ConfigurationManagement.ManagementProvider.ODataQueryEngine.ODataConnectionManager" -ArgumentList $WqlConnectionManager.NamedValueDictionary,$WqlConnectionManager
-    [void]($ODataConnectionManager.Connect($ProviderMachineName))
-
-    return $ODataConnectionManager;
+    return $WqlConnectionManager;
 }
 
 function Invoke-CMGet {
@@ -140,4 +149,18 @@ function Invoke-CMApplicationUninstall {
     
     $odata = Connect-CMAdminService
     Invoke-CMPost $odata $uri $body
+}
+
+function New-Application {
+    param (
+        [string]$Name,
+        [int]$Type = 2, # 1 = user, 2 = device
+        [string]$Comment = ""
+    )
+
+    Add-Type -Path "$ConsoleDir\Microsoft.ConfigurationManagement.ApplicationManagement.dll";
+ 
+    $app = New-Object -TypeName "Microsoft.ConfigurationManagement.ApplicationManagement.Application";
+    app.
+
 }
