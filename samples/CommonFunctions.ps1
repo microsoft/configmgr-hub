@@ -7,13 +7,13 @@ function Connect-CMAdminService {
     $WqlConnectionManager = Get-WmiConnectionManager
 
     # Create ODataConnectionManager to communicate with AdminService
+    $ProviderMachineName = $WqlConnectionManager.NamedValueDictionary["ProviderMachineName"];
     Add-Type -Path "$ConsoleDir\AdminUI.ODataQueryEngine.dll"
     $ODataConnectionManager = New-Object -TypeName "Microsoft.ConfigurationManagement.ManagementProvider.ODataQueryEngine.ODataConnectionManager" -ArgumentList $WqlConnectionManager.NamedValueDictionary,$WqlConnectionManager
     [void]($ODataConnectionManager.Connect($ProviderMachineName))
 
     return $ODataConnectionManager;
 }
-
 
 function Get-WmiConnectionManager {
     
@@ -154,6 +154,22 @@ function Invoke-CMApplicationUninstall {
     $uri = "v1.0/Application($($CIGUID))/AdminService.UninstallApplication"
     $body = @{
         "Devices" = @($SMSID);
+    }
+    
+    $odata = Connect-CMAdminService
+    Invoke-CMPost $odata $uri $body
+}
+
+function Invoke-CMApplicationOnDemandInstall {
+    param (
+        [string]$CIGUID,
+        [string]$SMSID
+    )
+
+    $uri = "v1.0/Application($($CIGUID))/AdminService.InstallApplication"
+    $body = @{
+        "Devices" = @($SMSID);
+        "InstallationType" = 1;
     }
     
     $odata = Connect-CMAdminService
