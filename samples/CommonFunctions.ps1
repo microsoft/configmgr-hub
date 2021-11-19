@@ -170,6 +170,5 @@ function New-Application {
     Add-Type -Path "$ConsoleDir\Microsoft.ConfigurationManagement.ApplicationManagement.dll";
  
     $app = New-Object -TypeName "Microsoft.ConfigurationManagement.ApplicationManagement.Application";
-    app.
 
 }
