@@ -126,3 +126,18 @@ function Invoke-CMApplicationInstall {
     $odata = Connect-CMAdminService
     Invoke-CMPost $odata $uri $body
 }
+
+function Invoke-CMApplicationUninstall {
+    param (
+        [string]$CIGUID,
+        [string]$SMSID
+    )
+
+    $uri = "v1.0/Application($($CIGUID))/AdminService.UninstallApplication"
+    $body = @{
+        "Devices" = @($SMSID);
+    }
+    
+    $odata = Connect-CMAdminService
+    Invoke-CMPost $odata $uri $body
+}

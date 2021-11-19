@@ -13,3 +13,9 @@ $device = Get-CMDevice | Where-Object {$_.Name -eq $deviceName}
 $application = Get-CMApplication | Where-Object {$_.DisplayName -eq $applicationName}
 Invoke-CMApplicationInstall -CIGUID $application.CIGUID -SMSID $device.SMSID
 
+# Invoke app uninstall remotely for an available application already deployed to the client (for this one client must know about this app)
+$deviceName = "MyDevice"
+$applicationName = "My Application"
+$device = Get-CMDevice | Where-Object {$_.Name -eq $deviceName}
+$application = Get-CMApplication | Where-Object {$_.DisplayName -eq $applicationName}
+Invoke-CMApplicationUninstall -CIGUID $application.CIGUID -SMSID $device.SMSID
