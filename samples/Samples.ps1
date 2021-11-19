@@ -1,9 +1,6 @@
-# Plug in admin service FQDN
-$ServerName = ""
-
 function Connect-CMAdminService {
 
-    # Get the provider machine
+    # Get the provider machine - add server name if remote from the site server
     $AllProviderLocations=Get-WmiObject -Query "SELECT * FROM SMS_ProviderLocation" -Namespace "root\sms"
     foreach($ProviderLocation in $AllProviderLocations)
     {
@@ -13,6 +10,8 @@ function Connect-CMAdminService {
         # Pick first provider
         break;
     }
+
+    # This function expects console to be installed
     $ConsoleDir = "$ENV:SMS_ADMIN_UI_PATH\.."
 
     Add-Type -Path "$ConsoleDir\AdminUI.WqlQueryEngine.dll"
@@ -39,6 +38,8 @@ function Invoke-CMGet {
     # Doesn't appear to work as desired
     # $results = $odata.ExecuteMethod($query);
     # return $results.PropertyList["value"] | ConvertFrom-Json;
+
+    # Using invoke REST method for now, requires SSL cert bound to the port
     $uri = $odata.BaseUrl + $query;
     return (Invoke-RestMethod -Method Get -Uri $uri -UseDefaultCredentials).value;
 }
@@ -54,6 +55,13 @@ function Invoke-CMPost {
     # return $odata.ExecuteMethod($query, $body);
     $uri = $odata.BaseUrl + $query;
     return (Invoke-RestMethod -Method Post -Uri $uri -UseDefaultCredentials -Body (ConvertTo-Json $body) -ContentType "application/json");
+}
+
+function Get-CMDevice {
+    
+    $uri = "v1.0/Device";
+    $odata = Connect-CMAdminService
+    Invoke-CMGet $odata $uri
 }
 
 
@@ -75,3 +83,34 @@ function New-CMCollection {
     $odata = Connect-CMAdminService
     Invoke-CMPost $odata $uri $body
 }
+
+function Add-CMCollectionMember {
+    param (
+        [string]$CollectionID,
+        [int]$ResourceID,
+        [string]$RuleName = "Test Rule"
+    )
+
+    # This only works in the more recent Tech Preview builds (2110+)
+    $uri = "wmi/SMS_Collection/$($CollectionID)/AdminService.AddMembershipRule"
+    $body = @{
+        "collectionRule" = @{
+            "@odata.type"="#AdminService.SMS_CollectionRuleDirect";
+            ResourceClassName="SMS_R_System";
+            RuleName=$RuleName;
+            ResourceID=$ResourceID
+        }
+    }
+    
+    $odata = Connect-CMAdminService
+    Invoke-CMPost $odata $uri $body
+}
+
+# Sample usage
+
+# Create a collection and add device as direct member
+$collection = New-CMCollection -Name "Test Collection 1"
+$device = (Get-CMDevice)[0]
+Add-CMCollectionMember -CollectionID $collection.CollectionID -ResourceID $device.MachineId -RuleName "Direct member $($device.Name)"
+
+
