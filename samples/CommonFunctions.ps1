@@ -4,9 +4,9 @@ $ConsoleDir = "$ENV:SMS_ADMIN_UI_PATH\.."
 function Connect-CMAdminService {
 
     $WqlConnectionManager = Get-WmiConnectionManager
+    $ProviderMachineName = $WqlConnectionManager.NamedValueDictionary["ProviderMachineName"];
 
     # Create ODataConnectionManager to communicate with AdminService
-    $ProviderMachineName = $WqlConnectionManager.NamedValueDictionary["ProviderMachineName"];
     Add-Type -Path "$ConsoleDir\AdminUI.ODataQueryEngine.dll"
     $ODataConnectionManager = New-Object -TypeName "Microsoft.ConfigurationManagement.ManagementProvider.ODataQueryEngine.ODataConnectionManager" -ArgumentList $WqlConnectionManager.NamedValueDictionary,$WqlConnectionManager
     [void]($ODataConnectionManager.Connect($ProviderMachineName))
@@ -42,7 +42,7 @@ function Invoke-CMGet {
     # Use OData connection manager
 
     # This path takes care of admin service communication for intranet scenarios, both HTTPS and Enhanced HTTP (no PKI cert required)
-    $results = $odata.ODataServiceCaller.ExecuteGetQuery($odata.BaseUrl + $query, $null);
+    $results = $odata.QueryProcessor.ExecuteQuery($query, $null);
     if ($null -ne $results)
     {
         return ($results.ToString() | ConvertFrom-Json).value;
@@ -254,18 +254,6 @@ function Get-CMScriptResult {
     Invoke-CMGet $odata $uri
 }
 
-function New-Application {
-    param (
-        [string]$Name,
-        [int]$Type = 2, # 1 = user, 2 = device
-        [string]$Comment = ""
-    )
-
-    Add-Type -Path "$ConsoleDir\Microsoft.ConfigurationManagement.ApplicationManagement.dll";
- 
-    $app = New-Object -TypeName "Microsoft.ConfigurationManagement.ApplicationManagement.Application";
-
-}
 
 
 
