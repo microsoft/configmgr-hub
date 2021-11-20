@@ -193,12 +193,15 @@ function New-CMScript {
     )
 
     $scriptGuid = [System.Guid]::NewGuid().ToString().ToUpper();
+    [Byte[]]$scriptByteArray = [Text.Encoding]::Unicode.GetPreamble();
+    $scriptByteArray+=[Text.Encoding]::Unicode.GetBytes($ScriptText);
+    $scriptBody = [Convert]::ToBase64String($scriptByteArray);
     $uri = "wmi/SMS_Scripts.CreateScripts";
     $body = @{
         "ParamsDefinition" = "";
         "ScriptName" = $Name;
         "Author" = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name;
-        "Script" = $ScriptText;
+        "Script" = $scriptBody;
         "ScriptVersion" = "1";
         "ScriptType" = 0; # Powershell
         "ParameterlistXML" = "";
@@ -252,6 +255,41 @@ function Get-CMScriptResult {
     
     $odata = Connect-CMAdminService
     Invoke-CMGet $odata $uri
+}
+
+function Invoke-WaitScriptResult {
+    param (
+        [int]$ResourceId,
+        [int]$OperationId
+    )
+
+    $startTime = [System.DateTime]::Now;
+    $status = 0;
+    while ($status -eq 0)
+    {
+        try 
+        {
+            $scriptResult = Get-CMScriptResult -ResourceId $ResourceId -OperationId $operationId
+            $status = $scriptResult.Status
+            Write-Host "Script completed in $(([System.DateTime]::Now - $startTime).TotalSeconds) seconds."
+            Write-Host "Script result: $($scriptResult.Result)."
+        }
+        catch
+        {
+            # 404 from this API means script result is not found yet. Need to improve looking for specific status code rather than catch all. 
+            $status = 0 # still waiting for result
+            Write-Host "Waiting for the device to report script result..."
+            Start-sleep 5
+        }
+    
+        # Need to time out eventually, wait 1 minute
+        $currentTime = [System.DateTime]::Now
+        if (($currentTime - $startTime).TotalSeconds -ge 60)
+        {
+            Write-Host "Timed out waiting for script result"
+            $status = 2
+        }
+    }
 }
 
 function New-Application {
