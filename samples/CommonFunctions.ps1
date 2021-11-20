@@ -1,4 +1,3 @@
-
 # This function expects console to be installed
 $ConsoleDir = "$ENV:SMS_ADMIN_UI_PATH\.."
 
@@ -62,8 +61,13 @@ function Invoke-CMPost {
         $body
     )
 
-    # This path takes care of admin service communication for intranet scenarios, both HTTPS and Enhanced HTTP (no PKI cert required)
     $jsonBody = (ConvertTo-Json $body);
+
+    # Enable this to troubleshoot POST issues
+    # Write-Host ($odata.BaseUrl + $query)
+    # Write-Host $jsonBody
+
+    # This path takes care of admin service communication for intranet scenarios, both HTTPS and Enhanced HTTP (no PKI cert required)
     $results = $odata.ODataServiceCaller.ExecutePost($odata.BaseUrl + $query, $null, $jsonBody);
     if ($null -ne $results)
     {
@@ -73,7 +77,7 @@ function Invoke-CMPost {
 
     # Using invoke REST method, for the intranet scenario, requires PKI cert bound to the port, but the same method can be used for token auth scenarios
     # $uri = $odata.BaseUrl + $query;
-    # return (Invoke-RestMethod -Method Post -Uri $uri -UseDefaultCredentials -Body (ConvertTo-Json $body) -ContentType "application/json");
+    # return (Invoke-RestMethod -Method Post -Uri $uri -UseDefaultCredentials -Body $jsonBody -ContentType "application/json");
 }
 
 function Get-CMDevice {
@@ -176,6 +180,80 @@ function Invoke-CMApplicationOnDemandInstall {
     Invoke-CMPost $odata $uri $body
 }
 
+function Get-CMScript {
+    $uri = "wmi/SMS_Scripts";
+    $odata = Connect-CMAdminService
+    Invoke-CMGet $odata $uri
+}
+
+function New-CMScript {
+    param (
+        [string]$Name,
+        [string]$ScriptText
+    )
+
+    $scriptGuid = [System.Guid]::NewGuid().ToString().ToUpper();
+    $uri = "wmi/SMS_Scripts.CreateScripts";
+    $body = @{
+        "ParamsDefinition" = "";
+        "ScriptName" = $Name;
+        "Author" = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name;
+        "Script" = $ScriptText;
+        "ScriptVersion" = "1";
+        "ScriptType" = 0; # Powershell
+        "ParameterlistXML" = "";
+        "ScriptGuid" = $scriptGuid;
+    };
+    
+    $odata = Connect-CMAdminService
+    Invoke-CMPost $odata $uri $body
+}
+
+function Approve-CMScript {
+    param (
+        [string]$ScriptGuid,
+        [string]$Comments = ""
+    )
+
+    $uri = "wmi/SMS_Scripts/$($ScriptGuid)/AdminService.UpdateApprovalState";
+    $body = @{
+        "Approver" = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name;
+        "ApprovalState" = "3"; #Approved
+        "Comment" = $Comments;
+    };
+    
+    $odata = Connect-CMAdminService
+    Invoke-CMPost $odata $uri $body
+}
+
+function Invoke-CMRunScript {
+    param (
+        [string]$ScriptGuid,
+        [int]$ResourceId
+    )
+
+    $uri = "v1.0/Device($($ResourceId))/AdminService.RunScript"
+    $body = @{
+        "ScriptGuid" = $ScriptGuid;
+    }
+    
+    $odata = Connect-CMAdminService
+    Invoke-CMPost $odata $uri $body
+}
+
+
+function Get-CMScriptResult {
+    param (
+        [int]$ResourceId,
+        [int]$OperationId
+    )
+
+    $uri = "v1.0/Device($($ResourceId))/AdminService.ScriptResult(OperationId=$($OperationId))"
+    
+    $odata = Connect-CMAdminService
+    Invoke-CMGet $odata $uri
+}
+
 function New-Application {
     param (
         [string]$Name,
@@ -188,3 +266,18 @@ function New-Application {
     $app = New-Object -TypeName "Microsoft.ConfigurationManagement.ApplicationManagement.Application";
 
 }
+
+
+
+
+# Additional troubleshooting notes
+# For each admin service request, there will be corresponding entry in AdminService.log. Look at the URI and check if it is valid.
+# For WMI methods, there are two different types - static and instance methods. Either mof (wmi definition) or $metadata will show the type of method.
+#    Static methods are triggered directly based on the class, such as AdminService/wmi/WMIClassName.MethodName
+#    Instance methods are triggered with id of the instance, such as AdminService/wmi/WmiClassName/id/AdminService.MethodName
+# One of the ways to pull in WMI metadata of admin service:
+# https://admin_service_fqdn/AdminService/wmi/$metadata
+# If you are stuck getting 404 when calling WMI method, follow these steps:
+#     Capture URI and Json POST body (add Write-Host debug line in Invoke-CMPost method)
+#     Use a tool such as Fiddler or Invoke-RestMethod to make POST request manually using URI and body
+#     Look at the error details in the response. Error message should point to either incorrect entity / method name OR incorrect value/type of the parameters to the method (such as int vs string)

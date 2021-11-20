@@ -27,3 +27,39 @@ $applicationName = "My Application"
 $device = Get-CMDevice | Where-Object {$_.Name -eq $deviceName}
 $application = Get-CMApplication | Where-Object {$_.DisplayName -eq $applicationName}
 Invoke-CMApplicationOnDemandInstall -CIGUID $application.CIGUID -SMSID $device.SMSID
+
+# Create a script, approve, and initiate on a device. If same user is approving the script, disable "Script authors require additional script approver" option in the Hierarchy Settings.
+$deviceName = "MyDevice"
+$device = Get-CMDevice | Where-Object {$_.Name -eq $deviceName}
+New-CMScript -Name "Test Script 1" -ScriptText "(Get-WMIObject win32_operatingsystem).Name"
+$script = Get-CMScript | Where-Object {$_.ScriptName -eq 'Test Script 1'}
+Approve-CMScript -ScriptGuid $script.ScriptGuid 
+$runResult = Invoke-CMRunScript -ResourceId $device.MachineId -ScriptGuid $script.ScriptGuid 
+$operationId = $runResult.value
+$startTime = [System.DateTime]::Now
+$status = 0
+while ($status -eq 0)
+{
+    try 
+    {
+        $scriptResult = Get-CMScriptResult -ResourceId $device.MachineId -OperationId $operationId
+        $status = $scriptResult.Status
+        Write-Host "Script completed in $(([System.DateTime]::Now - $startTime).TotalSeconds) seconds."
+        Write-Host "Script result: $($scriptResult.Result)."
+    }
+    catch
+    {
+        # 404 from this API means script result is not found yet. Need to improve looking for specific status code rather than catch all. 
+        $status = 0 # still waiting for result
+        Write-Host "Waiting for the device to report script result..."
+        Start-sleep 5
+    }
+
+    # Need to time out eventually, wait 1 minute
+    $currentTime = [System.DateTime]::Now
+    if (($currentTime - $startTime).TotalSeconds -ge 60)
+    {
+        Write-Host "Timed out waiting for script result"
+        $status = 2
+    }
+}
