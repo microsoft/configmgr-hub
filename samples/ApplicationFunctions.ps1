@@ -1,6 +1,3 @@
-
-
-
 function New-ScopeID {
     
     $GetSiteID = $odata.ExecuteMethod("wmi/SMS_Identification.GetSiteId", "{}");
@@ -10,7 +7,7 @@ function New-ScopeID {
     $ScopeID  = "ScopeId_$($SiteID)";
 
     return $ScopeID
-}S
+}
 
 function New-Application {
     param (
