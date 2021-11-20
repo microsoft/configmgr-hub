@@ -31,8 +31,8 @@ Invoke-CMApplicationOnDemandInstall -CIGUID $application.CIGUID -SMSID $device.S
 # Create a script, approve, and initiate on a device. If same user is approving the script, disable "Script authors require additional script approver" option in the Hierarchy Settings.
 $deviceName = "MyDevice"
 $device = Get-CMDevice | Where-Object {$_.Name -eq $deviceName}
-New-CMScript -Name "Test Script 4" -ScriptText "Get-WMIObject win32_operatingsystem).Name"
-$script = Get-CMScript | Where-Object {$_.ScriptName -eq 'Test Script 4'}
+New-CMScript -Name "Test Script 5" -ScriptText "(Get-WMIObject win32_operatingsystem).Name"
+$script = Get-CMScript | Where-Object {$_.ScriptName -eq 'Test Script 5'}
 Approve-CMScript -ScriptGuid $script.ScriptGuid 
 $runResult = Invoke-CMRunScript -ResourceId $device.MachineId -ScriptGuid $script.ScriptGuid 
 Invoke-WaitScriptResult -ResourceId $device.MachineId -OperationId $runResult.value
