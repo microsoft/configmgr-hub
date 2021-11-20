@@ -2,7 +2,7 @@ function New-ScopeID {
     
     $GetSiteID = $odata.ExecuteMethod("wmi/SMS_Identification.GetSiteId", "{}");
     
-    $SiteID   = $GetSiteID.SiteID;
+    $SiteID   = $GetSiteID["SiteID"].StringValue;
     $SiteID   = $SiteID.Replace("{","").Replace("}","").ToUpper();
     $ScopeID  = "ScopeId_$($SiteID)";
 
@@ -18,11 +18,11 @@ function New-Application {
     Add-Type -Path "$ENV:SMS_ADMIN_UI_PATH\..\Microsoft.ConfigurationManagement.ApplicationManagement.dll";
     $scopeId = New-ScopeId;
 
-    $objectId = New-Object -TypeName "Microsoft.ConfigurationManagement.ApplicationManagement.ObjectId" -ArgumentList $scopeId New-Guid "1.0";
-    # [Microsoft.ConfigurationManagement.ApplicationManagement.NamedObject]::DefaultScope = New-ScopeID
+    $objectId = New-Object -TypeName "Microsoft.ConfigurationManagement.ApplicationManagement.ObjectId" -ArgumentList @($scopeId,([System.Guid]::NewGuid().ToString().ToUpper()),1);
  
     $app = New-Object -TypeName "Microsoft.ConfigurationManagement.ApplicationManagement.Application" -ArgumentList $objectId;
     $app.Name = $Name;
+    $app.Title = $Name;
     $app.Description = $Description;
     
     $displayInfo = New-Object -TypeName "Microsoft.ConfigurationManagement.ApplicationManagement.AppDisplayInfo";
@@ -36,7 +36,7 @@ function New-Application {
     $appXml = [Microsoft.ConfigurationManagement.ApplicationManagement.Serialization.SccmSerializer]::SerializeToString($app);
 
     $body = @{
-        "SDMPackageXML" = @($appXml);
+        "SDMPackageXML" = $appXml;
     }
     
     Invoke-CMPost -odata $odata -body $body -query "wmi/SMS_Application";
