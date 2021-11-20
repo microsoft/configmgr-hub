@@ -42,7 +42,7 @@ function Invoke-CMGet {
     # Use OData connection manager
 
     # This path takes care of admin service communication for intranet scenarios, both HTTPS and Enhanced HTTP (no PKI cert required)
-    $results = $odata.QueryProcessor.ExecuteQuery($query, $null);
+    $results = $odata.ODataServiceCaller.ExecuteGetQuery($odata.BaseUrl + $query, $null);
     if ($null -ne $results)
     {
         return ($results.ToString() | ConvertFrom-Json).value;
