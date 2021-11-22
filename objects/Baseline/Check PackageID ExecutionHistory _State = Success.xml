@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <Baseline AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="Baseline_05c498b5-f80f-4c2c-b72b-88d76695169d" Version="3">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Check PackageID ExecutionHistory _State = Success" ResourceId="ID-3a308b0d-6f66-4382-8174-f05011f471bf" />
+      <Description Text="This baseline will check the executionhistory for a &quot;success&quot; _state.&#xD;&#xA;Eg. check if an task sequence has successfully ran, and then you can make and compliant collection for this." ResourceId="ID-8ecd2805-3fbe-4587-a620-ea285cbca5d1" />
+    </Annotation>
+    <RequiredItems />
+    <ProhibitedItems />
+    <OptionalItems />
+    <OperatingSystems>
+      <OperatingSystemReference AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_6ba923c0-5798-48f6-8890-37c4ec3b632f" />
+    </OperatingSystems>
+    <SoftwareUpdates />
+    <Baselines />
+    <OtherConfigurationItems />
+  </Baseline>
+</DesiredConfigurationDigest>
