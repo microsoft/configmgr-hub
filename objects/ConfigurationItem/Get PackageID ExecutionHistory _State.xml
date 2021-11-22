@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_6ba923c0-5798-48f6-8890-37c4ec3b632f" Version="2">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Get PackageID ExecutionHistory _State" ResourceId="ID-c9d89b96-a8fe-48ff-9b70-a1c4d337fcda" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_329a6aba-6963-45cf-ad8e-c012795fc308" DataType="String">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Get PackgeID _State" ResourceId="ID-c94d2393-775a-4f52-b9ad-b2ce54fabbd8" />
+            <Description Text="Get the executionhistory of an packgeID, eg. a task sequence" ResourceId="ID-2bb4695c-50f1-4a07-b5f9-834b8d9fa729" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">param(
+  [string]$PackageID = ""
+)
+
+$ExecutionHistoryKey = "HKLM:\SOFTWARE\Microsoft\SMS\Mobile Client\Software Distribution\Execution History\System\$PackageID"
+$ExecutionHistorySubKey = Get-ChildItem $ExecutionHistoryKey | Select -ExpandProperty Name
+$PackageExecutionHistoryKey = $ExecutionhistorySubKey -Replace "HKEY_LOCAL_MACHINE","HKLM:"
+$_State = (Get-ItemProperty $PackageExecutionHistoryKey)._State
+Write-Output $_State</DiscoveryScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_fb634cbc-2d7f-4538-9c27-6b2e5ea790d9" Severity="None" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="ExecutionHistory _State = Success" ResourceId="ID-f5ad44c3-935b-4e85-96fc-f80732a249fe" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_6ba923c0-5798-48f6-8890-37c4ec3b632f" Version="2" DataType="String" SettingLogicalName="ScriptSetting_329a6aba-6963-45cf-ad8e-c012795fc308" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="success" DataType="String" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
