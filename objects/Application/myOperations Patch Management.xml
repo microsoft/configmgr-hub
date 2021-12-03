@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-16"?>
+<AppMgmtDigest xmlns="http://schemas.microsoft.com/SystemCenterConfigurationManager/2009/AppMgmtDigest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Application AuthoringScopeId="ScopeId_1A82C462-52AF-4BB7-9B3E-32D6A9C34589" LogicalName="Application_89eebb7e-b2c0-4edb-81cc-50db2aa519ca" Version="1">
+    <DisplayInfo DefaultLanguage="en-US">
+      <Info Language="en-US">
+        <Title>myOperations Patch Management</Title>
+        <Description />
+        <Publisher>Axians Cloud und IT Automation GmbH</Publisher>
+        <Version>3.32.0</Version>
+      </Info>
+    </DisplayInfo>
+    <DeploymentTypes>
+      <DeploymentType AuthoringScopeId="ScopeId_1A82C462-52AF-4BB7-9B3E-32D6A9C34589" LogicalName="DeploymentType_0a81f2eb-65e8-496b-83fc-96d0388d6d69" Version="1" />
+    </DeploymentTypes>
+    <Title ResourceId="Res_1665628948">myOperations Patch Management</Title>
+    <Description ResourceId="Res_1447935118" />
+    <Publisher ResourceId="Res_1043394885">Axians Cloud und IT Automation GmbH</Publisher>
+    <SoftwareVersion ResourceId="Res_860071511">3.32.0</SoftwareVersion>
+    <CustomId ResourceId="Res_1502952390" />
+    <Owners>
+      <User Qualifier="LogonName" Id="mkoe" />
+    </Owners>
+    <Contacts>
+      <User Qualifier="LogonName" Id="mkoe" />
+    </Contacts>
+  </Application>
+  <DeploymentType AuthoringScopeId="ScopeId_1A82C462-52AF-4BB7-9B3E-32D6A9C34589" LogicalName="DeploymentType_0a81f2eb-65e8-496b-83fc-96d0388d6d69" Version="1">
+    <Title ResourceId="Res_2110917655">myOperations Portal - Windows Installer (*.msi file)</Title>
+    <DeploymentTechnology>GLOBAL/MSIDeploymentTechnology</DeploymentTechnology>
+    <Technology>MSI</Technology>
+    <Hosting>Native</Hosting>
+    <Installer Technology="MSI">
+      <ExecutionContext>System</ExecutionContext>
+      <Contents>
+        <Content ContentId="Content_16c90ea8-95ca-49ca-900e-551d1766c663" Version="1">
+          <File Name="myoperations Portal PM 3.32.0.201.msi" Size="287998242" />
+          <Location>\\T00-MYOPS-SCCM\Applications\</Location>
+          <PeerCache>true</PeerCache>
+          <OnFastNetwork>Download</OnFastNetwork>
+          <OnSlowNetwork>DoNothing</OnSlowNetwork>
+        </Content>
+      </Contents>
+      <DetectAction>
+        <Provider>MSI</Provider>
+        <Args>
+          <Arg Name="ExecutionContext" Type="String">System</Arg>
+          <Arg Name="ProductCode" Type="String">{E93F63E7-1691-4600-889C-738CC8265F97}</Arg>
+          <Arg Name="PackageCode" Type="String" />
+          <Arg Name="PatchCodes" Type="String[]" />
+        </Args>
+      </DetectAction>
+      <InstallAction>
+        <Provider>MSI</Provider>
+        <Args>
+          <Arg Name="InstallCommandLine" Type="String">msiexec /i "myoperations Portal PM 3.32.0.201.msi" /q</Arg>
+          <Arg Name="WorkingDirectory" Type="String" />
+          <Arg Name="ExecutionContext" Type="String">System</Arg>
+          <Arg Name="RequiresLogOn" Type="String" />
+          <Arg Name="RequiresElevatedRights" Type="Boolean">false</Arg>
+          <Arg Name="RequiresUserInteraction" Type="Boolean">false</Arg>
+          <Arg Name="RequiresReboot" Type="Boolean">false</Arg>
+          <Arg Name="UserInteractionMode" Type="String">Hidden</Arg>
+          <Arg Name="PostInstallBehavior" Type="String">BasedOnExitCode</Arg>
+          <Arg Name="ExecuteTime" Type="Int32">0</Arg>
+          <Arg Name="MaxExecuteTime" Type="Int32">120</Arg>
+          <Arg Name="RunAs32Bit" Type="Boolean">false</Arg>
+          <Arg Name="SuccessExitCodes" Type="Int32[]">
+            <Item>0</Item>
+            <Item>1707</Item>
+          </Arg>
+          <Arg Name="RebootExitCodes" Type="Int32[]">
+            <Item>3010</Item>
+          </Arg>
+          <Arg Name="HardRebootExitCodes" Type="Int32[]">
+            <Item>1641</Item>
+          </Arg>
+          <Arg Name="FastRetryExitCodes" Type="Int32[]">
+            <Item>1618</Item>
+          </Arg>
+        </Args>
+        <Contents>
+          <Content ContentId="Content_16c90ea8-95ca-49ca-900e-551d1766c663" Version="1" />
+        </Contents>
+      </InstallAction>
+      <UninstallAction>
+        <Provider>MSI</Provider>
+        <Args>
+          <Arg Name="InstallCommandLine" Type="String">msiexec /x {E93F63E7-1691-4600-889C-738CC8265F97} /q</Arg>
+          <Arg Name="WorkingDirectory" Type="String" />
+          <Arg Name="ExecutionContext" Type="String">System</Arg>
+          <Arg Name="RequiresLogOn" Type="String" />
+          <Arg Name="RequiresElevatedRights" Type="Boolean">false</Arg>
+          <Arg Name="RequiresUserInteraction" Type="Boolean">false</Arg>
+          <Arg Name="RequiresReboot" Type="Boolean">false</Arg>
+          <Arg Name="UserInteractionMode" Type="String">Hidden</Arg>
+          <Arg Name="PostInstallBehavior" Type="String">BasedOnExitCode</Arg>
+          <Arg Name="ExecuteTime" Type="Int32">0</Arg>
+          <Arg Name="MaxExecuteTime" Type="Int32">120</Arg>
+          <Arg Name="RunAs32Bit" Type="Boolean">false</Arg>
+          <Arg Name="SuccessExitCodes" Type="Int32[]">
+            <Item>0</Item>
+            <Item>1707</Item>
+          </Arg>
+          <Arg Name="RebootExitCodes" Type="Int32[]">
+            <Item>3010</Item>
+          </Arg>
+          <Arg Name="HardRebootExitCodes" Type="Int32[]">
+            <Item>1641</Item>
+          </Arg>
+          <Arg Name="FastRetryExitCodes" Type="Int32[]">
+            <Item>1618</Item>
+          </Arg>
+        </Args>
+        <Contents>
+          <Content ContentId="Content_16c90ea8-95ca-49ca-900e-551d1766c663" Version="1" />
+        </Contents>
+      </UninstallAction>
+      <CustomData>
+        <DetectionMethod>ProductCode</DetectionMethod>
+        <ProductCode>{E93F63E7-1691-4600-889C-738CC8265F97}</ProductCode>
+        <ProductVersion>3.32.0</ProductVersion>
+        <InstallCommandLine>msiexec /i "myoperations Portal PM 3.32.0.201.msi" /q</InstallCommandLine>
+        <InstallContent ContentId="Content_16c90ea8-95ca-49ca-900e-551d1766c663" Version="1" />
+        <UninstallSetting>SameAsInstall</UninstallSetting>
+        <UninstallCommandLine>msiexec /x {E93F63E7-1691-4600-889C-738CC8265F97} /q</UninstallCommandLine>
+        <ExitCodes>
+          <ExitCode Code="0" Class="Success" />
+          <ExitCode Code="1707" Class="Success" />
+          <ExitCode Code="3010" Class="SoftReboot" />
+          <ExitCode Code="1641" Class="HardReboot" />
+          <ExitCode Code="1618" Class="FastRetry" />
+        </ExitCodes>
+        <UserInteractionMode>Hidden</UserInteractionMode>
+        <UserInstall>true</UserInstall>
+      </CustomData>
+    </Installer>
+  </DeploymentType>
+</AppMgmtDigest>
