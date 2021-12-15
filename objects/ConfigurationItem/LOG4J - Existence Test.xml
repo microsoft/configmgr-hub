@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_FB9351DD-A95A-4BAC-922A-AA8CA356A135" LogicalName="OperatingSystem_51ba8b16-6ff9-45cf-a312-d5193daab776" Version="1">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="LOG4J - Existence Test" ResourceId="ID-270501d1-0a76-4706-9953-2f1b04ddb4f7" />
+      <Description Text="This Configuration Item tests the existence of files with LOG4J*.JAR on the machine." ResourceId="ID-b605e621-e5b6-497d-849e-a77209391af7" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_761a5df0-093a-4d3b-9457-39a987ba6270" DataType="String">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="LOG4J - Existence Script Test" ResourceId="ID-9300e6ff-4be3-46c9-a237-f133c383c001" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">$i = 0
+$drives = Get-CimInstance Win32_LogicalDisk | Where-Object DriveType -EQ 3 | Select-Object -ExpandProperty DeviceID
+$searchString = "log4j*.jar"
+Foreach ($drive in $drives) {
+    Foreach ($drive in $drives) {
+        $riskyFiles = $null
+        $riskyFiles = (&amp;cmd /c robocopy /l $(($drive) + '\') null "$searchString" /ns /njh /njs /np /nc /ndl /xjd /mt /s).trim() | Where-Object { $_ -ne "" }
+        if ($riskyFiles) {
+            Foreach ($riskyFile in $riskyFiles) {
+                    $i++
+            }
+        }
+    }
+}
+
+If ($i -ge 1) { 
+    Write-Host "Vulnerable"
+}
+Else { 
+    Write-Host "Compliant"
+}</DiscoveryScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_2a3a88c0-3a64-4530-b57d-df17a7f6aeaf" Severity="Warning" NonCompliantWhenSettingIsNotFound="true">
+        <Annotation>
+          <DisplayName Text="LOG4J*.JAR - Existence Compliance Rule" ResourceId="ID-28b84e14-8585-4ccf-bfc5-2fdc8f9b80db" />
+          <Description Text="If Compliant is returned no instances of the LOGJ*.JAR was found. If any file was found we will set a warning on the CI." ResourceId="ID-57e28e66-fded-4beb-a447-f4c7f46b2f51" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_FB9351DD-A95A-4BAC-922A-AA8CA356A135" LogicalName="OperatingSystem_51ba8b16-6ff9-45cf-a312-d5193daab776" Version="1" DataType="String" SettingLogicalName="ScriptSetting_761a5df0-093a-4d3b-9457-39a987ba6270" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="Compliant" DataType="String" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
