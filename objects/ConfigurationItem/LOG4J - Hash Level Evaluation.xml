@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_FB9351DD-A95A-4BAC-922A-AA8CA356A135" LogicalName="OperatingSystem_b67429bf-b9ba-4687-8ff3-d9dee686e051" Version="1">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="LOG4J - Hash Level Evaluation" ResourceId="ID-eb737aeb-aaa8-4221-b945-f10beef33280" />
+      <Description Text="This Compliance Item searches for all instances of the LOG4J*.jar file and evaluates if the file is on the known bad list of MD5 hashes as of December 15, 2021" ResourceId="ID-922738d3-df7a-45f4-b136-c311581a1175" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_ed5f6a79-6d61-4204-8c8a-69ac7dd81127" DataType="String">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="LOG4J - Hash Level Script" ResourceId="ID-cdc1bf72-92d9-48de-8438-0ca4e6b2de0b" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">$hashesToCompare = @('2addabe2ceca2145955c02a6182f7fc5',
+    '5b1d4e4eea828a724c8b0237326829b3',
+    'ce9e9a27c2a5caa47754999eb9c549b8',
+    '1538d8c342e3e2a31cd16e01e3865276',
+    '9cb138881a317a7f49c74c3e462f35f4',
+    '578ffc5bcccb29f6be2d23176c0425e0',
+    '5b73a0ad257c57e7441778edee4620a7',
+    'e32489039dab38637557882cca0653d7',
+    'db025370dbe801ac623382edb2336ede',
+    '152ecb3ce094ac5bc9ea39d6122e2814',
+    'cd70a1888ecdd311c1990e784867ce1e',
+    '088df113ad249ab72bf19b7f00b863d5',
+    'de8d01cc15fd0c74fea8bbb668e289f5',
+    'fbfa5f33ab4b29a6fdd52473ee7b834d',
+    '8c0cf3eb047154a4f8e16daf5a209319',
+    '8d331544b2e7b20ad166debca2550d73',
+    '5e4bca5ed20b94ab19bb65836da93f96',
+    '110ab3e3e4f3780921e8ee5dde3373ad',
+    '0079c907230659968f0fc0e41a6abcf9',
+    'f0c43adaca2afc71c6cc80f851b38818',
+    'dd0e3e0b404083ec69618aabb50b8ac0',
+    '5523f144faef2bfca08a3ca8b2becd6a',
+    '48f7f3cda53030a87e8c387d8d1e4265',
+    '472c8e1fbaa0e61520e025c255b5d168',
+    '2b63e0e5063fdaccf669a1e26384f3fd',
+    'c6d233bc8e9cfe5da690059d27d9f88f',
+    '547bb3ed2deb856d0e3bbd77c27b9625',
+    '4a5177a172764bda6f4472b94ba17ccb',
+    'a27e67868b69b7223576d6e8511659dd',
+    'a3a6bc23ffc5615efcb637e9fd8be7ec',
+    '0042e7de635dc1c6c0c5a1ebd2c1c416',
+    '90c12763ac2a49966dbb9a6d98be361d',
+    '71d3394226547d81d1bf6373a5b0e53a',
+    '8da9b75725fb3357cb9872adf7711f9f',
+    '7943c49b634b404144557181f550a59c',
+    'df949e7d73479ab717e5770814de0ae9',
+    '2803991d51c98421be35d2db4ed3c2ac',
+    '5ff1dab00c278ab8c7d46aadc60b4074',
+    'b8e0d2779abbf38586b869f8b8e2eb46',
+    '46e660d79456e6f751c22b94976f6ad5',
+    '62ad26fbfb783183663ba5bfdbfb5ace',
+    '3570d00d9ceb3ca645d6927f15c03a62',
+    'f5e2d2a9543ee3c4339b6f90b6cb01fc')
+
+
+$i = 0
+$drives = Get-CimInstance Win32_LogicalDisk | Where-Object DriveType -EQ 3 | Select-Object -ExpandProperty DeviceID
+
+$searchString = "log4j*.jar"
+Foreach ($drive in $drives) {
+    Foreach ($drive in $drives) {
+        $riskyFiles = $null
+        $riskyFiles = (&amp;cmd /c robocopy /l $(($drive) + '\') null "$searchString" /ns /njh /njs /np /nc /ndl /xjd /mt /s).trim() | Where-Object { $_ -ne "" }
+        if ($riskyFiles) {
+            Foreach ($riskyFile in $riskyFiles) {
+                $file = Get-FileHash -Path $riskyFile -Algorithm MD5
+                if ($file.Hash -in $hashesToCompare) {
+                    $result = [ordered]@{
+                        filePath  = $riskyFile
+                        fileHash  = $file.Hash
+                        detectoid = $($hashesToCompare | Where-Object { $_ -eq $file.Hash })
+                    }
+                    $i++
+                }
+            }
+        }
+    }
+}
+
+If ($i -ge 1) { 
+    Write-Host "Vulnerable"
+}
+Else { 
+    Write-Host "Compliant"
+}</DiscoveryScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_31d9e531-6066-4032-a9f3-963a8c639378" Severity="Critical" NonCompliantWhenSettingIsNotFound="true">
+        <Annotation>
+          <DisplayName Text="LOG4J - Compliance Rule" ResourceId="ID-29eefd23-5950-43bf-84ff-cc0fc7d467a9" />
+          <Description Text="Compliance Condition for the LOG4J Hash Check Script" ResourceId="ID-2f1720c5-75d7-4b9b-b675-e8fbfd2663b1" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_FB9351DD-A95A-4BAC-922A-AA8CA356A135" LogicalName="OperatingSystem_b67429bf-b9ba-4687-8ff3-d9dee686e051" Version="1" DataType="String" SettingLogicalName="ScriptSetting_ed5f6a79-6d61-4204-8c8a-69ac7dd81127" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="Compliant" DataType="String" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
