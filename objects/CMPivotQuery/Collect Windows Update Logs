@@ -1,0 +1,1 @@
+WinEvent('Microsoft-Windows-WindowsUpdateClient/Operational', 1d)
