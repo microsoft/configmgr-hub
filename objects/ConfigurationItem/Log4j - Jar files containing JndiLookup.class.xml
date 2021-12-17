@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_BD64A218-4284-4E88-B527-F292AD6E0935" LogicalName="OperatingSystem_6ab87596-417c-4776-8675-045b6f9daff8" Version="1">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Log4j - Jar files containing JndiLookup.class" ResourceId="ID-3e1d970e-d03f-4bf5-bb16-47201dc0c4d0" />
+      <Description Text="This CI searches for all jar-files on a system that contains the string JndiLookup, the class which contains the potentially vulnerable Log4j vulnerability" ResourceId="ID-8fd8f263-f74b-400a-bfc3-e3cdb4831558" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_81b32af5-4aa7-4062-8db2-22c618663be5" DataType="String">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Log4j - JndiLookup.class" ResourceId="ID-7495ebb2-14d5-4aef-901e-7e49f459bcd5" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">$searchName = "*.jar"
+$drives = Get-WmiObject Win32_LogicalDisk -Filter 'DriveType=3' | Select -ExpandProperty DeviceID
+
+$jarfiles = $null
+$jarfiles = @()
+
+$i = 0
+Foreach ($drive in $drives) {
+    $searchDir = "$drive\"
+    $jars= (&amp;cmd /c pushd $searchDir `&amp; robocopy /l "$searchDir" null "$searchName" /ns /njh /njs /np /nc /ndl /xjd /mt /s).trim() -ne ''
+
+
+    Foreach ($jar in $jars){
+        If($jar) {
+            If(($jar).StartsWith($drive)){
+               $jarfiles += $jar
+            }
+        }
+    }
+}
+
+Foreach($jarfile in $jarfiles){
+    try{
+        $jndiString = $null
+        $jndiString = get-childitem $jarfile | select-string "JndiLookup.class" |select -expand Path
+        if($jndiString)
+        {
+            $i++ #increase $i to instruct CM that file containing the class is found is found
+        }
+    }
+    catch {}
+}
+
+If ($i -ge 1){ "Noncompliant" }
+Else { "Compliant" }</DiscoveryScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_4470fa02-a4b7-4096-a9b1-5ec9b855548a" Severity="Warning" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="JndiLookup.class_Compliance" ResourceId="ID-c71ef08e-93f3-47bb-8dfd-691ef74dc3dc" />
+          <Description Text="If a jar-file containing the JndiLookup.class is found  this is reported as a warning" ResourceId="ID-5f70ffae-4ed3-43be-bbd9-25b23cdfabab" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_BD64A218-4284-4E88-B527-F292AD6E0935" LogicalName="OperatingSystem_6ab87596-417c-4776-8675-045b6f9daff8" Version="1" DataType="String" SettingLogicalName="ScriptSetting_81b32af5-4aa7-4062-8db2-22c618663be5" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="Compliant" DataType="String" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
