@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_BD64A218-4284-4E88-B527-F292AD6E0935" LogicalName="OperatingSystem_eb459b71-3e53-4a5c-8dcc-3fde15970d5d" Version="2">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Check if file exists (Log4j)" ResourceId="ID-31dc7c57-f186-4a82-a001-87c0c15838ab" />
+      <Description Text="This CI checks for the existence of file specified in the value $searchName (in this example it is searching for &quot;log4j-core-*.jar&quot; but can be changed to any value.&#xA;This works with Powershell 2.0 and above and uses robocopy for increased speed." ResourceId="ID-fcf63fa4-15bd-4926-82cd-690df25f35bb" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_8b4c921c-c3d9-4a34-ae51-0faba07bd573" DataType="String">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Check if file exists" ResourceId="ID-b585d558-4e56-4f85-98da-6781f9758b54" />
+            <Description Text="Check if file exists, update $searchName to seach for another file, update searchDir to limit the search to specific subdirs." ResourceId="ID-5aaa5cb8-f1a6-406b-8a7a-a3730dcb461e" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">$searchName = "log4j-core-*.jar"
+$drives = Get-WmiObject Win32_LogicalDisk -Filter 'DriveType=3' | Select -ExpandProperty DeviceID
+
+$i = 0
+Foreach ($drive in $drives) {
+    $searchDir = "$drive\"
+    $jars= (&amp;cmd /c pushd $searchDir `&amp; robocopy /l "$searchDir" null "$searchName" /ns /njh /njs /np /nc /ndl /xjd /mt /s).trim() -ne ''
+        
+    
+    Foreach ($jar in $jars){
+        If($jar) {
+            If(($jar).StartsWith($drive)){
+                $i++    #increase $i to instruct CM that file is found
+            }
+        }
+    }
+}
+
+If ($i -ge 1){ "Noncompliant" }
+Else { "Compliant" }</DiscoveryScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_9f197068-b53e-49d7-9f03-7abf49a93efc" Severity="Warning" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="File_exist compliance" ResourceId="ID-dcf140ff-565f-4017-89c0-9331ee8f8ca8" />
+          <Description Text="Compliant if no matching file was found, otherwise report warning." ResourceId="ID-aaab2a7e-d3d2-4f1b-9e97-bc9778a65b76" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_BD64A218-4284-4E88-B527-F292AD6E0935" LogicalName="OperatingSystem_eb459b71-3e53-4a5c-8dcc-3fde15970d5d" Version="2" DataType="String" SettingLogicalName="ScriptSetting_8b4c921c-c3d9-4a34-ae51-0faba07bd573" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="Compliant" DataType="String" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_XP_Professional" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_XP" />
+          <RuleExpression RuleId="Windows/x64_Windows_XP_Professional_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_XP_Professional_Service_Pack_3" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Vista" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Vista" />
+          <RuleExpression RuleId="Windows/x64_Windows_Vista_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_Vista_SP2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/x64_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/x64_Windows_7_SP1" />
+          <RuleExpression RuleId="Windows/x86_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/x86_Windows_7_SP1" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_8_Client" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_8_Client" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_8.1_Client" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_8.1_Client" />
+          <RuleExpression RuleId="Windows/All_ARM64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_MultiSession_Enterprise_Windows_10_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2003_Non_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2003_R2" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Server_2003_Non_R2" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Server_2003_R2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2003_R2_SP2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2003_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_Server_2003_R2_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_Server_2003_SP2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2008" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2008_R2" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Server_2008" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_CORE" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_SP1" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_SP1_Core" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_SP2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_SP2_Core" />
+          <RuleExpression RuleId="Windows/x86_Windows_Server_2008_SP2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_8" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2012_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2016" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2019_and_higher" />
+          <RuleExpression RuleId="Windows/All_Embedded_Windows_XP" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Embedded_8.1_Industry" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Embedded_8_Industry" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Embedded_8_Standard" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Embedded_8.1_Industry" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Embedded_8_Industry" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Embedded_8_Standard" />
+          <RuleExpression RuleId="Windows/x64_Embedded_Windows_7" />
+          <RuleExpression RuleId="Windows/x86_Embedded_Windows_7" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2022_and_higher" />
+          <RuleExpression RuleId="Windows/All_ARM64_Windows_11_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_MultiSession_Enterprise_Windows_11_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_11_and_higher_Clients" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
