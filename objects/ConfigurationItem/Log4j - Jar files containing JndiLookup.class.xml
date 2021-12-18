@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-16"?>
 <DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
   <!--Authored against the following schema version: 5-->
-  <OperatingSystem AuthoringScopeId="ScopeId_BD64A218-4284-4E88-B527-F292AD6E0935" LogicalName="OperatingSystem_6ab87596-417c-4776-8675-045b6f9daff8" Version="1">
+  <OperatingSystem AuthoringScopeId="ScopeId_BD64A218-4284-4E88-B527-F292AD6E0935" LogicalName="OperatingSystem_6ab87596-417c-4776-8675-045b6f9daff8" Version="2">
     <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
       <DisplayName Text="Log4j - Jar files containing JndiLookup.class" ResourceId="ID-3e1d970e-d03f-4bf5-bb16-47201dc0c4d0" />
       <Description Text="This CI searches for all jar-files on a system that contains the string JndiLookup, the class which contains the potentially vulnerable Log4j vulnerability" ResourceId="ID-8fd8f263-f74b-400a-bfc3-e3cdb4831558" />
@@ -26,7 +26,7 @@ $jarfiles = @()
 $i = 0
 Foreach ($drive in $drives) {
     $searchDir = "$drive\"
-    $jars= (&amp;cmd /c pushd $searchDir `&amp; robocopy /l "$searchDir" null "$searchName" /ns /njh /njs /np /nc /ndl /xjd /mt /s).trim() -ne ''
+    $jars= (&amp;cmd /c pushd $searchDir `&amp; robocopy /l "$searchDir" null "$searchName" /ns /njh /njs /np /nc /ndl /xjd /mt /s) -replace '^\s+|\s+$'
 
 
     Foreach ($jar in $jars){
@@ -65,7 +65,7 @@ Else { "Compliant" }</DiscoveryScriptBody>
         <Expression>
           <Operator>Equals</Operator>
           <Operands>
-            <SettingReference AuthoringScopeId="ScopeId_BD64A218-4284-4E88-B527-F292AD6E0935" LogicalName="OperatingSystem_6ab87596-417c-4776-8675-045b6f9daff8" Version="1" DataType="String" SettingLogicalName="ScriptSetting_81b32af5-4aa7-4062-8db2-22c618663be5" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <SettingReference AuthoringScopeId="ScopeId_BD64A218-4284-4E88-B527-F292AD6E0935" LogicalName="OperatingSystem_6ab87596-417c-4776-8675-045b6f9daff8" Version="2" DataType="String" SettingLogicalName="ScriptSetting_81b32af5-4aa7-4062-8db2-22c618663be5" SettingSourceType="Script" Method="Value" Changeable="false" />
             <ConstantValue Value="Compliant" DataType="String" />
           </Operands>
         </Expression>
@@ -75,7 +75,63 @@ Else { "Compliant" }</DiscoveryScriptBody>
       <OperatingSystemExpression>
         <Operator>OneOf</Operator>
         <Operands>
-          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_XP_Professional" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_XP" />
+          <RuleExpression RuleId="Windows/x64_Windows_XP_Professional_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_XP_Professional_Service_Pack_3" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Vista" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Vista" />
+          <RuleExpression RuleId="Windows/x64_Windows_Vista_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_Vista_SP2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/x64_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/x64_Windows_7_SP1" />
+          <RuleExpression RuleId="Windows/x86_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/x86_Windows_7_SP1" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_8_Client" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_8_Client" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_8.1_Client" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_8.1_Client" />
+          <RuleExpression RuleId="Windows/All_ARM64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_MultiSession_Enterprise_Windows_10_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2003_Non_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2003_R2" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Server_2003_Non_R2" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Server_2003_R2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2003_R2_SP2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2003_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_Server_2003_R2_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_Server_2003_SP2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2008" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2008_R2" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Server_2008" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_CORE" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_SP1" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_SP1_Core" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_SP2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_SP2_Core" />
+          <RuleExpression RuleId="Windows/x86_Windows_Server_2008_SP2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_8" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2012_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2016" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2019_and_higher" />
+          <RuleExpression RuleId="Windows/All_Embedded_Windows_XP" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Embedded_8.1_Industry" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Embedded_8_Industry" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Embedded_8_Standard" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Embedded_8.1_Industry" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Embedded_8_Industry" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Embedded_8_Standard" />
+          <RuleExpression RuleId="Windows/x64_Embedded_Windows_7" />
+          <RuleExpression RuleId="Windows/x86_Embedded_Windows_7" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2022_and_higher" />
+          <RuleExpression RuleId="Windows/All_ARM64_Windows_11_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_MultiSession_Enterprise_Windows_11_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_11_and_higher_Clients" />
         </Operands>
       </OperatingSystemExpression>
     </OperatingSystemDiscoveryRule>
