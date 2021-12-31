@@ -1,4 +1,4 @@
 Registry('hklm:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion') | where Property == 'ReleaseID'
 | join kind=leftouter (Registry('hklm:\\SOFTWARE\\Microsoft\\Internet Explorer\\WMITelemetry')) 
 | where isnull(Value1)
-| project device, Property
+| project Device,Property,Value
