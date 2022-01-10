@@ -19,7 +19,7 @@ steps:
       packageType: 'nuget'
       feed: '529bf55b-43ce-4ca9-a3fd-3c4ed16e057e/16e32dcf-19b6-4e02-b265-9d7f350b9d17'
       definition: 'e3212b3d-265a-4313-a777-8700eb28cc56'
-      version: '5.2111.1040.1000'
+      version: '5.2203.1030.1000'
       downloadPath: '$(System.ArtifactsDirectory)'
 
   - task: PowerShell@2
@@ -27,7 +27,7 @@ steps:
     inputs:
       filePath: '$(System.ArtifactsDirectory)\scripts\Extensiondownloader.ps1'
       failOnStderr: true
-      workingDirectory: '$(Build.SourcesDirectory)\objects'
+      workingDirectory: '$(Build.SourcesDirectory)'
 
   - powershell: 'get-childitem env:'
     displayName: "Print variables"
@@ -48,7 +48,7 @@ steps:
     displayName: 'Run PoliCheck'
     inputs:
       targetType: F
-      targetArgument: '$(Build.SourcesDirectory)\objects'
+      targetArgument: '$(Build.SourcesDirectory)'
     continueOnError: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
@@ -67,6 +67,15 @@ steps:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-codesignvalidation.CodeSign@1
     inputs:
       Path: '$(Build.SourcesDirectory)\objects\ConsoleExtension'
+      verboseOutput: true
+      PolicyType: 'Custom'
+      PolicyFile: '$(codeSignPolicyFile)'
+      ExcludePassesFromLog: false
+      FailIfNoTargetsFound: 'false'
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-codesignvalidation.CodeSign@1
+    inputs:
+      Path: '$(Build.SourcesDirectory)\Communityhub\ConsoleExtension'
       verboseOutput: true
       PolicyType: 'Custom'
       PolicyFile: '$(codeSignPolicyFile)'
