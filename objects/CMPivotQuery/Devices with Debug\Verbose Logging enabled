@@ -1,0 +1,3 @@
+ClientDiagnostics
+| where DebugLoggingEnabled == 'True'
+
