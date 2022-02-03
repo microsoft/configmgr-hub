@@ -1,3 +1,2 @@
 ClientDiagnostics
 | where DebugLoggingEnabled == 'True'
-
