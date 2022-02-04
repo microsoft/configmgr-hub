@@ -1,6 +1,7 @@
 {
-  "downloadLocation": "https://www.squadratechnologies.com/StaticContent/ProductDownload/secRMM/9.11.0.0/secRMMConfigMgrConsoleExtension_9_11_5_0.cab",
-  "FileHash": "C19CC4150B6FC32C20ABE2B49507CABFAF0EB0146CD7353B110F074BBC415079",
+  "downloadLocation": "https://www.squadratechnologies.com/StaticContent/ProductDownload/secRMM/9.11.0.0/secRMMConfigMgrConsoleExtension_9_11_8_0.cab",
+  "FileHash": "630ABA9833939A2225D0A526C826AF6FC92778BF4B9DEF7FEB962D6A2110A55D",
   "HashAlgorithm": "SHA256",
-  "codeSignPolicyFile": "Removable Media Security (secRMM) ConfigMgr console extension-CodeSign-Policy.xml"
+  "codeSignPolicyFile": "Removable Media Security (secRMM) ConfigMgr console extension-CodeSign-Policy.xml",
+  "Version": "9.11.8.0"
 }
