@@ -1,0 +1,5 @@
+ComputerSystem
+| distinct Device, Model
+| join Bios
+| project Model, SMBIOSBIOSVersion
+| summarize count() by SMBIOSBIOSVersion, Model
