@@ -1,0 +1,10 @@
+Registry('HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\TargetVersionUpgradeExperienceIndicators\\CO21H2') | where Property == 'UpgEx' and Value contains 'Red'
+| join
+Registry('HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\TargetVersionUpgradeExperienceIndicators\\CO21H2') | where Property1 == 'RedReason' 
+| join
+Registry('HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\TargetVersionUpgradeExperienceIndicators\\CO21H2') | where Property2 == 'GatedBlockId' 
+| join
+Registry('HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\TargetVersionUpgradeExperienceIndicators\\CO21H2') | where Property3 == 'GatedBlockReason' 
+| project Device, Property, Value, Property1, Value1, Property2, Value2, Property3, Value3, Key
+| order by Device asc
+
