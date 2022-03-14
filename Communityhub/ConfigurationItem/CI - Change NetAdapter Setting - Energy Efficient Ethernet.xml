@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_80649890-d587-4ac2-b159-36ef07efc0c9" Version="1" ConfigurationFlags="256">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="CI - Change NetAdapter Setting - Energy Efficient Ethernet" ResourceId="ID-e66381e3-530f-489e-b5fe-5b2a93f61d20" />
+      <Description Text="Configuration item to disable &quot;Energy Efficient Ethernet&quot;" ResourceId="ID-a63e7cc9-f892-40cf-afbf-c1f94e932833" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_cef69382-a361-46ab-9b07-11242aac6d30" DataType="String">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="NetAdapter - Energy Efficient Ethernet" ResourceId="ID-62171ae3-57b1-4b29-b347-f989c828a115" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">$SettingDisplayName = 'Energy Efficient Ethernet'
+$RegistryValue = '1'
+$RegistryValue = Get-NetAdapterAdvancedProperty | Where ({$_.DisplayName -eq "$SettingDisplayName" -and $_.RegistryValue -eq $RegistryValue}) | Select -ExpandProperty RegistryValue
+If([string]::IsNullOrEmpty($RegistryValue)){
+    Write-Output 0
+    break
+}
+Switch($RegistryValue){
+    "1" {Write-Output 1}
+    "0" {Write-Output 0}
+}</DiscoveryScriptBody>
+            <RemediationScriptBody ScriptType="PowerShell">$SettingDisplayName = 'Energy Efficient Ethernet'
+$GetRegistryValue = '1'
+$SetRegistryValue = '0'
+$AdaptersWithEEEActive = Get-NetAdapterAdvancedProperty | Where ({$_.DisplayName -eq "$SettingDisplayName" -and $_.RegistryValue -eq $GetRegistryValue}) | Select -ExpandProperty Name
+Foreach($Adapter in $AdaptersWithEEEActive){
+    set-NetAdapterAdvancedProperty -Name $Adapter -DisplayName $SettingDisplayName -RegistryValue $SetRegistryValue
+}</RemediationScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_80741207-2b69-4683-8a72-71fbdc110d41" Severity="Informational" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="Check if EEE is Disable (0)" ResourceId="ID-8a17fdab-01a2-4ba5-ba5d-3e3f704af0e1" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_80649890-d587-4ac2-b159-36ef07efc0c9" Version="1" DataType="String" SettingLogicalName="ScriptSetting_cef69382-a361-46ab-9b07-11242aac6d30" SettingSourceType="Script" Method="Value" Changeable="true" />
+            <ConstantValue Value="0" DataType="String" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
