@@ -1,0 +1,7 @@
+{
+  "downloadLocation": "https://releases.recastsoftware.com/releases/downloadcab/869",
+  "FileHash": "11D26C28613177EA91E500B00827CBA3A073A4A57B33840ADC787960D2C02813",
+  "HashAlgorithm": "SHA256",
+  "codeSignPolicyFile": "Right Click Tools-CodeSign-Policy.xml",
+  "Version": "4.8.2204.501"
+}
