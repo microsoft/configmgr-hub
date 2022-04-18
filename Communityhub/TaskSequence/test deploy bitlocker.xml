@@ -1,0 +1,13 @@
+<sequence version="3.10">
+  <step type="SMS_TaskSequence_EnableBitLockerAction" name="Enable BitLocker" description="" runIn="FullOS" successCodeList="0" retryCount="0" runFromNet="false">
+    <action>OSDBitLocker.exe /enable  /wait:True /mode:TPM /pwd:AD /full:False /crypt:0 /ignoretpm:False</action>
+    <defaultVarList>
+      <variable name="OSDBitLockerCreateRecoveryPassword" property="CreateRecoveryPassword" hidden="true">AD</variable>
+      <variable name="OSDBitLockerEncryptFullDisk" property="EncryptFullDisk" hidden="true">false</variable>
+      <variable name="OSDBitLockerEncryptMethod" property="EncryptMethod" hidden="true">0</variable>
+      <variable name="OSDBitLockerMode" property="Mode" hidden="true">TPM</variable>
+      <variable name="OSDBitLockerSkipWhenNoValidTPM" property="SkipWhenNoValidTPM" hidden="true">false</variable>
+      <variable name="OSDBitLockerWaitForEncryption" property="WaitForEncryption" hidden="true">true</variable>
+    </defaultVarList>
+  </step>
+</sequence>
