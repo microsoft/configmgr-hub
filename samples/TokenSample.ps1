@@ -1,24 +1,34 @@
 # The following sample shows how to request Azure AD user token using client app and a resource (server app).
-# Note: for testing purposes only to provide an example of requesting a user token. Do not include passwords in the automation scripts. 
-$clientId = "Application (client) ID" 
-$resource = "App ID URI-api://{tenantId}/{string}, for example, api://5e97358c-d99c-4558-af0c-de7774091dda/ConfigMgrService" 
-$tenantId = "Tenant ID GUID value" 
-$adminService = "https://<ProviderFQDN>/AdminService_TokenAuth/"
-$adalPath = "Microsoft.IdentityModel.Clients.ActiveDirectory DLL Path" 
-$username = "<user@domain.com>" (AAD cloud UPN, must match on-premises UPN of the admin account) 
-$password = "password"  
-$authority = 'https://login.windows.net/'+$tenantId 
-$adal = Join-Path $adalPath "Microsoft.IdentityModel.Clients.ActiveDirectory.dll" 
-[System.Reflection.Assembly]::LoadFrom($adal) | Out-Null 
-$userCredential = New-Object Microsoft.IdentityModel.Clients.ActiveDirectory.UserPasswordCredential -ArgumentList ($username, $password) 
-$authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority 
-$authResult = [Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContextIntegratedAuthExtensions]::AcquireTokenAsync($authContext,$resource,$clientId,$userCredential).Result 
-$token = $authResult.AccessToken 
 
-# Call admin service via powershell, can also do via Postman/Fiddler for same 
+# Install MSAL.NET or download the package at https://www.nuget.org/packages/Microsoft.Identity.Client/ and copy the binaries to the current folder
+Import-Module Microsoft.Identity.Client.dll
+
+# Define variables
+$clientId = "Application (client) ID" # Navigate to client app in Azure Portal and select Overview section to find application client id
+$tenantId = "tenant id" # Tenant or organization id is available on the same Overview page
+$redirectUri = "msalfclientApp://auth" # Under Authentication section of the client app, check one of the redirect URIs, save the app, and paste here 
+$resource = "api://tenantId/serverApp" # Navigate to server app and copy  Application ID URI from the Overview page
+
+# Derive variables
+$authority = "https://login.windows.net/"+$tenantid
+$scopes =  New-Object System.Collections.Generic.List[string]
+$scopes.Add($resource+"/.default")
+
+# Build MSAL application
+$app = [Microsoft.Identity.Client.PublicClientApplicationBuilder]::Create($clientId).WithAuthority($authority).WithRedirectUri($redirectUri).Build()
+$request = $app.AcquireTokenInteractive($scopes).WithPrompt([Microsoft.Identity.Client.Prompt]::ForceLogin)
+
+# Request the token and prompt the user for credentials
+$tokenResult = $request.ExecuteAsync().Result
+$token = $tokenResult.AccessToken
+
+# Invoke admin service
+$adminService = "https://Provider_FQDN/AdminService_TokenAuth/"
+$api = "v1.0/Device"
+
+$url = $adminService + $api
 $headers = @{ 
    "Authorization"="Bearer $token" 
    "Content-Type"="application/json" 
 } 
-$getcoll = $adminService + "<wmi or v1.0>/<Entity>" 
-Invoke-RestMethod -Uri $getcoll -Headers $headers
+Invoke-RestMethod -Uri $url -Headers $headers
