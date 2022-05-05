@@ -1,0 +1,7 @@
+{
+  "downloadLocation": "https://github.com/sihlamMSFT/testing/raw/master/recoveryKeyExtension.cab",
+  "FileHash": "32b34c18bc7033b6aeaaeb4180fe268397e9ff787b411b9e85671bf4c647bdcd",
+  "HashAlgorithm": "SHA256",
+  "codeSignPolicyFile": "Get BitLocker Recovery Key for a Device-CodeSign-Policy.xml",
+  "Version": "1.0"
+}
