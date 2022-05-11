@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_9820aef7-51d3-4fe6-8960-f972a464f986" Version="1">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="ATP onboarded" ResourceId="ID-8144905f-53ff-42b7-a281-e87e430d18a0" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="RegSetting_dc17de26-69d4-4873-95b9-9d42d60ccf7c" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="OnboardingState" ResourceId="ID-06142539-2c53-4a3f-b45a-e2b0dd4fba4a" />
+            <Description Text="" />
+          </Annotation>
+          <RegistryDiscoverySource Hive="HKEY_LOCAL_MACHINE" Depth="Base" Is64Bit="false" CreateMissingPath="true">
+            <Key>SOFTWARE\Microsoft\Windows Advanced Threat Protection\Status</Key>
+            <ValueName>OnboardingState</ValueName>
+          </RegistryDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_1807debe-0cc5-44cd-a76b-45c82c937cfa" Severity="Warning" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="OnboardingState must exist" ResourceId="ID-d7bdf533-cc2b-4ac1-a61e-d3e5123e9947" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>NotEquals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_9820aef7-51d3-4fe6-8960-f972a464f986" Version="1" DataType="Int64" SettingLogicalName="RegSetting_dc17de26-69d4-4873-95b9-9d42d60ccf7c" SettingSourceType="Registry" Method="Count" Changeable="false" />
+            <ConstantValue Value="0" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_20626bf7-e195-430b-bf3a-aa82014d1e1a" Severity="Warning" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="OnboardingState Equals 1" ResourceId="ID-a93bfdcf-8188-494f-a557-3da04fd81254" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_9820aef7-51d3-4fe6-8960-f972a464f986" Version="1" DataType="Int64" SettingLogicalName="RegSetting_dc17de26-69d4-4873-95b9-9d42d60ccf7c" SettingSourceType="Registry" Method="Value" Changeable="false" />
+            <ConstantValue Value="1" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
