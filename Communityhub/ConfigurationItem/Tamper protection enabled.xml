@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_80970b98-cc24-4bf7-b320-6d9038d31d0f" Version="2">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Tamper protection enabled" ResourceId="ID-6d6a078d-4838-4c8c-b7bb-75d368b64763" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_75f56b9f-b96c-41a6-9c02-ff9ef8849ebb" DataType="Boolean">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Tamper protection enabled" ResourceId="ID-7390c719-42f6-4d14-9930-45c27a4b8cb1" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">$TamperProtectionEnabled=(get-mpcomputerstatus).IsTamperProtected
+write-output $TamperProtectionEnabled</DiscoveryScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_6c5aaae2-b190-4c7b-beeb-67936b79cb4c" Severity="Warning" NonCompliantWhenSettingIsNotFound="true">
+        <Annotation>
+          <DisplayName Text="IsTamperProtected = true" ResourceId="ID-0cfb5f75-caa1-4cac-8958-77d015da1dc2" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_80970b98-cc24-4bf7-b320-6d9038d31d0f" Version="2" DataType="Boolean" SettingLogicalName="ScriptSetting_75f56b9f-b96c-41a6-9c02-ff9ef8849ebb" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="True" DataType="Boolean" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
