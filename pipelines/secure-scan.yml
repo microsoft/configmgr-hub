@@ -36,7 +36,7 @@ steps:
     displayName: 'Run ESRP Malware Scan'
     condition: and(succeeded(), eq(variables['codeSignEnabled'], 'true'))
     inputs:
-      ConnectedServiceName: 'ESRP Malware Scanning service connection'
+      ConnectedServiceName: 'ESRP Malware Scanning service connection (PROD)'
       FolderPath: '$(ESRPScanFolder)'
       Pattern: '*.*'
       Region: 'PuertoRico'
