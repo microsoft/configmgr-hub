@@ -1,6 +1,7 @@
 # The following sample shows how to request Azure AD user token using client app and a resource (server app).
 
 # Install MSAL.NET or download the package at https://www.nuget.org/packages/Microsoft.Identity.Client/ and copy the binaries to the current folder
+# Note: Last tested with version https://www.nuget.org/packages/Microsoft.Identity.Client/4.44.0
 Import-Module Microsoft.Identity.Client.dll
 
 # Define variables
