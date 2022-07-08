@@ -8,7 +8,7 @@ Import-Module Microsoft.Identity.Client.dll
 $clientId = "Application (client) ID" # Navigate to client app in Azure Portal and select Overview section to find application client id
 $tenantId = "tenant id" # Tenant or organization id is available on the same Overview page
 $redirectUri = "msalfclientApp://auth" # Under Authentication section of the client app, check one of the redirect URIs, save the app, and paste here 
-$resource = "api://tenantId/serverApp" # Navigate to server app and copy  Application ID URI from the Overview page
+$resource = "api://tenantId/serverApp" # Navigate to server app and copy Application ID URI from the Overview page
 
 # Derive variables
 $authority = "https://login.windows.net/"+$tenantid
