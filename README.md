@@ -1,5 +1,5 @@
 # Welcome to the ConfigMgr-Hub repo
-This repository is where reports, scripts, CMPivot queries, configuration items, applications, and other hub content for Microsoft Endpoint Configuration Manager are stored. Pull requests (PRs) to this repository should only be submitted using the Configuration Manager console using the instructions in this ReadMe file. For more information about using the hub, see [Configuration Manager Community hub documentation](https://docs.microsoft.com/mem/configmgr/core/servers/manage/community-hub).
+This repository is where reports, scripts, CMPivot queries, configuration items, applications, and other Community hub content for Microsoft Endpoint Configuration Manager are stored. Pull requests (PRs) to this repository should only be submitted using the Configuration Manager console using the instructions in this ReadMe file. For more information about using the hub, see [Configuration Manager Community hub documentation](https://docs.microsoft.com/mem/configmgr/core/servers/manage/community-hub).
 
 ## Contributor License Agreement
 
