@@ -1,13 +1,14 @@
 # The following sample shows how to request Azure AD user token using client app and a resource (server app).
 
 # Install MSAL.NET or download the package at https://www.nuget.org/packages/Microsoft.Identity.Client/ and copy the binaries to the current folder
+# Note: This was last tested with version https://www.nuget.org/packages/Microsoft.Identity.Client/4.44.0
 Import-Module Microsoft.Identity.Client.dll
 
 # Define variables
 $clientId = "Application (client) ID" # Navigate to client app in Azure Portal and select Overview section to find application client id
 $tenantId = "tenant id" # Tenant or organization id is available on the same Overview page
 $redirectUri = "msalfclientApp://auth" # Under Authentication section of the client app, check one of the redirect URIs, save the app, and paste here 
-$resource = "api://tenantId/serverApp" # Navigate to server app and copy  Application ID URI from the Overview page
+$resource = "api://tenantId/serverApp" # Navigate to server app and copy Application ID URI from the Overview page
 
 # Derive variables
 $authority = "https://login.windows.net/"+$tenantid
