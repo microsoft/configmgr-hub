@@ -1,0 +1,7 @@
+{
+  "downloadLocation": "https://github.com/kwygant/BDERCT/blob/main/Compiled%20Cab/BDERecoveryKeyUI.cab",
+  "FileHash": "91654F45F9AD0BB790996C7DA348BF74ED96B20A5EDB13A211BEAC31777C6792",
+  "HashAlgorithm": "SHA256",
+  "codeSignPolicyFile": "BitLocker Recovery Key UI-CodeSign-Policy.xml",
+  "Version": "1.0"
+}
