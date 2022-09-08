@@ -1,0 +1,3 @@
+Registry('hklm:\SOFTWARE\Microsoft\Windows NT\CurrentVersion')  
+| where Property == 'UBR' | project Device, UBR=Value
+| join (Registry('hklm:\SOFTWARE\Microsoft\Windows NT\CurrentVersion')  | where Property == 'ReleaseId' | project Device, ReleaseId=Value)
