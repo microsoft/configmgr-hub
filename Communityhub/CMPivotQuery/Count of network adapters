@@ -1,0 +1,17 @@
+SystemDevices
+| where (Name contains 'wireless' or Name contains 'GbE' or Name contains 'Ethernet')
+// Need to filter out multiple non-network adapter drivers
+| where Name !contains 'Manageability' and Name !contains 'Bluetooth' and Name !contains 'PROSet' and Name !contains 'Enumerator' 
+| where Name !contains 'Button' and Name !contains 'HID' and Name !contains 'iAP'
+// Drivername might contain numbers. Need to combine all similar drivernames
+| project NetAdapter=case(
+	Name contains 'Hyper-V Virtual Ethernet', 'Hyper-V Virtual Ethernet Adapter',
+	Name contains 'VMWare Virtual Ethernet', 'VMWare Virtual Ethernet Adapter',
+	Name contains 'Realtek USB GbE', 'Realtek USB GbE Family Controller',
+	Name contains 'Realtek PCIe GbE', 'Realtek PCIe GbE Family Controller',
+	Name contains 'I219-V', 'Intel Ethernet Connection I219-V',
+	Name contains 'I219-LM', 'Intel Ethernet Connection I219-LM',
+	Name)
+| summarize count() by NetAdapter
+| order by count_ desc
+	
