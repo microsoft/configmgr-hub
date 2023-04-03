@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_BD64A218-4284-4E88-B527-F292AD6E0935" LogicalName="OperatingSystem_fa49c73b-1ffb-4c23-8823-ee5dda6addb3" Version="2">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Log4j - Compliant versions of log4j*,jar" ResourceId="ID-ff739fb7-451c-4e6a-aa83-a9de07f18683" />
+      <Description Text="This CI searches all local drives for log4j*.jar files and checks the version for compliance. If version is below 2.17.0.0 it is marked as incompliant with a warning.&#xD;&#xA;This CI requires atleast .Net 4.5 and PS3.0 to be installed on the target machines." ResourceId="ID-56409223-5ba4-4e52-a310-e86b17017097" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_573ef5dc-fac7-4caa-aa3c-4302486ce033" DataType="String">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Log4j - Compliant version" ResourceId="ID-69bae671-03af-40d9-986a-0069a44c4a82" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell"># Created by Mattias Benninge @matbg on Twitter
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+$searchName = "log4j*.jar"
+$compliantMajorVersion = 2
+$compliantMinorVersion = 17
+$drives = Get-WmiObject Win32_LogicalDisk -Filter 'DriveType=3' | Select-Object -ExpandProperty DeviceID
+$jarfiles = $null
+$jarfiles = @()
+
+$i = 0
+Foreach ($drive in $drives) {
+    $searchDir = "$drive\"
+    $jars = (&amp; cmd /c pushd $searchDir `&amp; robocopy /l "$searchDir" null "$searchName" /ns /njh /njs /np /nc /ndl /xjd /mt /s) -replace '^\s+|\s+$'
+
+
+    Foreach ($jar in $jars) {
+        If ($jar) {
+            If (($jar).StartsWith($drive)) {
+                $jarfiles += $jar
+            }
+        }
+    }
+}
+
+Foreach ($jarfile in $jarfiles) {
+    $Majorver = $null ; $Minorver = $null
+    try {
+        $jndiString = $null
+        $ZipFile = [io.compression.zipfile]::OpenRead("$jarFile")
+        $jndiString = $ZipFile.Entries | Where-Object { $_.fullname -like "*jndiLookup.class" } # Credits to Jordan Benzing @JordanTheITguy on Twitter for the search Entris method
+        if ($jndiString) {
+            $Entry = $ZipFile.GetEntry("META-INF/MANIFEST.MF") # Credits to Mattias Cedervall @M_Cedervall on Twitter for the versioncontrol
+            if ($Entry -ne $null) {
+                $EntOpen = $Entry.Open()
+                $arr = [byte[]]::new($Entry.Length)
+                $null = $EntOpen.Read($arr, 0, $Entry.Length)
+                [string]$str = $([System.Text.Encoding]::UTF8.GetString($arr))
+                $str.Split("`n") | ForEach-Object -Process { if ($_ -match "Implementation-Version") { $ver = $_ -replace '^.*: ', '' } }
+                $ver = $ver.Replace("`r`n", "")
+                $ver = $ver -replace "`r", ""
+                $EntOpen.Close()
+                $ZipFile.Dispose()
+            }
+
+            $Majorver = ([version]$ver).Major
+            $Minorver = ([version]$ver).Minor
+        }
+    }
+    catch {}
+    
+    if (($Majorver -eq $compliantMajorVersion) -and ($Minorver -lt $compliantMinorVersion)) {
+        # $jarfile # Uncomment this line if you run the script manually and want the path to the vurnable file
+        $i++ #increase $i to instruct CM that a file containing the class with an incompliant version is found
+    }
+
+}
+If ($i -ge 1) { "Noncompliant" }
+Else { "Compliant" }</DiscoveryScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_a726dd1a-c175-42f6-a78e-29631341984a" Severity="Warning" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="Log4j - Compliant version rule" ResourceId="ID-7aded6ae-70c6-48f0-a71f-8564ffffa63a" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_BD64A218-4284-4E88-B527-F292AD6E0935" LogicalName="OperatingSystem_fa49c73b-1ffb-4c23-8823-ee5dda6addb3" Version="2" DataType="String" SettingLogicalName="ScriptSetting_573ef5dc-fac7-4caa-aa3c-4302486ce033" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="Compliant" DataType="String" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_8" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2012_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2016" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2019_and_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2022_and_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_11_and_higher_Clients" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
