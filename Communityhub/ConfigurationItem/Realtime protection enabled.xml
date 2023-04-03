@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_7baf15b9-5cac-452d-8e54-2f7397e89eb7" Version="1">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Realtime protection enabled" ResourceId="ID-ccc0f07e-86bb-4e3a-8995-e179553bcf70" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_77b34ebd-8f17-4730-ad4d-086ef3e4ad31" DataType="Boolean">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Realtime protection enabled" ResourceId="ID-d3049af7-e413-42c6-88d7-11eee81b3302" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">$RealTimeProtectionEnabled=(get-mpcomputerstatus).RealTimeProtectionEnabled
+write-output $RealTimeProtectionEnabled
+</DiscoveryScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_a9e6c855-87fc-4190-a387-3c19badc5166" Severity="Warning" NonCompliantWhenSettingIsNotFound="true">
+        <Annotation>
+          <DisplayName Text="RealTimeProtectionEnabled = true" ResourceId="ID-b1c991ca-8845-4869-9012-8bb60be14faf" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_7baf15b9-5cac-452d-8e54-2f7397e89eb7" Version="1" DataType="Boolean" SettingLogicalName="ScriptSetting_77b34ebd-8f17-4730-ad4d-086ef3e4ad31" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="True" DataType="Boolean" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
