@@ -1,0 +1,9 @@
+Registry('HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion') |
+where Property == 'ProductName'
+	and Value like '%Windows%' |
+join Registry('HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion') |
+where Property1 == 'CurrentBuild'
+	and Value1 != '' |
+join Registry('HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion') |
+where Property2 == 'UBR'
+	and Value2 != '' | project Device, Value1 = case (Value1 == '22000', 'Windows 11 Enterprise', 'Windows 10 Enterprise'), Value1, Value2 | order by Device asc
