@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_0947d6b8-914d-48eb-90df-b87f0ce99043" Version="2">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Current antivirus signatures" ResourceId="ID-ceb08b61-0973-4b9d-940b-59fc12368da5" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_3bdc5d73-85b6-4432-bbbb-a95a981863b7" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Antivirus signature age" ResourceId="ID-12203e3a-3895-4b15-8c85-e4d8a304fd00" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">$AntivirusSignatureAge=(get-mpcomputerstatus).AntivirusSignatureAge
+write-output $AntivirusSignatureAge</DiscoveryScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_4740583a-17eb-44ca-9eff-77611cad98c4" Severity="Critical" NonCompliantWhenSettingIsNotFound="true">
+        <Annotation>
+          <DisplayName Text="Antivirus signature age &lt; 3" ResourceId="ID-748c708f-129c-4259-aaac-b8c7555d2758" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>LessThan</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_0947d6b8-914d-48eb-90df-b87f0ce99043" Version="2" DataType="Int64" SettingLogicalName="ScriptSetting_3bdc5d73-85b6-4432-bbbb-a95a981863b7" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="3" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
