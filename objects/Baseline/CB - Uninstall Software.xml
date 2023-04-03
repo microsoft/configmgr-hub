@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <Baseline AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="Baseline_ac9287d9-1003-4b16-9735-1793be9c1829" Version="1">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="CB - Uninstall Software" ResourceId="ID-d5ca0f46-be4e-44b4-8a25-b209a87ac475" />
+      <Description Text="" />
+    </Annotation>
+    <RequiredItems />
+    <ProhibitedItems />
+    <OptionalItems />
+    <OperatingSystems>
+      <OperatingSystemReference AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_54c25c3c-2ece-4dbc-9603-2b1ece31d9cb" />
+    </OperatingSystems>
+    <SoftwareUpdates />
+    <Baselines />
+    <OtherConfigurationItems />
+  </Baseline>
+</DesiredConfigurationDigest>
