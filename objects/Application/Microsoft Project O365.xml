@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-16"?>
+<AppMgmtDigest xmlns="http://schemas.microsoft.com/SystemCenterConfigurationManager/2009/AppMgmtDigest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Application AuthoringScopeId="ScopeId_A52FF9FC-7241-4C9C-9D95-C1010F28570F" LogicalName="Application_58ba4032-e71b-46de-bc16-85c15815e9b4" Version="2">
+    <DisplayInfo DefaultLanguage="en-US">
+      <Info Language="en-US">
+        <Title>Microsoft Project O365</Title>
+        <Icon Id="Icon_bWkCtijbkAXabnetghuWQSoi4RZPF33W3_RsptxFobM" />
+      </Info>
+    </DisplayInfo>
+    <DeploymentTypes>
+      <DeploymentType AuthoringScopeId="ScopeId_A52FF9FC-7241-4C9C-9D95-C1010F28570F" LogicalName="DeploymentType_5e6a57dd-33b3-4987-bec6-cb89db5de979" Version="2" />
+    </DeploymentTypes>
+    <Title ResourceId="Res_241810506">Microsoft Project O365</Title>
+    <Owners>
+      <User Qualifier="LogonName" Id="O0734" />
+    </Owners>
+    <Contacts>
+      <User Qualifier="LogonName" Id="O0734" />
+    </Contacts>
+  </Application>
+  <DeploymentType AuthoringScopeId="ScopeId_A52FF9FC-7241-4C9C-9D95-C1010F28570F" LogicalName="DeploymentType_5e6a57dd-33b3-4987-bec6-cb89db5de979" Version="2">
+    <Title ResourceId="Res_517836957">Office 365 Default Deployment Type</Title>
+    <Description ResourceId="Res_1360818161" />
+    <DeploymentTechnology>GLOBAL/ScriptDeploymentTechnology</DeploymentTechnology>
+    <Technology>Script</Technology>
+    <Hosting>Native</Hosting>
+    <Installer Technology="Script">
+      <ExecutionContext>System</ExecutionContext>
+      <Contents>
+        <Content ContentId="Content_76b27173-5291-4574-a3ea-d045e7d6f878" Version="1">
+          <File Name="configuration.xml" Size="1160" />
+          <File Name="setup.exe" Size="8101176" />
+          <File Name="office\" Size="0" />
+          <File Name="office\data\v64.cab" Size="9817" />
+          <File Name="office\data\v64_16.0.13801.21050.cab" Size="9817" />
+          <File Name="office\data\16.0.13801.21050\i640.cab" Size="29584824" />
+          <File Name="office\data\16.0.13801.21050\i640.cab.cat" Size="30158" />
+          <File Name="office\data\16.0.13801.21050\i641033.cab" Size="8903" />
+          <File Name="office\data\16.0.13801.21050\s640.cab" Size="2953226" />
+          <File Name="office\data\16.0.13801.21050\s641033.cab" Size="747594" />
+          <File Name="office\data\16.0.13801.21050\sp641033.cab" Size="101981" />
+          <File Name="office\data\16.0.13801.21050\stream.x64.en-us.dat" Size="447212694" />
+          <File Name="office\data\16.0.13801.21050\stream.x64.en-us.dat.cat" Size="95372" />
+          <File Name="office\data\16.0.13801.21050\stream.x64.en-us.proof.dat" Size="68491231" />
+          <File Name="office\data\16.0.13801.21050\stream.x64.en-us.proof.dat.cat" Size="12874" />
+          <File Name="office\data\16.0.13801.21050\stream.x64.x-none.dat" Size="2566932214" />
+          <File Name="office\data\16.0.13801.21050\stream.x64.x-none.dat.cat" Size="618078" />
+          <Location>\\SERVER249V\Package.Source$\Desktop.Packages\Ms-Project\</Location>
+          <PeerCache>true</PeerCache>
+          <OnFastNetwork>Download</OnFastNetwork>
+          <OnSlowNetwork>DoNothing</OnSlowNetwork>
+        </Content>
+      </Contents>
+      <DetectAction>
+        <Provider>Local</Provider>
+        <Args>
+          <Arg Name="ExecutionContext" Type="String">System</Arg>
+          <Arg Name="MethodBody" Type="String">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;EnhancedDetectionMethod xmlns="http://schemas.microsoft.com/SystemCenterConfigurationManager/2009/AppMgmtDigest"&gt;
+  &lt;Settings xmlns="http://schemas.microsoft.com/SystemCenterConfigurationManager/2009/AppMgmtDigest"&gt;
+    &lt;SimpleSetting LogicalName="RegSetting_451b5cb5-68b8-4bc3-b756-5da0a791511f" DataType="Version" xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration"&gt;
+      &lt;Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules"&gt;
+        &lt;DisplayName Text="" /&gt;
+        &lt;Description Text="" /&gt;
+      &lt;/Annotation&gt;
+      &lt;RegistryDiscoverySource Hive="HKEY_LOCAL_MACHINE" Depth="Base" Is64Bit="true" CreateMissingPath="false"&gt;
+        &lt;Key&gt;Software\Microsoft\Office\ClickToRun\Configuration&lt;/Key&gt;
+        &lt;ValueName&gt;VersionToReport&lt;/ValueName&gt;
+      &lt;/RegistryDiscoverySource&gt;
+    &lt;/SimpleSetting&gt;
+    &lt;SimpleSetting LogicalName="RegSetting_f825eb7d-056a-4f1d-bf49-27fa3928f183" DataType="String" xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration"&gt;
+      &lt;Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules"&gt;
+        &lt;DisplayName Text="" /&gt;
+        &lt;Description Text="" /&gt;
+      &lt;/Annotation&gt;
+      &lt;RegistryDiscoverySource Hive="HKEY_LOCAL_MACHINE" Depth="Base" Is64Bit="true" CreateMissingPath="true"&gt;
+        &lt;Key&gt;SOFTWARE\Microsoft\Office\ClickToRun\Configuration&lt;/Key&gt;
+        &lt;ValueName&gt;ProductReleaseIds&lt;/ValueName&gt;
+      &lt;/RegistryDiscoverySource&gt;
+    &lt;/SimpleSetting&gt;
+  &lt;/Settings&gt;
+  &lt;Rule id="Office365VersionRule" Severity="None" NonCompliantWhenSettingIsNotFound="false" xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules"&gt;
+    &lt;Expression&gt;
+      &lt;Operator&gt;And&lt;/Operator&gt;
+      &lt;Operands&gt;
+        &lt;Expression&gt;
+          &lt;Operator&gt;GreaterEquals&lt;/Operator&gt;
+          &lt;Operands&gt;
+            &lt;SettingReference AuthoringScopeId="ScopeId_A52FF9FC-7241-4C9C-9D95-C1010F28570F" LogicalName="Application_58ba4032-e71b-46de-bc16-85c15815e9b4" Version="1" DataType="Version" SettingLogicalName="RegSetting_451b5cb5-68b8-4bc3-b756-5da0a791511f" SettingSourceType="Registry" Method="Value" Changeable="false" /&gt;
+            &lt;ConstantValue Value="16.0.13801.21050" DataType="Version" /&gt;
+          &lt;/Operands&gt;
+        &lt;/Expression&gt;
+        &lt;Expression&gt;
+          &lt;Operator&gt;Equals&lt;/Operator&gt;
+          &lt;Operands&gt;
+            &lt;SettingReference AuthoringScopeId="ScopeId_A52FF9FC-7241-4C9C-9D95-C1010F28570F" LogicalName="Application_58ba4032-e71b-46de-bc16-85c15815e9b4" Version="1" DataType="String" SettingLogicalName="RegSetting_f825eb7d-056a-4f1d-bf49-27fa3928f183" SettingSourceType="Registry" Method="Value" Changeable="false" /&gt;
+            &lt;ConstantValue Value="ProjectProRetail" DataType="String" /&gt;
+          &lt;/Operands&gt;
+        &lt;/Expression&gt;
+      &lt;/Operands&gt;
+    &lt;/Expression&gt;
+  &lt;/Rule&gt;
+&lt;/EnhancedDetectionMethod&gt;</Arg>
+        </Args>
+      </DetectAction>
+      <InstallAction>
+        <Provider>Script</Provider>
+        <Args>
+          <Arg Name="InstallCommandLine" Type="String">setup.exe /configure configuration.xml</Arg>
+          <Arg Name="WorkingDirectory" Type="String" />
+          <Arg Name="ExecutionContext" Type="String">System</Arg>
+          <Arg Name="RequiresLogOn" Type="String" />
+          <Arg Name="RequiresElevatedRights" Type="Boolean">false</Arg>
+          <Arg Name="RequiresUserInteraction" Type="Boolean">false</Arg>
+          <Arg Name="RequiresReboot" Type="Boolean">false</Arg>
+          <Arg Name="UserInteractionMode" Type="String">Hidden</Arg>
+          <Arg Name="PostInstallBehavior" Type="String">BasedOnExitCode</Arg>
+          <Arg Name="ExecuteTime" Type="Int32">30</Arg>
+          <Arg Name="MaxExecuteTime" Type="Int32">120</Arg>
+          <Arg Name="RunAs32Bit" Type="Boolean">false</Arg>
+          <Arg Name="SuccessExitCodes" Type="Int32[]">
+            <Item>0</Item>
+            <Item>1707</Item>
+          </Arg>
+          <Arg Name="RebootExitCodes" Type="Int32[]">
+            <Item>3010</Item>
+          </Arg>
+          <Arg Name="HardRebootExitCodes" Type="Int32[]">
+            <Item>1641</Item>
+          </Arg>
+          <Arg Name="FastRetryExitCodes" Type="Int32[]">
+            <Item>1618</Item>
+          </Arg>
+        </Args>
+        <Contents>
+          <Content ContentId="Content_76b27173-5291-4574-a3ea-d045e7d6f878" Version="1" />
+        </Contents>
+      </InstallAction>
+      <CustomData>
+        <DetectionMethod>Enhanced</DetectionMethod>
+        <EnhancedDetectionMethod>
+          <Settings xmlns="http://schemas.microsoft.com/SystemCenterConfigurationManager/2009/AppMgmtDigest">
+            <SimpleSetting xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration" LogicalName="RegSetting_451b5cb5-68b8-4bc3-b756-5da0a791511f" DataType="Version">
+              <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+                <DisplayName Text="" />
+                <Description Text="" />
+              </Annotation>
+              <RegistryDiscoverySource Hive="HKEY_LOCAL_MACHINE" Depth="Base" Is64Bit="true" CreateMissingPath="false">
+                <Key>Software\Microsoft\Office\ClickToRun\Configuration</Key>
+                <ValueName>VersionToReport</ValueName>
+              </RegistryDiscoverySource>
+            </SimpleSetting>
+            <SimpleSetting xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration" LogicalName="RegSetting_f825eb7d-056a-4f1d-bf49-27fa3928f183" DataType="String">
+              <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+                <DisplayName Text="" />
+                <Description Text="" />
+              </Annotation>
+              <RegistryDiscoverySource Hive="HKEY_LOCAL_MACHINE" Depth="Base" Is64Bit="true" CreateMissingPath="true">
+                <Key>SOFTWARE\Microsoft\Office\ClickToRun\Configuration</Key>
+                <ValueName>ProductReleaseIds</ValueName>
+              </RegistryDiscoverySource>
+            </SimpleSetting>
+          </Settings>
+          <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Office365VersionRule" Severity="None" NonCompliantWhenSettingIsNotFound="false">
+            <Expression>
+              <Operator>And</Operator>
+              <Operands>
+                <Expression>
+                  <Operator>GreaterEquals</Operator>
+                  <Operands>
+                    <SettingReference AuthoringScopeId="ScopeId_A52FF9FC-7241-4C9C-9D95-C1010F28570F" LogicalName="Application_58ba4032-e71b-46de-bc16-85c15815e9b4" Version="1" DataType="Version" SettingLogicalName="RegSetting_451b5cb5-68b8-4bc3-b756-5da0a791511f" SettingSourceType="Registry" Method="Value" Changeable="false" />
+                    <ConstantValue Value="16.0.13801.21050" DataType="Version" />
+                  </Operands>
+                </Expression>
+                <Expression>
+                  <Operator>Equals</Operator>
+                  <Operands>
+                    <SettingReference AuthoringScopeId="ScopeId_A52FF9FC-7241-4C9C-9D95-C1010F28570F" LogicalName="Application_58ba4032-e71b-46de-bc16-85c15815e9b4" Version="1" DataType="String" SettingLogicalName="RegSetting_f825eb7d-056a-4f1d-bf49-27fa3928f183" SettingSourceType="Registry" Method="Value" Changeable="false" />
+                    <ConstantValue Value="ProjectProRetail" DataType="String" />
+                  </Operands>
+                </Expression>
+              </Operands>
+            </Expression>
+          </Rule>
+        </EnhancedDetectionMethod>
+        <InstallCommandLine>setup.exe /configure configuration.xml</InstallCommandLine>
+        <InstallContent ContentId="Content_76b27173-5291-4574-a3ea-d045e7d6f878" Version="1" />
+        <UninstallContent ContentId="Content_76b27173-5291-4574-a3ea-d045e7d6f878" Version="1" />
+        <UninstallSetting>SameAsInstall</UninstallSetting>
+        <InstallFolder />
+        <UninstallCommandLine />
+        <UninstallFolder />
+        <RepairCommandLine />
+        <RepairFolder />
+        <ExecuteTime>30</ExecuteTime>
+        <ExitCodes>
+          <ExitCode Code="0" Class="Success" />
+          <ExitCode Code="1707" Class="Success" />
+          <ExitCode Code="3010" Class="SoftReboot" />
+          <ExitCode Code="1641" Class="HardReboot" />
+          <ExitCode Code="1618" Class="FastRetry" />
+        </ExitCodes>
+        <UserInteractionMode>Hidden</UserInteractionMode>
+        <AllowUninstall>true</AllowUninstall>
+      </CustomData>
+    </Installer>
+  </DeploymentType>
+  <Resources>
+    <Icon Id="Icon_bWkCtijbkAXabnetghuWQSoi4RZPF33W3_RsptxFobM">
+      <Data>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</Data>
+    </Icon>
+  </Resources>
+</AppMgmtDigest>
