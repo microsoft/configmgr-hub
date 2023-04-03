@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_cfab7c2e-3de3-4b92-a80e-a259f4dc6f64" Version="1" ConfigurationFlags="256">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="CI - Disable FastStartup" ResourceId="ID-b8782bae-c2b6-4c64-a9ec-dbc5554e1d07" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="RegSetting_338aafa0-b9b7-47e8-8299-ed8d128c0f46" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="HiberbootEnable" ResourceId="ID-e67f2af9-91a4-4d55-8202-8b54d10fd1f5" />
+            <Description Text="" />
+          </Annotation>
+          <RegistryDiscoverySource Hive="HKEY_LOCAL_MACHINE" Depth="Base" Is64Bit="false" CreateMissingPath="true" RemediateDword="true">
+            <Key>SYSTEM\CurrentControlSet\Control\Session Manager\Power</Key>
+            <ValueName>HiberbootEnabled</ValueName>
+          </RegistryDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_4cdce06f-8cbd-434b-a24c-be3764877968" Severity="Warning" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="HiberbootEnabled equals 0" ResourceId="ID-9e3fc585-4107-4c29-8111-e86bc3561798" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_cfab7c2e-3de3-4b92-a80e-a259f4dc6f64" Version="1" DataType="Int64" SettingLogicalName="RegSetting_338aafa0-b9b7-47e8-8299-ed8d128c0f46" SettingSourceType="Registry" Method="Value" Changeable="true" />
+            <ConstantValue Value="0" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_51ce59c8-aef6-431f-9e05-4b5abc468bb7" Severity="Informational" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="HiberbootEnable must exist" ResourceId="ID-2b95f6fb-6b91-4627-bd60-a2f05dcb7fae" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>NotEquals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_cfab7c2e-3de3-4b92-a80e-a259f4dc6f64" Version="1" DataType="Int64" SettingLogicalName="RegSetting_338aafa0-b9b7-47e8-8299-ed8d128c0f46" SettingSourceType="Registry" Method="Count" Changeable="false" />
+            <ConstantValue Value="0" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_ARM64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_MultiSession_Enterprise_Windows_10_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_ARM64_Windows_11_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_MultiSession_Enterprise_Windows_11_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_11_and_higher_Clients" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
