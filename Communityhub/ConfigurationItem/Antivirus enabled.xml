@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_f3311604-c5fd-494d-8404-9413802b71b7" Version="1">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Antivirus enabled" ResourceId="ID-bacb7cf0-7ba6-4685-be9d-818238234223" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_59b528d3-fe91-482c-96cd-f5b1c68a9783" DataType="Boolean">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Antivirus enabled" ResourceId="ID-6b85298e-0399-4df3-aa75-caa9418ed085" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">$AntivirusEnabled=(get-mpcomputerstatus).AntivirusEnabled
+write-output $AntivirusEnabled
+</DiscoveryScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_c2c4b60e-806c-49e2-8d81-b52c91b814e6" Severity="Warning" NonCompliantWhenSettingIsNotFound="true">
+        <Annotation>
+          <DisplayName Text="AntivirusEnabled = Ture" ResourceId="ID-7e567266-8adc-4e97-951d-93325b5bad73" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_f3311604-c5fd-494d-8404-9413802b71b7" Version="1" DataType="Boolean" SettingLogicalName="ScriptSetting_59b528d3-fe91-482c-96cd-f5b1c68a9783" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="True" DataType="Boolean" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_Windows_Client_Server" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
