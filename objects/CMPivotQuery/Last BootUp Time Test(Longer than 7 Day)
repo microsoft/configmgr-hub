@@ -1,0 +1,1 @@
+OperatingSystem |project Device, LastBootUpTime | where LastBootUpTime <= ago(7d) |join (Device | project UserName)
