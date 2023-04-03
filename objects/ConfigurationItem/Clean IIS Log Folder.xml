@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_934D3704-824B-4374-9652-668BE142BFCB" LogicalName="OperatingSystem_c8fc1de2-c3fc-450c-bb4d-d695863a312f" Version="22">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Clean IIS Log Folder" ResourceId="ID-fc5de748-2987-40c0-a6cd-69cd4d994a75" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_b8bc4db0-f4a0-4714-ad56-bda3afe6b710" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Check for files older than x days" ResourceId="ID-ebfdc481-c2b3-4b0a-9cbf-45aa8c3e1582" />
+            <Description Text="Are there any files to be cleaned?" ResourceId="ID-84552bf8-2c1d-4e13-80b9-04c2cd179222" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">#-----------------------------------------------------------------------------
+# Clean IIS Logs
+# If you do not clean the IIS logs they will grow infinitively.
+# This CI will delete files that are older than the value defined by DaysDiff
+# This sample script is provided AS IS without warranty of any kind.
+#-----------------------------------------------------------------------------
+
+$DaysDiff = 60 #Removes log files that are older than this value. If you change his value you should also change it in the remediation script.
+    
+Try
+{    
+    Import-Module WebAdministration -ErrorAction Stop
+    $count=0
+    foreach($WebSite in $(get-website))
+    {
+        $logPath = "$($Website.logFile.directory)\w3svc$($website.id)".replace("%SystemDrive%",$env:SystemDrive) + '\*.log'
+        $count = $count + (Get-ChildItem -Path $logPath  | where {$_.LastWriteTime -lt (get-date).AddDays(0 - $DaysDiff)}).Count
+    }
+    Write-Host $count
+}
+Catch
+{
+    # if you are targeting only on web servers return -1
+    Write-Host 0
+}
+
+    </DiscoveryScriptBody>
+            <RemediationScriptBody ScriptType="PowerShell">#-----------------------------------------------------------------------------
+# Clean IIS Logs
+# If you do not clean the IIS logs they will grow infinitively.
+# This CI will delete files that are older than the value defined by DaysDiff
+# This sample script is provided AS IS without warranty of any kind.
+#-----------------------------------------------------------------------------
+
+$DaysDiff = 60 #Removes files that are older than this value. Parameter must be negative.  Should be set in the detection script to the same value. 
+Try
+{
+    Import-Module WebAdministration
+    $n=0
+    foreach($WebSite in $(get-website))
+    {
+        $logPath = "$($Website.logFile.directory)\w3svc$($website.id)".replace("%SystemDrive%",$env:SystemDrive) + '\*.log'
+        Get-ChildItem -Path $logPath  | where {$_.LastWriteTime -lt (get-date).AddDays(0 - $DaysDiff)} | Remove-Item
+    }
+    'Remediation done' | Out-File 'C:\Windows\Temp\CleanIISLogs.log' -append
+}
+Catch
+{    
+    Write-Host -1
+}
+</RemediationScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_2eb4fb92-c30a-4c92-85a9-b8ba34132c67" Severity="None" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="Validate if any logs are older than x days" ResourceId="ID-f02d95c5-de1b-4f85-897b-ceee2e90ad7f" />
+          <Description Text="The value is specified in the script" ResourceId="ID-3b95c5e7-e114-48f2-b011-8585166d5aa7" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_934D3704-824B-4374-9652-668BE142BFCB" LogicalName="OperatingSystem_c8fc1de2-c3fc-450c-bb4d-d695863a312f" Version="22" DataType="Int64" SettingLogicalName="ScriptSetting_b8bc4db0-f4a0-4714-ad56-bda3afe6b710" SettingSourceType="Script" Method="Value" Changeable="true" />
+            <ConstantValue Value="0" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_8.1_Client" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_8.1_Client" />
+          <RuleExpression RuleId="Windows/All_ARM64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_MultiSession_Enterprise_Windows_10_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_8" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2012_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2016" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2019_and_higher" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
