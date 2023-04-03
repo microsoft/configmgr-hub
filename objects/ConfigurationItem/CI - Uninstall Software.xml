@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_54c25c3c-2ece-4dbc-9603-2b1ece31d9cb" Version="2" ConfigurationFlags="256">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="CI - Uninstall Software" ResourceId="ID-0ec3154b-192f-489e-9c92-7576b928ff5b" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_6f39533a-141d-402f-96ea-ec02d934c091" DataType="String">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Uninstall Software" ResourceId="ID-ea719a7a-3074-413c-b669-1893c9dcb086" />
+            <Description Text="" />
+          </Annotation>
+          <ScriptDiscoverySource Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">Function Get-Uninstaller {
+    [Cmdletbinding()]
+    Param(
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty]
+        [String] $SoftwareName
+)
+    $LocalKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    $MachineKey32 = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    $MachineKey64 = 'HKLM:\SOFTWARE\Wow6432Node\Windows\CurrentVersion\Uninstall\*'
+
+    $Keys = @($LocalKey, $MachineKey32, $MachineKey64)
+
+    Get-ItemProperty -Path $Keys -EA SilentlyContinue | ?{($_.DisplayName -Like "*$Name*") -or ($_.PsChildName -Like "*$Name*")} | Select PsPath,DisplayVersion,DisplayName,UninstallString,InstallSource,InstallLocation,QuietUninstallString,Installdate
+}
+
+If((Get-Uninstaller '{MSIPRODCODE}').DisplayName -eq "SoftwareName"){
+    Write-Output 1
+}
+Else{
+    Write-Output 0
+}</DiscoveryScriptBody>
+            <RemediationScriptBody ScriptType="PowerShell">$MSIuninstallArgs = @(
+    "/x"
+    "{MSIPRODCODE}"
+    "/qn"
+    "/norestart"
+)
+
+Start-Process "msiexec.exe" -ArgumentList $MSIUninstallArgs -Waint -NoNewWindow</RemediationScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_e8eed496-b454-4252-90fc-09b611aef88f" Severity="None" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="Software Not Detected" ResourceId="ID-bef9c5c6-81cb-47df-8bc4-1ccc8cfc9667" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_1CB14F9C-DC4C-4347-8A8F-161F814912B7" LogicalName="OperatingSystem_54c25c3c-2ece-4dbc-9603-2b1ece31d9cb" Version="2" DataType="String" SettingLogicalName="ScriptSetting_6f39533a-141d-402f-96ea-ec02d934c091" SettingSourceType="Script" Method="Value" Changeable="false" />
+            <ConstantValue Value="0" DataType="String" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_XP_Professional" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_XP" />
+          <RuleExpression RuleId="Windows/x64_Windows_XP_Professional_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_XP_Professional_Service_Pack_3" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Vista" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Vista" />
+          <RuleExpression RuleId="Windows/x64_Windows_Vista_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_Vista_SP2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/x64_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/x64_Windows_7_SP1" />
+          <RuleExpression RuleId="Windows/x86_Windows_7_Client" />
+          <RuleExpression RuleId="Windows/x86_Windows_7_SP1" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_8_Client" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_8_Client" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_8.1_Client" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_8.1_Client" />
+          <RuleExpression RuleId="Windows/All_ARM64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_MultiSession_Enterprise_Windows_10_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2003_Non_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2003_R2" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Server_2003_Non_R2" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Server_2003_R2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2003_R2_SP2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2003_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_Server_2003_R2_SP2" />
+          <RuleExpression RuleId="Windows/x86_Windows_Server_2003_SP2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2008" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2008_R2" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Server_2008" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_CORE" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_SP1" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_R2_SP1_Core" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_SP2" />
+          <RuleExpression RuleId="Windows/x64_Windows_Server_2008_SP2_Core" />
+          <RuleExpression RuleId="Windows/x86_Windows_Server_2008_SP2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_8" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2012_R2" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2016" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2019_and_higher" />
+          <RuleExpression RuleId="Windows/All_Embedded_Windows_XP" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Embedded_8.1_Industry" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Embedded_8_Industry" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Embedded_8_Standard" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Embedded_8.1_Industry" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Embedded_8_Industry" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_Embedded_8_Standard" />
+          <RuleExpression RuleId="Windows/x64_Embedded_Windows_7" />
+          <RuleExpression RuleId="Windows/x86_Embedded_Windows_7" />
+          <RuleExpression RuleId="Windows/All_ARM64_Windows_11_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_MultiSession_Enterprise_Windows_11_higher" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_11_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x64_Windows_Server_2022_and_higher" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
