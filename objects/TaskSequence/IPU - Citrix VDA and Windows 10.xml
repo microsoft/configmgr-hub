@@ -1,0 +1,392 @@
+<sequence version="3.10">
+  <group name="Prepare for Upgrade" description="">
+    <step type="SMS_TaskSequence_PrestartCheckAction" name="Check Readiness" description="Enter your precheck preferences" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>OSDPrestartCheck.exe </action>
+      <defaultVarList>
+        <variable name="OSDCMClientMinVersion" property="CMClientMinVersion"> .  .    .</variable>
+        <variable name="OSDCheckCMClientMinVersion" property="CheckCMClientMinVersion">false</variable>
+        <variable name="OSDCheckDeviceUEFI" property="CheckDeviceUEFI">false</variable>
+        <variable name="OSDCheckFreeDiskSpace" property="CheckFreeDiskSpace">true</variable>
+        <variable name="OSDCheckMaxOsVersion" property="CheckMaxOSVersion">false</variable>
+        <variable name="OSDCheckMemory" property="CheckMemory">true</variable>
+        <variable name="OSDCheckMinOSVersion" property="CheckMinOSVersion">false</variable>
+        <variable name="OSDCheckNetworkConnected" property="CheckNetworkConnected">false</variable>
+        <variable name="OSDCheckNetworkWired" property="CheckNetworkWired">false</variable>
+        <variable name="OSDCheckOSArchitecture" property="CheckOSArchitecture">false</variable>
+        <variable name="OSDCheckOSLanguageID" property="CheckOSLanguageID">false</variable>
+        <variable name="OSDCheckOSType" property="CheckOSType">true</variable>
+        <variable name="OSDCheckPowerState" property="CheckPowerState">false</variable>
+        <variable name="OSDCheckProcessorSpeed" property="CheckProcessorSpeed">true</variable>
+        <variable name="OSDCheckDeviceTpmActivated" property="CheckTpmActivated">false</variable>
+        <variable name="OSDCheckDeviceTpmEnabled" property="CheckTpmEnabled">false</variable>
+        <variable name="OSDFreeDiskSpace" property="FreeDiskSpace">25000</variable>
+        <variable name="OSDMaxOSVersion" property="MaxOSVersion">  . .</variable>
+        <variable name="OSDMemory" property="Memory">512</variable>
+        <variable name="OSDMinOSVersion" property="MinOSVersion">  . .</variable>
+        <variable name="OSDOSArchitecture" property="OSArchitecture">64</variable>
+        <variable name="OSDOSLanguageID" property="OSLanguageID">1033</variable>
+        <variable name="OSDOSType" property="OSType">CLIENT</variable>
+        <variable name="OSDProcessorSpeed" property="ProcessorSpeed">800</variable>
+      </defaultVarList>
+    </step>
+  </group>
+  <group name="VDI - Update Citrix VDA" description="">
+    <step type="SMS_TaskSequence_RebootAction" name="Restart Computer" description="An initial restart in order to close any active sessions to the VDA. There can be none active, but you can still use XenCenter in order to shadow an VDA in order to see the upgrade progression live if you want." runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>smsboot.exe /target:HD</action>
+      <defaultVarList>
+        <variable name="SMSRebootMessage" property="Message"></variable>
+        <variable name="SMSRebootTimeout" property="MessageTimeout">0</variable>
+        <variable name="SMSRebootTarget" property="Target" hidden="true">HD</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_InstallApplicationAction" name="Install Application" description="Add your packed Citrix VDA installation with your install parameters" runIn="FullOS" successCodeList="0" retryCount="2" runFromNet="false">
+      <action>smsappinstall.exe /app: /basevar:d /continueOnError:False</action>
+      <defaultVarList>
+        <variable name="BaseVariableName" property="BaseVariableName" hidden="true">d</variable>
+        <variable name="OSDAppClearCache" property="ClearCache">false</variable>
+        <variable name="ContinueOnInstallError" property="ContinueOnInstallError" hidden="true">false</variable>
+        <variable name="RetryCount" property="RetryCount" hidden="true">2</variable>
+      </defaultVarList>
+    </step>
+    <group name="Exit 3" description="If the update of the VDA exits with 3, there has to be a restart and then the update can continue">
+      <condition>
+        <operator type="and">
+          <expression type="SMS_TaskSequence_VariableConditionExpression">
+            <variable name="Operator">equals</variable>
+            <variable name="Value">3</variable>
+            <variable name="Variable">_SMSTSLastActionRetCode</variable>
+          </expression>
+        </operator>
+      </condition>
+      <step type="SMS_TaskSequence_RebootAction" name="Restart Computer" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+        <action>smsboot.exe /target:HD</action>
+        <defaultVarList>
+          <variable name="SMSRebootMessage" property="Message"></variable>
+          <variable name="SMSRebootTimeout" property="MessageTimeout">0</variable>
+          <variable name="SMSRebootTarget" property="Target" hidden="true">HD</variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_RunCommandLineAction" name="Continue VDA update" description="After your first reboot, you dont continue the install/update from the application package, rather you continue it from the files that the installer unpacks at a certain destination. Read more about it @ citrix docs &quot;Install VDAs using SCCM&quot;" runIn="WinPEandFullOS" successCodeList="0 3010 3 8 4" retryCount="0" runFromNet="false">
+        <action>smsswd.exe /run: cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</action>
+        <defaultVarList>
+          <variable name="CommandLine" property="CommandLine" hidden="true">cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</variable>
+          <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+          <variable name="SMSTSRunCommandLineOutputVariableName" property="OutputVariableName"></variable>
+          <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+          <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010 3 8 4</variable>
+        </defaultVarList>
+      </step>
+      <group name="Exit 4" description="As with Exit 3, exit 4 needs a reboot and a continuation of the vda update.">
+        <condition>
+          <operator type="and">
+            <expression type="SMS_TaskSequence_VariableConditionExpression">
+              <variable name="Operator">equals</variable>
+              <variable name="Value">4</variable>
+              <variable name="Variable">_SMSTSLastActionRetCode</variable>
+            </expression>
+          </operator>
+        </condition>
+        <step type="SMS_TaskSequence_RebootAction" name="Restart Computer" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+          <action>smsboot.exe /target:HD</action>
+          <defaultVarList>
+            <variable name="SMSRebootMessage" property="Message"></variable>
+            <variable name="SMSRebootTimeout" property="MessageTimeout">0</variable>
+            <variable name="SMSRebootTarget" property="Target" hidden="true">HD</variable>
+          </defaultVarList>
+        </step>
+        <step type="SMS_TaskSequence_RunCommandLineAction" name="Continue VDA update" description="Same cmdline as with exit 3" runIn="WinPEandFullOS" successCodeList="0 3010 3 8 4" retryCount="0" runFromNet="false">
+          <action>smsswd.exe /run: cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</action>
+          <defaultVarList>
+            <variable name="CommandLine" property="CommandLine" hidden="true">cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</variable>
+            <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+            <variable name="SMSTSRunCommandLineOutputVariableName" property="OutputVariableName"></variable>
+            <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+            <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010 3 8 4</variable>
+          </defaultVarList>
+        </step>
+      </group>
+    </group>
+    <group name="Exit 3" description="now it will do this check for a cupple of times, ive never seen an update with more than 4 exit 3´s, but you might have to copy and add another.">
+      <condition>
+        <operator type="and">
+          <expression type="SMS_TaskSequence_VariableConditionExpression">
+            <variable name="Operator">equals</variable>
+            <variable name="Value">3</variable>
+            <variable name="Variable">_SMSTSLastActionRetCode</variable>
+          </expression>
+        </operator>
+      </condition>
+      <step type="SMS_TaskSequence_RebootAction" name="Restart Computer" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+        <action>smsboot.exe /target:HD</action>
+        <defaultVarList>
+          <variable name="SMSRebootMessage" property="Message"></variable>
+          <variable name="SMSRebootTimeout" property="MessageTimeout">0</variable>
+          <variable name="SMSRebootTarget" property="Target" hidden="true">HD</variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_RunPowerShellScriptAction" name="Check if XenDesktopSetup folder exists" description="" runIn="WinPEandFullOS" successCodeList="0 3010" retryCount="0" runFromNet="false">
+        <action>OSDRunPowerShellScript.exe</action>
+        <defaultVarList>
+          <variable name="OSDRunPowerShellScriptExecutionPolicy" property="ExecutionPolicy">Bypass</variable>
+          <variable name="OSDRunPowerShellScriptOutputVariableName" property="OutputVariableName">XenSetupCatalog</variable>
+          <variable name="OSDRunPowerShellScriptParameters" property="Parameters"></variable>
+          <variable name="_SMSTSRunPowerShellAsUser" property="RunAsUser">false</variable>
+          <variable name="OSDRunPowerShellScriptSourceScript" property="SourceScript">//5JAGYAKAAoAHQAZQBzAHQALQBwAGEAdABoACAALQBwAGEAdABoACAAIgAkAGUAbgB2ADoAUAByAG8AZwByAGEAbQBEAGEAdABhAFwAQwBpAHQAcgBpAHgAXABYAGUAbgBEAGUAcwBrAHQAbwBwAFMAZQB0AHUAcAAiACkAIAAtAGUAcQAgACQAdAByAHUAZQApAHsADQAKACAAIAAgACAAVwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAiAFgAZQBuAFMAZQB0AHUAcABUAHIAdQBlACIADQAKAH0AZQBsAHMAZQB7AA0ACgAgACAAIAAgAHcAcgBpAHQAZQAtAE8AdQB0AHAAdQB0ACAAIgBYAGUAbgBTAGUAdAB1AHAARgBhAGwAcwBlACIADQAKAH0A</variable>
+          <variable name="OSDRunPowerShellScriptSuccessCodes" property="SuccessCodes" hidden="true">0 3010</variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_RunCommandLineAction" name="Continue VDA update" description="" runIn="WinPEandFullOS" successCodeList="0 3010 3 8" retryCount="0" runFromNet="false">
+        <condition>
+          <operator type="and">
+            <expression type="SMS_TaskSequence_VariableConditionExpression">
+              <variable name="Operator">equals</variable>
+              <variable name="Value">XenSetupTrue</variable>
+              <variable name="Variable">XenSetupCatalog</variable>
+            </expression>
+          </operator>
+        </condition>
+        <action>smsswd.exe /run: cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</action>
+        <defaultVarList>
+          <variable name="CommandLine" property="CommandLine" hidden="true">cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</variable>
+          <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+          <variable name="SMSTSRunCommandLineOutputVariableName" property="OutputVariableName"></variable>
+          <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+          <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010 3 8</variable>
+        </defaultVarList>
+      </step>
+    </group>
+    <group name="Exit 3" description="">
+      <condition>
+        <operator type="and">
+          <expression type="SMS_TaskSequence_VariableConditionExpression">
+            <variable name="Operator">equals</variable>
+            <variable name="Value">3</variable>
+            <variable name="Variable">_SMSTSLastActionRetCode</variable>
+          </expression>
+        </operator>
+      </condition>
+      <step type="SMS_TaskSequence_RebootAction" name="Restart Computer" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+        <action>smsboot.exe /target:HD</action>
+        <defaultVarList>
+          <variable name="SMSRebootMessage" property="Message"></variable>
+          <variable name="SMSRebootTimeout" property="MessageTimeout">0</variable>
+          <variable name="SMSRebootTarget" property="Target" hidden="true">HD</variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_RunPowerShellScriptAction" name="Check if XenDesktopSetup folder exists" description="" runIn="WinPEandFullOS" successCodeList="0 3010" retryCount="0" runFromNet="false">
+        <action>OSDRunPowerShellScript.exe</action>
+        <defaultVarList>
+          <variable name="OSDRunPowerShellScriptExecutionPolicy" property="ExecutionPolicy">Bypass</variable>
+          <variable name="OSDRunPowerShellScriptOutputVariableName" property="OutputVariableName">XenSetupCatalog</variable>
+          <variable name="OSDRunPowerShellScriptParameters" property="Parameters"></variable>
+          <variable name="_SMSTSRunPowerShellAsUser" property="RunAsUser">false</variable>
+          <variable name="OSDRunPowerShellScriptSourceScript" property="SourceScript">//5JAGYAKAAoAHQAZQBzAHQALQBwAGEAdABoACAALQBwAGEAdABoACAAIgAkAGUAbgB2ADoAUAByAG8AZwByAGEAbQBEAGEAdABhAFwAQwBpAHQAcgBpAHgAXABYAGUAbgBEAGUAcwBrAHQAbwBwAFMAZQB0AHUAcAAiACkAIAAtAGUAcQAgACQAdAByAHUAZQApAHsADQAKACAAIAAgACAAVwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAiAFgAZQBuAFMAZQB0AHUAcABUAHIAdQBlACIADQAKAH0AZQBsAHMAZQB7AA0ACgAgACAAIAAgAHcAcgBpAHQAZQAtAE8AdQB0AHAAdQB0ACAAIgBYAGUAbgBTAGUAdAB1AHAARgBhAGwAcwBlACIADQAKAH0A</variable>
+          <variable name="OSDRunPowerShellScriptSuccessCodes" property="SuccessCodes" hidden="true">0 3010</variable>
+          <variable name="SMSTSRunPowerShellUserName" property="UserName"></variable>
+          <variable name="SMSTSRunPowerShellWorkingDirectory" property="WorkingDirectory"></variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_RunCommandLineAction" name="Continue VDA update" description="" runIn="WinPEandFullOS" successCodeList="0 3010 3 8" retryCount="0" runFromNet="false">
+        <condition>
+          <operator type="and">
+            <expression type="SMS_TaskSequence_VariableConditionExpression">
+              <variable name="Operator">equals</variable>
+              <variable name="Value">XenSetupTrue</variable>
+              <variable name="Variable">XenSetupCatalog</variable>
+            </expression>
+          </operator>
+        </condition>
+        <action>smsswd.exe /run: cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</action>
+        <defaultVarList>
+          <variable name="CommandLine" property="CommandLine" hidden="true">cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</variable>
+          <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+          <variable name="SMSTSRunCommandLineOutputVariableName" property="OutputVariableName"></variable>
+          <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+          <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010 3 8</variable>
+        </defaultVarList>
+      </step>
+    </group>
+    <group name="Exit 3" description="">
+      <condition>
+        <operator type="and">
+          <expression type="SMS_TaskSequence_VariableConditionExpression">
+            <variable name="Operator">equals</variable>
+            <variable name="Value">3</variable>
+            <variable name="Variable">_SMSTSLastActionRetCode</variable>
+          </expression>
+        </operator>
+      </condition>
+      <step type="SMS_TaskSequence_RebootAction" name="Restart Computer" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+        <action>smsboot.exe /target:HD</action>
+        <defaultVarList>
+          <variable name="SMSRebootMessage" property="Message"></variable>
+          <variable name="SMSRebootTimeout" property="MessageTimeout">0</variable>
+          <variable name="SMSRebootTarget" property="Target" hidden="true">HD</variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_RunPowerShellScriptAction" name="Check if XenDesktopSetup folder exists" description="" runIn="WinPEandFullOS" successCodeList="0 3010" retryCount="0" runFromNet="false">
+        <action>OSDRunPowerShellScript.exe</action>
+        <defaultVarList>
+          <variable name="OSDRunPowerShellScriptExecutionPolicy" property="ExecutionPolicy">Bypass</variable>
+          <variable name="OSDRunPowerShellScriptOutputVariableName" property="OutputVariableName">XenSetupCatalog</variable>
+          <variable name="OSDRunPowerShellScriptParameters" property="Parameters"></variable>
+          <variable name="_SMSTSRunPowerShellAsUser" property="RunAsUser">false</variable>
+          <variable name="OSDRunPowerShellScriptSourceScript" property="SourceScript">//5JAGYAKAAoAHQAZQBzAHQALQBwAGEAdABoACAALQBwAGEAdABoACAAIgAkAGUAbgB2ADoAUAByAG8AZwByAGEAbQBEAGEAdABhAFwAQwBpAHQAcgBpAHgAXABYAGUAbgBEAGUAcwBrAHQAbwBwAFMAZQB0AHUAcAAiACkAIAAtAGUAcQAgACQAdAByAHUAZQApAHsADQAKACAAIAAgACAAVwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAiAFgAZQBuAFMAZQB0AHUAcABUAHIAdQBlACIADQAKAH0AZQBsAHMAZQB7AA0ACgAgACAAIAAgAHcAcgBpAHQAZQAtAE8AdQB0AHAAdQB0ACAAIgBYAGUAbgBTAGUAdAB1AHAARgBhAGwAcwBlACIADQAKAH0A</variable>
+          <variable name="OSDRunPowerShellScriptSuccessCodes" property="SuccessCodes" hidden="true">0 3010</variable>
+          <variable name="SMSTSRunPowerShellUserName" property="UserName"></variable>
+          <variable name="SMSTSRunPowerShellWorkingDirectory" property="WorkingDirectory"></variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_RunCommandLineAction" name="Continue VDA update" description="" runIn="WinPEandFullOS" successCodeList="0 3010 3 8" retryCount="0" runFromNet="false">
+        <condition>
+          <operator type="and">
+            <expression type="SMS_TaskSequence_VariableConditionExpression">
+              <variable name="Operator">equals</variable>
+              <variable name="Value">XenSetupTrue</variable>
+              <variable name="Variable">XenSetupCatalog</variable>
+            </expression>
+          </operator>
+        </condition>
+        <action>smsswd.exe /run: cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</action>
+        <defaultVarList>
+          <variable name="CommandLine" property="CommandLine" hidden="true">cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</variable>
+          <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+          <variable name="SMSTSRunCommandLineOutputVariableName" property="OutputVariableName"></variable>
+          <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+          <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010 3 8</variable>
+        </defaultVarList>
+      </step>
+    </group>
+    <group name="Exit 3" description="">
+      <condition>
+        <operator type="and">
+          <expression type="SMS_TaskSequence_VariableConditionExpression">
+            <variable name="Operator">equals</variable>
+            <variable name="Value">3</variable>
+            <variable name="Variable">_SMSTSLastActionRetCode</variable>
+          </expression>
+        </operator>
+      </condition>
+      <step type="SMS_TaskSequence_RebootAction" name="Restart Computer" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+        <action>smsboot.exe /target:HD</action>
+        <defaultVarList>
+          <variable name="SMSRebootMessage" property="Message"></variable>
+          <variable name="SMSRebootTimeout" property="MessageTimeout">0</variable>
+          <variable name="SMSRebootTarget" property="Target" hidden="true">HD</variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_RunPowerShellScriptAction" name="Check if XenDesktopSetup folder exists" description="" runIn="WinPEandFullOS" successCodeList="0 3010" retryCount="0" runFromNet="false">
+        <action>OSDRunPowerShellScript.exe</action>
+        <defaultVarList>
+          <variable name="OSDRunPowerShellScriptExecutionPolicy" property="ExecutionPolicy">Bypass</variable>
+          <variable name="OSDRunPowerShellScriptOutputVariableName" property="OutputVariableName">XenSetupCatalog</variable>
+          <variable name="OSDRunPowerShellScriptParameters" property="Parameters"></variable>
+          <variable name="_SMSTSRunPowerShellAsUser" property="RunAsUser">false</variable>
+          <variable name="OSDRunPowerShellScriptSourceScript" property="SourceScript">//5JAGYAKAAoAHQAZQBzAHQALQBwAGEAdABoACAALQBwAGEAdABoACAAIgAkAGUAbgB2ADoAUAByAG8AZwByAGEAbQBEAGEAdABhAFwAQwBpAHQAcgBpAHgAXABYAGUAbgBEAGUAcwBrAHQAbwBwAFMAZQB0AHUAcAAiACkAIAAtAGUAcQAgACQAdAByAHUAZQApAHsADQAKACAAIAAgACAAVwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAiAFgAZQBuAFMAZQB0AHUAcABUAHIAdQBlACIADQAKAH0AZQBsAHMAZQB7AA0ACgAgACAAIAAgAHcAcgBpAHQAZQAtAE8AdQB0AHAAdQB0ACAAIgBYAGUAbgBTAGUAdAB1AHAARgBhAGwAcwBlACIADQAKAH0A</variable>
+          <variable name="OSDRunPowerShellScriptSuccessCodes" property="SuccessCodes" hidden="true">0 3010</variable>
+          <variable name="SMSTSRunPowerShellUserName" property="UserName"></variable>
+          <variable name="SMSTSRunPowerShellWorkingDirectory" property="WorkingDirectory"></variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_RunCommandLineAction" name="Continue VDA update" description="" runIn="WinPEandFullOS" successCodeList="0 3010 3 8" retryCount="0" runFromNet="false">
+        <condition>
+          <operator type="and">
+            <expression type="SMS_TaskSequence_VariableConditionExpression">
+              <variable name="Operator">equals</variable>
+              <variable name="Value">XenSetupTrue</variable>
+              <variable name="Variable">XenSetupCatalog</variable>
+            </expression>
+          </operator>
+        </condition>
+        <action>smsswd.exe /run: cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</action>
+        <defaultVarList>
+          <variable name="CommandLine" property="CommandLine" hidden="true">cmd.exe /c %ProgramData%\Citrix\XenDesktopSetup\XenDesktopVdaSetup.exe /quiet /noreboot /noresume</variable>
+          <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+          <variable name="SMSTSRunCommandLineOutputVariableName" property="OutputVariableName"></variable>
+          <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+          <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010 3 8</variable>
+        </defaultVarList>
+      </step>
+    </group>
+    <group name="Exit 0 or 8" description="Exit 0 or 8 means just a reboot, then you can go on and update the OS.">
+      <condition>
+        <operator type="or">
+          <expression type="SMS_TaskSequence_VariableConditionExpression">
+            <variable name="Operator">equals</variable>
+            <variable name="Value">0</variable>
+            <variable name="Variable">_SMSTSLastActionRetCode</variable>
+          </expression>
+          <expression type="SMS_TaskSequence_VariableConditionExpression">
+            <variable name="Operator">equals</variable>
+            <variable name="Value">8</variable>
+            <variable name="Variable">_SMSTSLastActionRetCode</variable>
+          </expression>
+        </operator>
+      </condition>
+      <step type="SMS_TaskSequence_RebootAction" name="Restart Computer" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+        <action>smsboot.exe /target:WinPE</action>
+        <defaultVarList>
+          <variable name="SMSRebootMessage" property="Message">A new Microsoft Windows operating system is being installed. The computer must restart to continue.</variable>
+          <variable name="SMSRebootTimeout" property="MessageTimeout">60</variable>
+          <variable name="SMSRebootTarget" property="Target" hidden="true">WinPE</variable>
+        </defaultVarList>
+      </step>
+    </group>
+  </group>
+  <group name="Upgrade the Operating System" description="">
+    <step type="SMS_TaskSequence_UpgradeOperatingSystemAction" name="Upgrade Operating System" description="Change according to you preferences and method" runIn="FullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>OSDUpgradeOS.exe </action>
+      <defaultVarList>
+        <variable name="OSDUpgradeDynamicUpdateSettings" property="DynamicUpdateSettings">Disable</variable>
+        <variable name="OSDFeatureUpdateAssignmentID" property="FeatureUpdateAssignmentId"></variable>
+        <variable name="OSDUpgradeFeatureUpdateName" property="FeatureUpdateName"></variable>
+        <variable name="OSDUpgradeIgnoreMessages" property="IgnoreMessages">false</variable>
+        <variable name="OSDUpgradeInstallEditionIndex" property="InstallEditionIndex">1</variable>
+        <variable name="OSDUpgradeInstallPath" property="InstallPath">C:\</variable>
+        <variable name="OSDUpgradeOsProductKey" property="OsProductKey"></variable>
+        <variable name="OSDUpgradePreserveSettings" property="PreserveSettings">Upgrade</variable>
+        <variable name="OSDUpgradeScanOnly" property="ScanOnly">false</variable>
+        <variable name="OSDUpgradeStagedContent" property="StagedContent"></variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_RebootAction" name="Restart Computer" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>smsboot.exe /target:WinPE</action>
+      <defaultVarList>
+        <variable name="SMSRebootMessage" property="Message">A new Microsoft Windows operating system is being installed. The computer must restart to continue.</variable>
+        <variable name="SMSRebootTimeout" property="MessageTimeout">60</variable>
+        <variable name="SMSRebootTarget" property="Target" hidden="true">WinPE</variable>
+      </defaultVarList>
+    </step>
+  </group>
+  <group name="Install applications" description="">
+    <step type="SMS_TaskSequence_InstallApplicationAction" name="Install Citrix Workspace 19.12.5000" description="You might need to update Workspace after VDA and OS upgrade." runIn="FullOS" successCodeList="0" retryCount="2" runFromNet="false">
+      <action>smsappinstall.exe /app: /basevar:s /continueOnError:False</action>
+      <defaultVarList>
+        <variable name="BaseVariableName" property="BaseVariableName" hidden="true">s</variable>
+        <variable name="OSDAppClearCache" property="ClearCache">false</variable>
+        <variable name="ContinueOnInstallError" property="ContinueOnInstallError" hidden="true">false</variable>
+        <variable name="RetryCount" property="RetryCount" hidden="true">2</variable>
+      </defaultVarList>
+    </step>
+  </group>
+  <group name="Post-Processing" description="" />
+  <group name="Rollback" description="">
+    <condition>
+      <operator type="and">
+        <expression type="SMS_TaskSequence_VariableConditionExpression">
+          <variable name="Operator">equals</variable>
+          <variable name="Value">true</variable>
+          <variable name="Variable">_SMSTSSetupRollback</variable>
+        </expression>
+      </operator>
+    </condition>
+  </group>
+  <step type="SMS_TaskSequence_RebootAction" name="Restart Computer" description="" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+    <action>smsboot.exe /target:WinPE</action>
+    <defaultVarList>
+      <variable name="SMSRebootMessage" property="Message">A new Microsoft Windows operating system is being installed. The computer must restart to continue.</variable>
+      <variable name="SMSRebootTimeout" property="MessageTimeout">60</variable>
+      <variable name="SMSRebootTarget" property="Target" hidden="true">WinPE</variable>
+    </defaultVarList>
+  </step>
+</sequence>
