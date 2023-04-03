@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <OperatingSystem AuthoringScopeId="ScopeId_2CF434D3-44B7-415B-9C3D-5508F88F90D0" LogicalName="OperatingSystem_08c4768c-d2a7-4198-870f-049335e8c233" Version="2">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Clear Ccmcache Windows 10" ResourceId="ID-a1fe4875-1628-41c4-b76d-358ee60b4220" />
+      <Description Text="" />
+    </Annotation>
+    <Parts>
+      <SuppressionReferences />
+    </Parts>
+    <Settings>
+      <RootComplexSetting>
+        <SimpleSetting LogicalName="ScriptSetting_efd5ecd2-9c7c-45e6-93cb-55faa0b31345" DataType="Int64">
+          <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+            <DisplayName Text="Client Cache Cleaner" ResourceId="ID-31884b36-0a2e-49d6-b6ae-c106aa6a469c" />
+            <Description Text="Delete CCM Cache for clients that are older than 20 Days" ResourceId="ID-ed217439-c17f-45d2-b7df-260169fef974" />
+          </Annotation>
+          <ScriptDiscoverySource IsPerUser="true" Is64Bit="true">
+            <DiscoveryScriptBody ScriptType="PowerShell">function SCCMPurgeList 
+{ 
+  # Specify Max Days For CCM Cache Entries 
+  $MaxRetention = "20" 
+   
+  # Connect To Resource Manager Com Object 
+  $SCCMClient = New-Object -ComObject UIResource.UIResourceMgr 
+   
+  # Get SCCM Client Cache Directory Location 
+  $SCCMCacheDir = ($SCCMClient.GetCacheInfo().Location) 
+   
+  # List All Applications Due In The Future Or Currently Running 
+  $PendingApps = $SCCMClient.GetAvailableApplications() | Where-Object { (($_.StartTime -gt (Get-Date)) -or ($_.IsCurrentlyRunning -eq "1")) } 
+   
+  # Create List Of Applications To Purge From Cache 
+  $PurgeApps = $SCCMClient.GetCacheInfo().GetCacheElements() | Where-Object { ($_.ContentID -notin $PendingApps.PackageID) -and ((Test-Path -Path $_.Location) -eq $true) -and ($_.LastReferenceTime -lt (Get-Date).AddDays(- $MaxRetention)) } 
+   
+  # Count Applications To Purge 
+  $PurgeCount = ($PurgeApps.Items).Count 
+   
+  # Clean Up Misc Directories  
+  $ActiveDirs = $SCCMClient.GetCacheInfo().GetCacheElements() | ForEach-Object { Write-Output $_.Location } 
+  $MiscDirs = (Get-ChildItem -Path $SCCMCacheDir | Where-Object { (($_.PsIsContainer -eq $true) -and ($_.FullName -notin $ActiveDirs)) }).count 
+   
+  # Add Old App &amp; Misc Directories 
+  $PurgeCount = $PurgeCount + $MiscDirs 
+   
+  # Return Number Of Applications To Purge 
+  Return $PurgeCount 
+} 
+SCCMPurgeList 
+
+
+# ENCODEDSCRIPT # Begin Configuration Manager encoded script block # 77u/ZnVuY3Rpb24gU0NDTVB1cmdlTGlzdCANCnsgDQogICMgU3BlY2lmeSBNYXggRGF5cyBGb3IgQ0NNIENhY2hlIEVudHJpZXMgDQogICRNYXhSZXRlbnRpb24gPSAiMjAiIA0KICAgDQogICMgQ29ubmVjdCBUbyBSZXNvdXJjZSBNYW5hZ2VyIENvbSBPYmplY3QgDQogICRTQ0NNQ2xpZW50ID0gTmV3LU9iamVjdCAtQ29tT2JqZWN0IFVJUmVzb3VyY2UuVUlSZXNvdXJjZU1nciANCiAgIA0KICAjIEdldCBTQ0NNIENsaWVudCBDYWNoZSBEaXJlY3RvcnkgTG9jYXRpb24gDQogICRTQ0NNQ2FjaGVEaXIgPSAoJFNDQ01DbGllbnQuR2V0Q2FjaGVJbmZvKCkuTG9jYXRpb24pIA0KICAgDQogICMgTGlzdCBBbGwgQXBwbGljYXRpb25zIER1ZSBJbiBUaGUgRnV0dXJlIE9yIEN1cnJlbnRseSBSdW5uaW5nIA0KICAkUGVuZGluZ0FwcHMgPSAkU0NDTUNsaWVudC5HZXRBdmFpbGFibGVBcHBsaWNhdGlvbnMoKSB8IFdoZXJlLU9iamVjdCB7ICgoJF8uU3RhcnRUaW1lIC1ndCAoR2V0LURhdGUpKSAtb3IgKCRfLklzQ3VycmVudGx5UnVubmluZyAtZXEgIjEiKSkgfSANCiAgIA0KICAjIENyZWF0ZSBMaXN0IE9mIEFwcGxpY2F0aW9ucyBUbyBQdXJnZSBGcm9tIENhY2hlIA0KICAkUHVyZ2VBcHBzID0gJFNDQ01DbGllbnQuR2V0Q2FjaGVJbmZvKCkuR2V0Q2FjaGVFbGVtZW50cygpIHwgV2hlcmUtT2JqZWN0IHsgKCRfLkNvbnRlbnRJRCAtbm90aW4gJFBlbmRpbmdBcHBzLlBhY2thZ2VJRCkgLWFuZCAoKFRlc3QtUGF0aCAtUGF0aCAkXy5Mb2NhdGlvbikgLWVxICR0cnVlKSAtYW5kICgkXy5MYXN0UmVmZXJlbmNlVGltZSAtbHQgKEdldC1EYXRlKS5BZGREYXlzKC0gJE1heFJldGVudGlvbikpIH0gDQogICANCiAgIyBDb3VudCBBcHBsaWNhdGlvbnMgVG8gUHVyZ2UgDQogICRQdXJnZUNvdW50ID0gKCRQdXJnZUFwcHMuSXRlbXMpLkNvdW50IA0KICAgDQogICMgQ2xlYW4gVXAgTWlzYyBEaXJlY3RvcmllcyAgDQogICRBY3RpdmVEaXJzID0gJFNDQ01DbGllbnQuR2V0Q2FjaGVJbmZvKCkuR2V0Q2FjaGVFbGVtZW50cygpIHwgRm9yRWFjaC1PYmplY3QgeyBXcml0ZS1PdXRwdXQgJF8uTG9jYXRpb24gfSANCiAgJE1pc2NEaXJzID0gKEdldC1DaGlsZEl0ZW0gLVBhdGggJFNDQ01DYWNoZURpciB8IFdoZXJlLU9iamVjdCB7ICgoJF8uUHNJc0NvbnRhaW5lciAtZXEgJHRydWUpIC1hbmQgKCRfLkZ1bGxOYW1lIC1ub3RpbiAkQWN0aXZlRGlycykpIH0pLmNvdW50IA0KICAgDQogICMgQWRkIE9sZCBBcHAgJiBNaXNjIERpcmVjdG9yaWVzIA0KICAkUHVyZ2VDb3VudCA9ICRQdXJnZUNvdW50ICsgJE1pc2NEaXJzIA0KICAgDQogICMgUmV0dXJuIE51bWJlciBPZiBBcHBsaWNhdGlvbnMgVG8gUHVyZ2UgDQogIFJldHVybiAkUHVyZ2VDb3VudCANCn0gDQpTQ0NNUHVyZ2VMaXN0IA0K # ENCODEDSCRIPT# End Configuration Manager encoded script block
+
+</DiscoveryScriptBody>
+            <RemediationScriptBody ScriptType="PowerShell">function SCCMPurgeList 
+{ 
+  # Specify Max Days For CCM Cache Entries 
+  $MaxRetention = "14" 
+   
+  # Connect To Resource Manager Com Object 
+  $SCCMClient = New-Object -ComObject UIResource.UIResourceMgr 
+ 
+  # Check for Com Object type and process 
+    if ($SCCMClient -ne $null){ 
+        if (($SCCMClient.GetType()).Name -match "_ComObject"){ 
+ 
+            # Get SCCM Client Cache Directory Location 
+            $SCCMCacheDir = ($SCCMClient.GetCacheInfo().Location) 
+             
+            # List All Applications Due In The Future Or Currently Running 
+            $PendingApps = $SCCMClient.GetAvailableApplications() | Where-Object { (($_.StartTime -gt (Get-Date)) -or ($_.IsCurrentlyRunning -eq "1")) } 
+             
+            # Create List Of Applications To Purge From Cache 
+            $PurgeApps = $SCCMClient.GetCacheInfo().GetCacheElements() | Where-Object { ($_.ContentID -notin $PendingApps.PackageID) -and $((Test-Path -Path $_.Location) -eq $true) -and ($_.LastReferenceTime -lt (Get-Date).AddDays(- $MaxRetention)) } 
+             
+            # Purge Apps No Longer Required 
+            foreach ($App in $PurgeApps) 
+            { 
+                $SCCMClient.GetCacheInfo().DeleteCacheElement($App.CacheElementID) 
+            } 
+             
+            # Clean Up Misc Directories  
+            $ActiveDirs = $SCCMClient.GetCacheInfo().GetCacheElements() | ForEach-Object { Write-Output $_.Location } 
+            Get-ChildItem -Path $SCCMCacheDir | Where-Object { (($_.PsIsContainer -eq $true) -and ($_.FullName -notin $ActiveDirs)) } | Remove-Item -Recurse -Force -Verbose 
+        } 
+    } 
+} 
+SCCMPurgeList 
+
+
+# ENCODEDSCRIPT # Begin Configuration Manager encoded script block # 77u/ZnVuY3Rpb24gU0NDTVB1cmdlTGlzdCANCnsgDQogICMgU3BlY2lmeSBNYXggRGF5cyBGb3IgQ0NNIENhY2hlIEVudHJpZXMgDQogICRNYXhSZXRlbnRpb24gPSAiMTQiIA0KICAgDQogICMgQ29ubmVjdCBUbyBSZXNvdXJjZSBNYW5hZ2VyIENvbSBPYmplY3QgDQogICRTQ0NNQ2xpZW50ID0gTmV3LU9iamVjdCAtQ29tT2JqZWN0IFVJUmVzb3VyY2UuVUlSZXNvdXJjZU1nciANCiANCiAgIyBDaGVjayBmb3IgQ29tIE9iamVjdCB0eXBlIGFuZCBwcm9jZXNzIA0KICAgIGlmICgkU0NDTUNsaWVudCAtbmUgJG51bGwpeyANCiAgICAgICAgaWYgKCgkU0NDTUNsaWVudC5HZXRUeXBlKCkpLk5hbWUgLW1hdGNoICJfQ29tT2JqZWN0Iil7IA0KIA0KICAgICAgICAgICAgIyBHZXQgU0NDTSBDbGllbnQgQ2FjaGUgRGlyZWN0b3J5IExvY2F0aW9uIA0KICAgICAgICAgICAgJFNDQ01DYWNoZURpciA9ICgkU0NDTUNsaWVudC5HZXRDYWNoZUluZm8oKS5Mb2NhdGlvbikgDQogICAgICAgICAgICAgDQogICAgICAgICAgICAjIExpc3QgQWxsIEFwcGxpY2F0aW9ucyBEdWUgSW4gVGhlIEZ1dHVyZSBPciBDdXJyZW50bHkgUnVubmluZyANCiAgICAgICAgICAgICRQZW5kaW5nQXBwcyA9ICRTQ0NNQ2xpZW50LkdldEF2YWlsYWJsZUFwcGxpY2F0aW9ucygpIHwgV2hlcmUtT2JqZWN0IHsgKCgkXy5TdGFydFRpbWUgLWd0IChHZXQtRGF0ZSkpIC1vciAoJF8uSXNDdXJyZW50bHlSdW5uaW5nIC1lcSAiMSIpKSB9IA0KICAgICAgICAgICAgIA0KICAgICAgICAgICAgIyBDcmVhdGUgTGlzdCBPZiBBcHBsaWNhdGlvbnMgVG8gUHVyZ2UgRnJvbSBDYWNoZSANCiAgICAgICAgICAgICRQdXJnZUFwcHMgPSAkU0NDTUNsaWVudC5HZXRDYWNoZUluZm8oKS5HZXRDYWNoZUVsZW1lbnRzKCkgfCBXaGVyZS1PYmplY3QgeyAoJF8uQ29udGVudElEIC1ub3RpbiAkUGVuZGluZ0FwcHMuUGFja2FnZUlEKSAtYW5kICQoKFRlc3QtUGF0aCAtUGF0aCAkXy5Mb2NhdGlvbikgLWVxICR0cnVlKSAtYW5kICgkXy5MYXN0UmVmZXJlbmNlVGltZSAtbHQgKEdldC1EYXRlKS5BZGREYXlzKC0gJE1heFJldGVudGlvbikpIH0gDQogICAgICAgICAgICAgDQogICAgICAgICAgICAjIFB1cmdlIEFwcHMgTm8gTG9uZ2VyIFJlcXVpcmVkIA0KICAgICAgICAgICAgZm9yZWFjaCAoJEFwcCBpbiAkUHVyZ2VBcHBzKSANCiAgICAgICAgICAgIHsgDQogICAgICAgICAgICAgICAgJFNDQ01DbGllbnQuR2V0Q2FjaGVJbmZvKCkuRGVsZXRlQ2FjaGVFbGVtZW50KCRBcHAuQ2FjaGVFbGVtZW50SUQpIA0KICAgICAgICAgICAgfSANCiAgICAgICAgICAgICANCiAgICAgICAgICAgICMgQ2xlYW4gVXAgTWlzYyBEaXJlY3RvcmllcyAgDQogICAgICAgICAgICAkQWN0aXZlRGlycyA9ICRTQ0NNQ2xpZW50LkdldENhY2hlSW5mbygpLkdldENhY2hlRWxlbWVudHMoKSB8IEZvckVhY2gtT2JqZWN0IHsgV3JpdGUtT3V0cHV0ICRfLkxvY2F0aW9uIH0gDQogICAgICAgICAgICBHZXQtQ2hpbGRJdGVtIC1QYXRoICRTQ0NNQ2FjaGVEaXIgfCBXaGVyZS1PYmplY3QgeyAoKCRfLlBzSXNDb250YWluZXIgLWVxICR0cnVlKSAtYW5kICgkXy5GdWxsTmFtZSAtbm90aW4gJEFjdGl2ZURpcnMpKSB9IHwgUmVtb3ZlLUl0ZW0gLVJlY3Vyc2UgLUZvcmNlIC1WZXJib3NlIA0KICAgICAgICB9IA0KICAgIH0gDQp9IA0KU0NDTVB1cmdlTGlzdCANCg== # ENCODEDSCRIPT# End Configuration Manager encoded script block
+
+</RemediationScriptBody>
+          </ScriptDiscoverySource>
+        </SimpleSetting>
+      </RootComplexSetting>
+    </Settings>
+    <Rules>
+      <Rule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules" id="Rule_d29a0deb-0895-48e0-956f-21f6736077d7" Severity="None" NonCompliantWhenSettingIsNotFound="false">
+        <Annotation>
+          <DisplayName Text="Cache Cleaner Rule" ResourceId="ID-25d32762-5626-4f1e-97f0-fdcc45bfed93" />
+          <Description Text="" />
+        </Annotation>
+        <Expression>
+          <Operator>Equals</Operator>
+          <Operands>
+            <SettingReference AuthoringScopeId="ScopeId_2CF434D3-44B7-415B-9C3D-5508F88F90D0" LogicalName="OperatingSystem_08c4768c-d2a7-4198-870f-049335e8c233" Version="2" DataType="Int64" SettingLogicalName="ScriptSetting_efd5ecd2-9c7c-45e6-93cb-55faa0b31345" SettingSourceType="Script" Method="Value" Changeable="true" />
+            <ConstantValue Value="0" DataType="Int64" />
+          </Operands>
+        </Expression>
+      </Rule>
+    </Rules>
+    <OperatingSystemDiscoveryRule xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <OperatingSystemExpression>
+        <Operator>OneOf</Operator>
+        <Operands>
+          <RuleExpression RuleId="Windows/All_x64_Windows_10_and_higher_Clients" />
+          <RuleExpression RuleId="Windows/All_x86_Windows_10_and_higher_Clients" />
+        </Operands>
+      </OperatingSystemExpression>
+    </OperatingSystemDiscoveryRule>
+  </OperatingSystem>
+</DesiredConfigurationDigest>
