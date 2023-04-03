@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-16"?>
+<DesiredConfigurationDigest xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/07/10/DesiredConfiguration">
+  <!--Authored against the following schema version: 5-->
+  <Baseline AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="Baseline_94642b7c-dd95-4aed-9b82-e6191d646297" Version="3" ConfigurationFlags="64">
+    <Annotation xmlns="http://schemas.microsoft.com/SystemsCenterConfigurationManager/2009/06/14/Rules">
+      <DisplayName Text="Check Defender settings" ResourceId="ID-7387165c-dde0-4cc4-a80c-a52bba069c89" />
+      <Description Text="" />
+    </Annotation>
+    <RequiredItems />
+    <ProhibitedItems />
+    <OptionalItems />
+    <OperatingSystems>
+      <OperatingSystemReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_09b3adbd-1f9b-499b-a197-4c70fc589078" />
+      <OperatingSystemReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_f3311604-c5fd-494d-8404-9413802b71b7" />
+      <OperatingSystemReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_0947d6b8-914d-48eb-90df-b87f0ce99043" />
+      <OperatingSystemReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_7baf15b9-5cac-452d-8e54-2f7397e89eb7" />
+      <OperatingSystemReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_80970b98-cc24-4bf7-b320-6d9038d31d0f" />
+      <OperatingSystemReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_f9b03f10-fa13-4928-ac30-a88a4232f16a" />
+      <OperatingSystemReference AuthoringScopeId="ScopeId_0149710E-F364-4741-AF5F-AEC0FC36E6A7" LogicalName="OperatingSystem_9820aef7-51d3-4fe6-8960-f972a464f986" />
+    </OperatingSystems>
+    <SoftwareUpdates />
+    <Baselines />
+    <OtherConfigurationItems />
+  </Baseline>
+</DesiredConfigurationDigest>
