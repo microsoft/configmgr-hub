@@ -1,0 +1,110 @@
+<sequence version="3.10">
+  <referenceList>
+    <reference package="PS20003E" />
+  </referenceList>
+  <group name="UpgradePreSetup" description="Blue">
+    <condition>
+      <expression type="SMS_TaskSequence_VariableConditionExpression">
+        <variable name="Operator">equals</variable>
+        <variable name="Value">Upgrade</variable>
+        <variable name="Variable">SplashTheme</variable>
+      </expression>
+    </condition>
+    <step type="SMS_TaskSequence_SetDynamicVariablesAction" name="Set Splash Array Upgrade" description="These are the items that will display in the rotating text screen" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>OSDSetDynamicVariables.exe</action>
+      <defaultVarList>
+        <variable name="OSDSetDynamicVariablesRules" property="Rules">&lt;Rules&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_001" IsSecret="false"&gt;This Line never actually displays&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_002" IsSecret="false"&gt;We're upgrading you to Windows 10 %SMSTS_BUILD%&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_003" IsSecret="false"&gt;It may take 60 - 120 minutes&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_004" IsSecret="false"&gt;Your PC will restart several times&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_005" IsSecret="false"&gt;Should anything go wrong (Unlikely), contact ...&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_006" IsSecret="false"&gt;... Your Local Service Desk&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_007" IsSecret="false"&gt;Other Ideas while you wait...&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_008" IsSecret="false"&gt;Take this opportunity to clean your work area&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_009" IsSecret="false"&gt;Visit GARYTOWN.COM, check out the WaaS Page&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_010" IsSecret="false"&gt;MIKETERRILL.NET for all your BIOS -&amp;gt; UEFI Questions&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_011" IsSecret="false"&gt;MMS2019 is the BEST MMS EVER!&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;/Rules&gt;
+</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_SetDynamicVariablesAction" name="Set Color Scheme Upgrade" description="Blue Theme" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>OSDSetDynamicVariables.exe</action>
+      <defaultVarList>
+        <variable name="OSDSetDynamicVariablesRules" property="Rules">&lt;Rules&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_WindowBackGroundDefault" IsSecret="false"&gt;#012a47&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourBrighterAnimation1" IsSecret="false"&gt;#012a47&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourBrighterAnimation2" IsSecret="false"&gt;#1271b5&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourDarkerAnimation1" IsSecret="false"&gt;#1271b5&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourDarkerAnimation2" IsSecret="false"&gt;#012a47&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;/Rules&gt;
+</variable>
+      </defaultVarList>
+    </step>
+  </group>
+  <group name="UpgradePostSetup" description="Blue">
+    <condition>
+      <expression type="SMS_TaskSequence_VariableConditionExpression">
+        <variable name="Operator">equals</variable>
+        <variable name="Value">UpgradePostSetup</variable>
+        <variable name="Variable">SplashTheme</variable>
+      </expression>
+    </condition>
+    <step type="SMS_TaskSequence_SetDynamicVariablesAction" name="Set Splash Array Upgrade" description="These are the items that will display in the rotating text screen" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>OSDSetDynamicVariables.exe</action>
+      <defaultVarList>
+        <variable name="OSDSetDynamicVariablesRules" property="Rules">&lt;Rules&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_001" IsSecret="false"&gt;This Line never actually displays&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_002" IsSecret="false"&gt;We're almost done upgrading to Windows 10 %SMSTS_BUILD%&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_004" IsSecret="false"&gt;Your PC will restart at least one more time.&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_005" IsSecret="false"&gt;Should anything go wrong (Unlikely), contact ...&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_006" IsSecret="false"&gt;... Your Local Service Desk&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;/Rules&gt;
+</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_SetDynamicVariablesAction" name="Set Color Scheme Upgrade" description="Blue Theme" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>OSDSetDynamicVariables.exe</action>
+      <defaultVarList>
+        <variable name="OSDSetDynamicVariablesRules" property="Rules">&lt;Rules&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_WindowBackGroundDefault" IsSecret="false"&gt;#012a47&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourBrighterAnimation1" IsSecret="false"&gt;#012a47&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourBrighterAnimation2" IsSecret="false"&gt;#1271b5&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourDarkerAnimation1" IsSecret="false"&gt;#1271b5&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourDarkerAnimation2" IsSecret="false"&gt;#012a47&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;/Rules&gt;
+</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_RunCommandLineAction" name="Deployment Screen" description="Run even if no user is logged in. (After Setup Stage)" runIn="WinPEandFullOS" successCodeList="0 3010" retryCount="0" runFromNet="false">
+      <action>smsswd.exe /run:PS20003E ServiceUI.exe -process:TSProgressUI.exe %SYSTEMROOT%\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File Show-OSUpgradeBackground-Variable.ps1</action>
+      <defaultVarList>
+        <variable name="CommandLine" property="CommandLine" hidden="true">ServiceUI.exe -process:TSProgressUI.exe %SYSTEMROOT%\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File Show-OSUpgradeBackground-Variable.ps1</variable>
+        <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+        <variable name="PackageID" property="PackageID" hidden="true">PS20003E</variable>
+        <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+        <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010</variable>
+      </defaultVarList>
+    </step>
+  </group>
+  <group name="Warning" description="">
+    <condition>
+      <expression type="SMS_TaskSequence_VariableConditionExpression">
+        <variable name="Operator">equals</variable>
+        <variable name="Value">Warning</variable>
+        <variable name="Variable">SplashTheme</variable>
+      </expression>
+    </condition>
+    <step type="SMS_TaskSequence_SetDynamicVariablesAction" name="Set Splash Array Warning" description="These are the items that will display in the rotating text screen" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>OSDSetDynamicVariables.exe</action>
+      <defaultVarList>
+        <variable name="OSDSetDynamicVariablesRules" property="Rules">&lt;Rules&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_001" IsSecret="false"&gt;This Line never actually displays&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_002" IsSecret="false"&gt;We are doing updates on this PC&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_003" IsSecret="false"&gt;It may take 15 - 20 minutes&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_004" IsSecret="false"&gt;Your PC will restart several times&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_005" IsSecret="false"&gt;Should anything go wrong (Unlikely), contact ...&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_006" IsSecret="false"&gt;... Your Local Service Desk&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SA_007" IsSecret="false"&gt;Other Ideas while you wait...&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;/Rules&gt;
+</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_SetDynamicVariablesAction" name="Set Color Scheme Warning" description="Red ish...https://htmlcolorcodes.com/color-picker/" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>OSDSetDynamicVariables.exe</action>
+      <defaultVarList>
+        <variable name="OSDSetDynamicVariablesRules" property="Rules">&lt;Rules&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_WindowBackGroundDefault" IsSecret="false"&gt;#8d1313&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourBrighterAnimation1" IsSecret="false"&gt;#8d1313&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourBrighterAnimation2" IsSecret="false"&gt;#dc4e4e&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourDarkerAnimation1" IsSecret="false"&gt;#dc4e4e&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;Rule&gt;&lt;Variables&gt;&lt;Variable Name="SC_ColourDarkerAnimation2" IsSecret="false"&gt;#8d1313&lt;/Variable&gt;&lt;/Variables&gt;&lt;/Rule&gt;&lt;/Rules&gt;
+</variable>
+      </defaultVarList>
+    </step>
+  </group>
+  <group name="Launch if User Logged ON" description="Don't Bother to Run The Splash Screen is no user is logged on.">
+    <condition>
+      <expression type="SMS_TaskSequence_WMIConditionExpression">
+        <variable name="Namespace">root\cimv2</variable>
+        <variable name="Query">select __relpath from win32_process where caption = 'explorer.exe'</variable>
+      </expression>
+    </condition>
+    <step type="SMS_TaskSequence_RunCommandLineAction" name="Deployment Screen" description="" runIn="WinPEandFullOS" successCodeList="0 3010" retryCount="0" runFromNet="false">
+      <action>smsswd.exe /run:PS20003E ServiceUI.exe -process:TSProgressUI.exe %SYSTEMROOT%\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File Show-OSUpgradeBackground-Variable.ps1</action>
+      <defaultVarList>
+        <variable name="CommandLine" property="CommandLine" hidden="true">ServiceUI.exe -process:TSProgressUI.exe %SYSTEMROOT%\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File Show-OSUpgradeBackground-Variable.ps1</variable>
+        <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+        <variable name="PackageID" property="PackageID" hidden="true">PS20003E</variable>
+        <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+        <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010</variable>
+      </defaultVarList>
+    </step>
+    <step type="SMS_TaskSequence_SetVariableAction" name="Disable Progress UI" description="Disabling Step.  Otherwise uses won't see progress after upgrade (Post upgrade steps)" disable="true" runIn="WinPEandFullOS" successCodeList="0" retryCount="0" runFromNet="false">
+      <action>tsenv.exe "TSDisableProgressUI=True" /hiddenflag:False</action>
+      <defaultVarList>
+        <variable name="DoNotShowVariableValue" property="DoNotShowVariableValue" hidden="true">false</variable>
+        <variable name="VariableName" property="VariableName" hidden="true">TSDisableProgressUI</variable>
+        <variable name="VariableValue" property="VariableValue" hidden="true">True</variable>
+      </defaultVarList>
+    </step>
+  </group>
+</sequence>
