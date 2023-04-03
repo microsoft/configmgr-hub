@@ -1,0 +1,188 @@
+<sequence version="3.10">
+  <group name="Enable BitLocker on Laptop and Desktop" description="">
+    <group name="Enable BitLocker - OS DRIVE" description="">
+      <step type="SMS_TaskSequence_RunCommandLineAction" name="Set BitLockerKey Streight - Win7+ - Not Win10" description="" runIn="WinPEandFullOS" successCodeList="0 3010" retryCount="0" runFromNet="false">
+        <condition>
+          <operator type="and">
+            <osConditionGroup type="or">
+              <osExpressionGroup type="and" name="All x64 Windows 7 Client">
+                <platformKey arch="x64" type="Win_NT" minVer="6.10.0000.0" maxVer="6.10.9999.9999" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '6.1%' AND OSType=18 AND ProductType=1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '64%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All x64 Windows 8 Client">
+                <platformKey arch="x64" type="Win_NT" minVer="6.20.0000.0" maxVer="6.20.9999.9999" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '6.2%' AND OSType=18 AND ProductType=1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '64%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All x64 Windows 8.1 Client">
+                <platformKey arch="x64" type="Win_NT" minVer="6.30.0000.0" maxVer="6.30.9999.9999" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '6.3%' AND OSType=18 AND ProductType=1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '64%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All x64 Windows Server 2008 R2">
+                <platformKey arch="x64" type="Win_NT" minVer="6.10.0000.0" maxVer="6.10.9999.9998" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '6.1%' AND OSType=18 AND ProductType&gt;1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '64%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All x64 Windows Server 2012 R2">
+                <platformKey arch="x64" type="Win_NT" minVer="6.30.0000.0" maxVer="6.30.9999.9998" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '6.3%' AND OSType=18 AND ProductType&gt;1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '64%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All x64 Windows Server 8">
+                <platformKey arch="x64" type="Win_NT" minVer="6.20.0000.0" maxVer="6.20.9999.9998" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '6.2%' AND OSType=18 AND ProductType&gt;1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '64%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All x86 Windows 7 Client">
+                <platformKey arch="X86" type="Win_NT" minVer="6.10.0000.0" maxVer="6.10.9999.9999" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '6.1%' AND OSType=18 AND ProductType=1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '32%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All x86 Windows 8 Client">
+                <platformKey arch="X86" type="Win_NT" minVer="6.20.0000.0" maxVer="6.20.9999.9999" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '6.2%' AND OSType=18 AND ProductType=1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '32%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All x86 Windows 8.1 Client">
+                <platformKey arch="X86" type="Win_NT" minVer="6.30.0000.0" maxVer="6.30.9999.9999" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '6.3%' AND OSType=18 AND ProductType=1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '32%'</variable>
+                </expression>
+              </osExpressionGroup>
+            </osConditionGroup>
+          </operator>
+        </condition>
+        <action>smsswd.exe /run: cmd /c reg.exe add HKLM\SOFTWARE\Policies\Microsoft\FVE /v EncryptionMethod /t REG_DWORD /d 4 /f</action>
+        <defaultVarList>
+          <variable name="CommandLine" property="CommandLine" hidden="true">cmd /c reg.exe add HKLM\SOFTWARE\Policies\Microsoft\FVE /v EncryptionMethod /t REG_DWORD /d 4 /f</variable>
+          <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+          <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+          <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010</variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_RunCommandLineAction" name="Set BitLockerKey Streight - Win10+" description="" runIn="WinPEandFullOS" successCodeList="0 3010" retryCount="0" runFromNet="false">
+        <condition>
+          <operator type="and">
+            <osConditionGroup type="or">
+              <osExpressionGroup type="and" name="All Windows 10 (32-bit) Client">
+                <platformKey arch="X86" type="Win_NT" minVer="10.00.0000.0" maxVer="10.00.99999.9999" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '[1-9][0-9].%' AND OSType=18 AND ProductType=1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '32%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All Windows 10 (64-bit) Client">
+                <platformKey arch="x64" type="Win_NT" minVer="10.00.0000.0" maxVer="10.00.99999.9999" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '[1-9][0-9].%' AND OSType=18 AND ProductType=1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '64%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All x64 Windows Server 2016">
+                <platformKey arch="x64" type="Win_NT" minVer="10.00.0000.0" maxVer="10.00.99999.9998" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE Version like '10.%' AND OSType=18 AND ProductType&gt;1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '64%'</variable>
+                </expression>
+              </osExpressionGroup>
+              <osExpressionGroup type="and" name="All x64 Windows Server 2019 and higher">
+                <platformKey arch="x64" type="Win_NT" minVer="10.00.17763.0" maxVer="10.99.99999.9998" />
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE ((Version like '10.0.[1-9][0-9][0-9][0-9][0-9]' AND BuildNumber&gt;='17763') OR (Version like '10.[1-9]%')) AND OSType=18 AND ProductType&gt;1</variable>
+                </expression>
+                <expression type="SMS_TaskSequence_WMIConditionExpression" ignoreQueryFailure="true">
+                  <variable name="Namespace">root\cimv2</variable>
+                  <variable name="Query">SELECT * FROM Win32_OperatingSystem WHERE OSArchitecture like '64%'</variable>
+                </expression>
+              </osExpressionGroup>
+            </osConditionGroup>
+          </operator>
+        </condition>
+        <action>smsswd.exe /run: cmd /c reg.exe add HKLM\SOFTWARE\Policies\Microsoft\FVE /v EncryptionMethod /t REG_DWORD /d 7 /f</action>
+        <defaultVarList>
+          <variable name="CommandLine" property="CommandLine" hidden="true">cmd /c reg.exe add HKLM\SOFTWARE\Policies\Microsoft\FVE /v EncryptionMethod /t REG_DWORD /d 7 /f</variable>
+          <variable name="SMSTSDisableWow64Redirection" property="DisableWow64Redirection">false</variable>
+          <variable name="_SMSTSRunCommandLineAsUser" property="RunAsUser">false</variable>
+          <variable name="SuccessCodes" property="SuccessCodes" hidden="true">0 3010</variable>
+        </defaultVarList>
+      </step>
+      <step type="SMS_TaskSequence_EnableBitLockerAction" name="Enable BitLocker - OS DRIVE" description="" runIn="FullOS" successCodeList="0" retryCount="0" runFromNet="false">
+        <action>OSDBitLocker.exe /enable  /wait:False /mode:TPM /pwd:AD /full:True</action>
+        <defaultVarList>
+          <variable name="OSDBitLockerCreateRecoveryPassword" property="CreateRecoveryPassword" hidden="true">AD</variable>
+          <variable name="OSDBitLockerEncryptFullDisk" property="EncryptFullDisk" hidden="true">true</variable>
+          <variable name="OSDBitLockerMode" property="Mode" hidden="true">TPM</variable>
+          <variable name="OSDBitLockerWaitForEncryption" property="WaitForEncryption" hidden="true">false</variable>
+        </defaultVarList>
+      </step>
+    </group>
+  </group>
+</sequence>
