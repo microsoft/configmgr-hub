@@ -1,0 +1,7 @@
+{
+  "downloadLocation": "https://github.com/kwygant/WAC-MECM-RCT/raw/main/compiled%20cab/WACRCT.cab",
+  "FileHash": "ED540442F2844CA3631A1F88B4E5AF515184B015A202495798E6893315947403",
+  "HashAlgorithm": "SHA256",
+  "codeSignPolicyFile": "Open in Windows Admin Center-CodeSign-Policy.xml",
+  "Version": "1.0"
+}
